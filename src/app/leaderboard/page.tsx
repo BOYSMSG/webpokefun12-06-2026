@@ -3,6 +3,42 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 
+const MODE_COLUMNS: Record<string, { label: string, key: string, color: string }[]> = {
+  ranked: [
+    { label: 'Elo', key: 'elo', color: '#10b981' },
+    { label: 'Wins', key: 'wins', color: '#3b82f6' },
+    { label: 'Losses', key: 'losses', color: '#ef4444' },
+    { label: 'Streak', key: 'win_streak', color: '#f59e0b' },
+    { label: 'Matches', key: 'total_matches', color: '#8b5cf6' },
+  ],
+  alphazone: [
+    { label: 'Elo', key: 'elo', color: '#10b981' },
+    { label: 'Kills', key: 'kills', color: '#ef4444' },
+    { label: 'Deaths', key: 'deaths', color: '#6b7280' },
+    { label: 'Wins', key: 'wins', color: '#3b82f6' },
+    { label: 'Losses', key: 'losses', color: '#ef4444' },
+  ],
+  dungeon: [
+    { label: 'Completed', key: 'dungeons_completed', color: '#10b981' },
+    { label: 'Kills', key: 'dungeon_kills', color: '#ef4444' },
+    { label: 'Deaths', key: 'dungeon_deaths', color: '#6b7280' },
+    { label: 'Points', key: 'dungeon_points', color: '#3b82f6' },
+  ],
+  raid: [
+    { label: 'Points', key: 'points', color: '#10b981' },
+    { label: 'Won', key: 'total_raids_won', color: '#3b82f6' },
+    { label: 'Damage', key: 'total_damage_dealt', color: '#ef4444' },
+  ],
+  battletower: [
+    { label: 'Floor', key: 'highest_floor', color: '#10b981' },
+    { label: 'Wins', key: 'total_wins', color: '#3b82f6' },
+    { label: 'Losses', key: 'total_losses', color: '#ef4444' },
+  ],
+  pokedex: [
+    { label: 'Caught', key: 'captures', color: '#10b981' },
+  ]
+};
+
 export default function LeaderboardPage() {
   const [activeMainTab, setActiveMainTab] = useState('ranked');
   const [activeSubTab, setActiveSubTab] = useState('alphazone');
@@ -45,8 +81,10 @@ export default function LeaderboardPage() {
       });
   }, [currentFetchMode]);
 
+  const activeColumns = MODE_COLUMNS[currentFetchMode] || [{ label: 'Score', key: sortBy, color: '#10b981' }];
+
   return (
-    <div className="inner" style={{ paddingTop: '60px', paddingBottom: '80px', maxWidth: '1200px', margin: '0 auto', minHeight: '80vh' }}>
+    <div className="inner" style={{ paddingTop: '60px', paddingBottom: '80px', maxWidth: '1400px', margin: '0 auto', minHeight: '80vh', paddingLeft: '20px', paddingRight: '20px' }}>
       
       <div style={{ textAlign: 'center', marginBottom: '50px' }}>
         <h1 style={{ fontSize: '4rem', fontWeight: 800, marginBottom: '15px', color: 'white', textShadow: '0 0 25px rgba(255,255,255,0.2)' }}>
@@ -114,7 +152,7 @@ export default function LeaderboardPage() {
       )}
 
       {/* Leaderboard Table Area */}
-      <div style={{ background: '#111827', borderRadius: '24px', border: '1px solid rgba(255,255,255,0.1)', overflow: 'hidden', boxShadow: '0 15px 50px rgba(0,0,0,0.6)' }}>
+      <div style={{ background: '#111827', borderRadius: '24px', border: '1px solid rgba(255,255,255,0.1)', overflow: 'hidden', boxShadow: '0 15px 50px rgba(0,0,0,0.6)', overflowX: 'auto' }}>
         
         {loading ? (
           <div style={{ padding: '120px', textAlign: 'center', color: 'gray', fontSize: '1.4rem' }}>
@@ -127,20 +165,22 @@ export default function LeaderboardPage() {
             <p style={{ fontSize: '1.4rem' }}>No data found for this category yet.</p>
           </div>
         ) : (
-          <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
+          <table style={{ width: '100%', minWidth: '800px', borderCollapse: 'collapse', textAlign: 'left' }}>
             <thead>
-              <tr style={{ background: 'rgba(0,0,0,0.5)', color: 'gray', textTransform: 'uppercase', fontSize: '1.1rem', letterSpacing: '2px' }}>
+              <tr style={{ background: 'rgba(0,0,0,0.5)', color: 'gray', textTransform: 'uppercase', fontSize: '1.1rem', letterSpacing: '1px' }}>
                 <th style={{ padding: '25px 30px', borderBottom: '2px solid rgba(255,255,255,0.05)', width: '10%' }}>Rank</th>
-                <th style={{ padding: '25px 30px', borderBottom: '2px solid rgba(255,255,255,0.05)', width: '50%' }}>Player</th>
-                <th style={{ padding: '25px 30px', borderBottom: '2px solid rgba(255,255,255,0.05)', width: '20%', textAlign: 'right' }}>Score ({sortBy})</th>
+                <th style={{ padding: '25px 30px', borderBottom: '2px solid rgba(255,255,255,0.05)', width: '35%' }}>Player</th>
+                {activeColumns.map(col => (
+                  <th key={col.key} style={{ padding: '25px 20px', borderBottom: '2px solid rgba(255,255,255,0.05)', textAlign: 'center', color: 'white' }}>
+                    {col.label}
+                  </th>
+                ))}
               </tr>
             </thead>
             <tbody>
               {leaderboardData.map((player, index) => {
                 
-                // Identify the player name column (usually name, player, or player_name)
                 const playerName = player.name || player.player_name || player.uuid || "Unknown Player";
-                const score = player[sortBy] || 0;
 
                 let rankIcon = null;
                 let rowBg = 'transparent';
@@ -171,22 +211,42 @@ export default function LeaderboardPage() {
                     </td>
                     <td style={{ padding: '25px 30px', display: 'flex', alignItems: 'center', gap: '20px' }}>
                       <img src={`https://minotar.net/helm/${playerName}/60.png`} alt={playerName} style={{ width: '60px', height: '60px', borderRadius: '12px', boxShadow: '0 4px 10px rgba(0,0,0,0.3)' }} onError={(e) => { e.currentTarget.src = 'https://ui-avatars.com/api/?name=' + playerName; }} />
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                        
                         {player.webUsername ? (
-                          <Link href={`/profile/${player.webUsername}`} style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                            <span style={{ fontSize: '1.5rem', fontWeight: 700, color: '#3b82f6', letterSpacing: '0.5px' }} className="hover-link">{playerName}</span>
-                            <span style={{ fontSize: '0.8rem', background: '#3b82f622', color: '#60a5fa', padding: '2px 8px', borderRadius: '10px', fontWeight: 'bold' }}>
-                              <i className="fa-solid fa-link"></i> Web Profile
-                            </span>
+                          <Link href={`/profile/${player.webUsername}`} style={{ textDecoration: 'none' }}>
+                            <span style={{ fontSize: '1.4rem', fontWeight: 800, color: 'white', letterSpacing: '0.5px' }} className="hover-link">{playerName}</span>
                           </Link>
                         ) : (
-                          <span style={{ fontSize: '1.5rem', fontWeight: 700, color: 'white', letterSpacing: '0.5px' }}>{playerName}</span>
+                          <span style={{ fontSize: '1.4rem', fontWeight: 800, color: 'white', letterSpacing: '0.5px' }}>{playerName}</span>
                         )}
+
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                          {player.socials?.discord && <i className="fa-brands fa-discord" style={{ color: '#5865F2', fontSize: '1.1rem' }} title="Discord Linked"></i>}
+                          {player.socials?.youtube && <i className="fa-brands fa-youtube" style={{ color: '#FF0000', fontSize: '1.1rem' }} title="YouTube Linked"></i>}
+                          {player.socials?.instagram && <i className="fa-brands fa-instagram" style={{ color: '#E1306C', fontSize: '1.1rem' }} title="Instagram Linked"></i>}
+                          
+                          {player.webUsername && (
+                            <Link href={`/profile/${player.webUsername}`} style={{ textDecoration: 'none' }}>
+                              <span style={{ fontSize: '0.75rem', background: '#3b82f622', color: '#60a5fa', padding: '3px 8px', borderRadius: '10px', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                                <i className="fa-solid fa-link"></i> VIEW PROFILE
+                              </span>
+                            </Link>
+                          )}
+                        </div>
+
                       </div>
                     </td>
-                    <td style={{ padding: '25px 30px', textAlign: 'right', fontWeight: 'bold', fontSize: '1.5rem', color: '#10b981' }}>
-                      {score.toLocaleString()}
-                    </td>
+                    
+                    {activeColumns.map(col => {
+                      const val = player[col.key] || 0;
+                      return (
+                        <td key={col.key} style={{ padding: '25px 20px', textAlign: 'center', fontWeight: 'bold', fontSize: '1.4rem', color: col.color }}>
+                          {val.toLocaleString()}
+                        </td>
+                      );
+                    })}
+
                   </tr>
                 );
               })}
@@ -200,6 +260,7 @@ export default function LeaderboardPage() {
           background: rgba(255,255,255,0.08) !important;
         }
         .hover-link:hover {
+          color: #3b82f6 !important;
           text-decoration: underline;
         }
         @keyframes fadeIn {
