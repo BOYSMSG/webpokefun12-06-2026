@@ -187,18 +187,20 @@ export default function LeaderboardPage() {
                 let rankColor = 'gray';
 
                 if (index === 0) {
-                  rankIcon = <i className="fa-solid fa-medal" style={{ color: '#fbbf24', fontSize: '2rem' }}></i>;
+                  rankIcon = <><span style={{ fontSize: '1.2rem', marginRight: '5px' }}>#1</span><i className="fa-solid fa-medal" style={{ color: '#fbbf24', fontSize: '2rem' }}></i></>;
                   rowBg = 'linear-gradient(90deg, rgba(251,191,36,0.1), transparent)';
                   rankColor = '#fbbf24';
                 } else if (index === 1) {
-                  rankIcon = <i className="fa-solid fa-medal" style={{ color: '#9ca3af', fontSize: '2rem' }}></i>;
+                  rankIcon = <><span style={{ fontSize: '1.2rem', marginRight: '5px' }}>#2</span><i className="fa-solid fa-medal" style={{ color: '#9ca3af', fontSize: '2rem' }}></i></>;
                   rowBg = 'linear-gradient(90deg, rgba(156,163,175,0.1), transparent)';
                   rankColor = '#9ca3af';
                 } else if (index === 2) {
-                  rankIcon = <i className="fa-solid fa-medal" style={{ color: '#b45309', fontSize: '2rem' }}></i>;
+                  rankIcon = <><span style={{ fontSize: '1.2rem', marginRight: '5px' }}>#3</span><i className="fa-solid fa-medal" style={{ color: '#b45309', fontSize: '2rem' }}></i></>;
                   rowBg = 'linear-gradient(90deg, rgba(180,83,9,0.1), transparent)';
                   rankColor = '#b45309';
                 }
+
+                const avatarUrl = player.socials?.image || `https://minotar.net/helm/${playerName}/60.png`;
 
                 return (
                   <tr key={index} style={{ 
@@ -206,11 +208,11 @@ export default function LeaderboardPage() {
                     borderBottom: '1px solid rgba(255,255,255,0.05)',
                     transition: 'background 0.2s',
                   }} className="leaderboard-row">
-                    <td style={{ padding: '25px 30px', fontWeight: 'bold', color: rankColor, fontSize: index < 3 ? '1.5rem' : '1.3rem' }}>
+                    <td style={{ padding: '25px 30px', fontWeight: 'bold', color: rankColor, fontSize: index < 3 ? '1.5rem' : '1.3rem', display: 'flex', alignItems: 'center' }}>
                       {rankIcon || `#${index + 1}`}
                     </td>
                     <td style={{ padding: '25px 30px', display: 'flex', alignItems: 'center', gap: '20px' }}>
-                      <img src={`https://minotar.net/helm/${playerName}/60.png`} alt={playerName} style={{ width: '60px', height: '60px', borderRadius: '12px', boxShadow: '0 4px 10px rgba(0,0,0,0.3)' }} onError={(e) => { e.currentTarget.src = 'https://ui-avatars.com/api/?name=' + playerName; }} />
+                      <img src={avatarUrl} alt={playerName} style={{ width: '60px', height: '60px', borderRadius: '12px', boxShadow: '0 4px 10px rgba(0,0,0,0.3)', objectFit: 'cover' }} onError={(e) => { e.currentTarget.src = `https://minotar.net/helm/${playerName}/60.png`; }} />
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                         
                         {player.webUsername ? (

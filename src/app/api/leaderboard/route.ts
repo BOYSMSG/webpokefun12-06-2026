@@ -52,13 +52,14 @@ export async function GET(req: Request) {
     // Lookup linked web profiles
     await connectDB();
     const playerNames = rows.map((r: any) => r.name || r.player_name || r.uuid).filter(Boolean);
-    const linkedUsers = await User.find({ 'connections.minecraft': { $in: playerNames } }).select('connections username').lean();
+    const linkedUsers = await User.find({ 'connections.minecraft': { $in: playerNames } }).select('connections username image').lean();
     
     const linkedMap: any = {};
     for (const u of linkedUsers as any) {
       if (u.connections?.minecraft) {
         linkedMap[u.connections.minecraft] = {
           webUsername: u.username,
+          image: u.image || null,
           discord: !!u.connections.discord,
           youtube: !!u.connections.youtube,
           instagram: !!u.connections.instagram
