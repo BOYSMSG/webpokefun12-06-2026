@@ -93,14 +93,27 @@ export const authOptions: NextAuthOptions = {
               dbUser.connections.google = user.email;
               isUpdated = true;
             }
+
+            // Image Priority Logic
+            if (account?.provider === "discord" && user.image) {
+              // Always prioritize Discord image if logging in with Discord
+              dbUser.image = user.image;
+              isUpdated = true;
+            } else if (account?.provider === "google" && user.image && !dbUser.connections.discord) {
+              // Only use Google image if Discord is NOT connected
+              dbUser.image = user.image;
+              isUpdated = true;
+            }
+
             if (isUpdated) {
-              await User.updateOne({ _id: dbUser._id }, { $set: { connections: dbUser.connections, discordId: dbUser.discordId } });
+              await User.updateOne({ _id: dbUser._id }, { $set: { connections: dbUser.connections, discordId: dbUser.discordId, image: dbUser.image } });
             }
           }
           // Attach role and permissions to user object
           if (dbUser) {
              (user as any).role = dbUser.role;
              (user as any).permissions = dbUser.permissions || [];
+             user.image = dbUser.image || user.image; // Force NextAuth to use the prioritized DB image
           }
         } catch (error) {
           console.warn("MongoDB connection failed in signIn, allowing temporary session for local testing.");
@@ -114,6 +127,7 @@ export const authOptions: NextAuthOptions = {
       if (user) {
         token.role = (user as any).role;
         token.permissions = (user as any).permissions;
+        token.picture = user.image; // Override JWT picture with our prioritized image
       }
       return token;
     },
