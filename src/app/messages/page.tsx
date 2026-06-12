@@ -100,10 +100,11 @@ export default function MessagesPage() {
 
   const contactUsernames = Object.keys(contacts);
   
-  // Sort all users so online users are at the top
+  // Sort all users so online users are at the top, then idle, then offline
   const sortedAllUsers = [...allUsers].sort((a, b) => {
-    if (a.isOnline === b.isOnline) return 0;
-    return a.isOnline ? -1 : 1;
+    const valA = a.status === 'Online' ? 2 : (a.status === 'Idle' ? 1 : 0);
+    const valB = b.status === 'Online' ? 2 : (b.status === 'Idle' ? 1 : 0);
+    return valB - valA;
   });
   
   const displayList = activeTab === 'RECENT' ? contactUsernames : sortedAllUsers.map(u => u.username || u.email);
@@ -225,7 +226,12 @@ export default function MessagesPage() {
                     onMouseOver={e => e.currentTarget.style.background = activeContact === username ? 'rgba(59, 130, 246, 0.2)' : 'rgba(255,255,255,0.05)'}
                     onMouseOut={e => e.currentTarget.style.background = activeContact === username ? 'rgba(59, 130, 246, 0.2)' : 'transparent'}
                   >
-                    <img src={info.image || `https://ui-avatars.com/api/?name=${info.name}&background=random`} style={{ width: '45px', height: '45px', borderRadius: '50%', objectFit: 'cover' }} />
+                    <div style={{ position: 'relative', flexShrink: 0 }}>
+                      <img src={info.image || `https://ui-avatars.com/api/?name=${info.name}&background=random`} style={{ width: '45px', height: '45px', borderRadius: '50%', objectFit: 'cover' }} />
+                      {username !== 'pokefun_actions' && (
+                        <div style={{ position: 'absolute', bottom: '0', right: '0', width: '13px', height: '13px', borderRadius: '50%', background: info.status === 'Online' ? '#10b981' : (info.status === 'Idle' ? '#fbbf24' : '#6b7280'), border: '2px solid #1c1f21', zIndex: 2 }} title={info.status}></div>
+                      )}
+                    </div>
                     <div style={{ flex: 1, overflow: 'hidden' }}>
                       <h4 style={{ margin: 0, color: isOwner ? '#ef4444' : (username === 'pokefun_actions' ? '#facc15' : 'white'), display: 'flex', alignItems: 'center', gap: '5px' }}>
                         {info.name}
@@ -268,8 +274,8 @@ export default function MessagesPage() {
                       {activeContact === 'pokefun_actions' && <span style={{ fontSize: '0.7rem', background: 'rgba(250, 204, 21, 0.2)', color: '#facc15', padding: '2px 6px', borderRadius: '8px', border: '1px solid rgba(250,204,21,0.5)' }}>🛡️ SYSTEM</span>}
                     </h3>
                     {activeContact !== 'pokefun_actions' && (
-                      <p style={{ margin: 0, color: activeContactInfo.isOnline ? '#10b981' : 'gray', fontSize: '0.8rem', fontWeight: 'bold' }}>
-                        {activeContactInfo.isOnline ? '● Online' : '○ Offline'}
+                      <p style={{ margin: 0, color: activeContactInfo.status === 'Online' ? '#10b981' : (activeContactInfo.status === 'Idle' ? '#fbbf24' : 'gray'), fontSize: '0.8rem', fontWeight: 'bold' }}>
+                        {activeContactInfo.status === 'Online' ? '● Online' : (activeContactInfo.status === 'Idle' ? '◐ Idle' : '○ Offline')}
                       </p>
                     )}
                   </div>

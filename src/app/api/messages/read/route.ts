@@ -14,8 +14,11 @@ export async function POST(req: Request) {
     const { senderId } = await req.json();
 
     await connectDB();
+    const me = await User.findOne({ email: session.user.email }).lean();
+    if (!me) return NextResponse.json({ error: 'User not found' }, { status: 404 });
+
     await Message.updateMany(
-      { receiverId: session.user.email, senderId, read: false },
+      { receiverId: me.username, senderId, read: false },
       { $set: { read: true } }
     );
 

@@ -33,14 +33,21 @@ export async function GET(req: Request) {
 
     const users = await User.find({ username: { $in: Array.from(userUsernames) } }).lean();
     const userMap: Record<string, any> = {};
-    const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
+    const threeMinutesAgo = new Date(Date.now() - 3 * 60 * 1000);
+    const fifteenMinutesAgo = new Date(Date.now() - 15 * 60 * 1000);
     
     users.forEach(u => {
+      let status = 'Offline';
+      if (u.lastActive) {
+        const last = new Date(u.lastActive);
+        if (last > threeMinutesAgo) status = 'Online';
+        else if (last > fifteenMinutesAgo) status = 'Idle';
+      }
       userMap[u.username] = { 
         name: u.name, 
         username: u.username,
         image: u.image,
-        isOnline: u.lastActive && new Date(u.lastActive) > fiveMinutesAgo 
+        status 
       };
     });
 

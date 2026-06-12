@@ -25,6 +25,7 @@ export default function AIChatWidget() {
   // Settings State 
   const [musicPlaying, setMusicPlaying] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const [msgSounds, setMsgSounds] = useState(true);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   const scrollToBottom = () => {
@@ -91,6 +92,12 @@ export default function AIChatWidget() {
       document.documentElement.classList.add("dark-mode");
     }
 
+    // Message Sounds setup
+    const muteSound = localStorage.getItem("muteMsgSound");
+    if (muteSound === "true") {
+      setMsgSounds(false);
+    }
+
     // Audio setup via HTMLAudioElement Ref
     if (audioRef.current) {
       audioRef.current.volume = 0.2;
@@ -142,6 +149,16 @@ export default function AIChatWidget() {
         audioRef.current.play().catch(e => console.log("Audio play failed:", e));
       }
       setMusicPlaying(!musicPlaying);
+    }
+  };
+
+  const toggleMsgSounds = () => {
+    if (msgSounds) {
+      localStorage.setItem("muteMsgSound", "true");
+      setMsgSounds(false);
+    } else {
+      localStorage.setItem("muteMsgSound", "false");
+      setMsgSounds(true);
     }
   };
 
@@ -293,9 +310,28 @@ export default function AIChatWidget() {
               <div id="google_translate_element_ai_hub" style={{ background: "rgba(255,255,255,0.05)", borderRadius: "10px", padding: "10px", border: "1px solid rgba(255,255,255,0.1)", minHeight: '40px' }}></div>
             </div>
 
-            {/* Music */}
+            {/* Sounds & Audio */}
             <div>
-              <h4 style={{ color: 'white', margin: '0 0 10px 0' }}>Music & Audio</h4>
+              <h4 style={{ color: 'white', margin: '0 0 10px 0' }}>Sounds & Audio</h4>
+              <button 
+                onClick={toggleMsgSounds} 
+                style={{
+                  width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                  background: 'rgba(255,255,255,0.05)', color: 'white', border: '1px solid rgba(255,255,255,0.1)',
+                  padding: '12px 15px', borderRadius: '10px', cursor: 'pointer', fontSize: '1rem', transition: '0.2s',
+                  marginBottom: '10px'
+                }}
+                onMouseOver={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.1)'}
+                onMouseOut={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.05)'}
+              >
+                <span style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <i className={`fa-solid ${msgSounds ? 'fa-bell' : 'fa-bell-slash'}`} style={{ color: '#3b82f6', width: '20px' }}></i> Message Ping
+                </span>
+                <span style={{ color: msgSounds ? '#10b981' : 'gray', fontWeight: 'bold' }}>
+                  {msgSounds ? 'ON' : 'OFF'}
+                </span>
+              </button>
+
               <button 
                 onClick={toggleMusic} 
                 style={{

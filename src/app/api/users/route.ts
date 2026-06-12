@@ -18,16 +18,25 @@ export async function GET() {
       .select('name username image role discordId lastActive')
       .lean();
 
-    const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
+    const threeMinutesAgo = new Date(Date.now() - 3 * 60 * 1000);
+    const fifteenMinutesAgo = new Date(Date.now() - 15 * 60 * 1000);
 
-    const formattedUsers = users.map(u => ({
-      name: u.name,
-      username: u.username,
-      image: u.image,
-      role: u.role,
-      discordId: u.discordId,
-      isOnline: u.lastActive && new Date(u.lastActive) > fiveMinutesAgo
-    }));
+    const formattedUsers = users.map(u => {
+      let status = 'Offline';
+      if (u.lastActive) {
+        const last = new Date(u.lastActive);
+        if (last > threeMinutesAgo) status = 'Online';
+        else if (last > fifteenMinutesAgo) status = 'Idle';
+      }
+      return {
+        name: u.name,
+        username: u.username,
+        image: u.image,
+        role: u.role,
+        discordId: u.discordId,
+        status
+      };
+    });
 
     return NextResponse.json({ users: formattedUsers });
   } catch (error: any) {
