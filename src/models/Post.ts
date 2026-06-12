@@ -2,7 +2,7 @@ import mongoose, { Schema, Document, Model } from 'mongoose';
 
 export interface IPost extends Document {
   authorId: string;
-  type: 'POST' | 'REEL';
+  type: 'POST' | 'REEL' | 'ANNOUNCEMENT' | 'GUIDE';
   category?: string;
   title: string;
   content: string; // text or video/image url from Google Drive
@@ -18,7 +18,7 @@ export interface IPost extends Document {
 
 const PostSchema: Schema = new Schema({
   authorId: { type: String, required: true },
-  type: { type: String, enum: ['POST', 'REEL'], required: true },
+  type: { type: String, enum: ['POST', 'REEL', 'ANNOUNCEMENT', 'GUIDE'], required: true },
   category: { type: String },
   title: { type: String, required: true },
   content: { type: String, required: true },

@@ -97,7 +97,7 @@ export async function POST(req: Request) {
     if (type === 'ANNOUNCEMENT' || type === 'GUIDE') {
       const userRole = (session?.user as any)?.role;
       const permissions = (session?.user as any)?.permissions || [];
-      const isPrivileged = userRole === 'OWNER' || permissions.includes('ANNOUNCEMENTS');
+      const isPrivileged = userRole === 'OWNER' || userRole === 'ADMIN' || permissions.includes('ANNOUNCEMENTS');
       if (!isPrivileged) {
         return NextResponse.json({ error: "Only staff with Announcements permission can post Guides and Announcements" }, { status: 403 });
       }
