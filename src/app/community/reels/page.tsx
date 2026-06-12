@@ -39,7 +39,7 @@ export default function ReelsPage() {
     const handleScroll = () => {
       if (containerRef.current) {
         // Calculate which reel is currently in the viewport
-        const index = Math.round(containerRef.current.scrollTop / window.innerHeight);
+        const index = Math.round(containerRef.current.scrollTop / containerRef.current.clientHeight);
         if (index !== activeIndex) {
           setActiveIndex(index);
         }
@@ -186,14 +186,14 @@ export default function ReelsPage() {
   };
 
   return (
-    <div style={{ background: 'black', width: '100vw', height: '100vh', position: 'fixed', top: 0, left: 0, zIndex: 10000, overflow: 'hidden' }}>
+    <div style={{ background: 'black', width: '100%', height: '100%', position: 'fixed', top: 0, left: 0, zIndex: 10000, overflow: 'hidden' }}>
       {/* Global CSS to hide website layout elements */}
       <style>{`
         #gh-header, #nav, #footer, .desktop-sidebar-container, .global-sidebar-toggle, .global-sidebar, #ai-chat-widget {
           display: none !important;
         }
         .snap-container {
-          height: 100dvh;
+          height: 100%;
           overflow-y: scroll;
           scroll-snap-type: y mandatory;
           scroll-behavior: smooth;
@@ -202,8 +202,8 @@ export default function ReelsPage() {
           display: none;
         }
         .reel-item {
-          height: 100dvh;
-          width: 100vw;
+          height: 100%;
+          width: 100%;
           scroll-snap-align: start;
           position: relative;
           display: flex;
