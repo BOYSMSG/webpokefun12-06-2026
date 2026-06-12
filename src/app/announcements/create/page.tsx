@@ -15,7 +15,7 @@ export default function CreateAnnouncementPage() {
 
   if (status === 'loading') return <div style={{textAlign: 'center', marginTop: '100px', color: 'white'}}>Loading...</div>;
 
-  const isAdmin = session?.user?.role === 'ADMIN' || 
+  const isAdmin = (session?.user as any)?.role === 'ADMIN' || 
                   session?.user?.email === 'boysmsg832@gmail.com' || 
                   (session?.user as any)?.discordId === 'boysmsg01';
 
