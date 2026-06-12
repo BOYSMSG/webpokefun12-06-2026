@@ -208,42 +208,45 @@ export default function LeaderboardPage() {
                     borderBottom: '1px solid rgba(255,255,255,0.05)',
                     transition: 'background 0.2s',
                   }} className="leaderboard-row">
-                    <td style={{ padding: '25px 30px', fontWeight: 'bold', color: rankColor, fontSize: index < 3 ? '1.5rem' : '1.3rem', display: 'flex', alignItems: 'center' }}>
-                      {rankIcon || `#${index + 1}`}
+                    <td style={{ padding: '25px 30px', fontWeight: 'bold', color: rankColor, fontSize: index < 3 ? '1.5rem' : '1.3rem', verticalAlign: 'middle' }}>
+                      <div style={{ display: 'flex', alignItems: 'center' }}>
+                        {rankIcon || `#${index + 1}`}
+                      </div>
                     </td>
-                    <td style={{ padding: '25px 30px', display: 'flex', alignItems: 'center', gap: '20px' }}>
-                      <img src={avatarUrl} alt={playerName} style={{ width: '60px', height: '60px', borderRadius: '12px', boxShadow: '0 4px 10px rgba(0,0,0,0.3)', objectFit: 'cover' }} onError={(e) => { e.currentTarget.src = `https://minotar.net/helm/${playerName}/60.png`; }} />
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                        
-                        {player.webUsername ? (
-                          <Link href={`/profile/${player.webUsername}`} style={{ textDecoration: 'none' }}>
-                            <span style={{ fontSize: '1.4rem', fontWeight: 800, color: 'white', letterSpacing: '0.5px' }} className="hover-link">{playerName}</span>
-                          </Link>
-                        ) : (
-                          <span style={{ fontSize: '1.4rem', fontWeight: 800, color: 'white', letterSpacing: '0.5px' }}>{playerName}</span>
-                        )}
-
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                          {player.socials?.discord && <i className="fa-brands fa-discord" style={{ color: '#5865F2', fontSize: '1.1rem' }} title="Discord Linked"></i>}
-                          {player.socials?.youtube && <i className="fa-brands fa-youtube" style={{ color: '#FF0000', fontSize: '1.1rem' }} title="YouTube Linked"></i>}
-                          {player.socials?.instagram && <i className="fa-brands fa-instagram" style={{ color: '#E1306C', fontSize: '1.1rem' }} title="Instagram Linked"></i>}
+                    <td style={{ padding: '25px 30px', verticalAlign: 'middle' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+                        <img src={avatarUrl} alt={playerName} style={{ width: '60px', height: '60px', borderRadius: '12px', boxShadow: '0 4px 10px rgba(0,0,0,0.3)', objectFit: 'cover' }} onError={(e) => { e.currentTarget.src = `https://minotar.net/helm/${playerName}/60.png`; }} />
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                           
-                          {player.webUsername && (
+                          {player.webUsername ? (
                             <Link href={`/profile/${player.webUsername}`} style={{ textDecoration: 'none' }}>
-                              <span style={{ fontSize: '0.75rem', background: '#3b82f622', color: '#60a5fa', padding: '3px 8px', borderRadius: '10px', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '5px' }}>
-                                <i className="fa-solid fa-link"></i> VIEW PROFILE
-                              </span>
+                              <span style={{ fontSize: '1.4rem', fontWeight: 800, color: 'white', letterSpacing: '0.5px' }} className="hover-link">{playerName}</span>
                             </Link>
+                          ) : (
+                            <span style={{ fontSize: '1.4rem', fontWeight: 800, color: 'white', letterSpacing: '0.5px' }}>{playerName}</span>
                           )}
-                        </div>
 
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                            {player.socials?.discord && <i className="fa-brands fa-discord" style={{ color: '#5865F2', fontSize: '1.1rem' }} title="Discord Linked"></i>}
+                            {player.socials?.youtube && <i className="fa-brands fa-youtube" style={{ color: '#FF0000', fontSize: '1.1rem' }} title="YouTube Linked"></i>}
+                            {player.socials?.instagram && <i className="fa-brands fa-instagram" style={{ color: '#E1306C', fontSize: '1.1rem' }} title="Instagram Linked"></i>}
+                            
+                            {player.webUsername && (
+                              <Link href={`/profile/${player.webUsername}`} style={{ textDecoration: 'none' }}>
+                                <span style={{ fontSize: '0.75rem', background: '#3b82f622', color: '#60a5fa', padding: '3px 8px', borderRadius: '10px', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '5px', whiteSpace: 'nowrap' }}>
+                                  <i className="fa-solid fa-link"></i> VIEW PROFILE
+                                </span>
+                              </Link>
+                            )}
+                          </div>
+                        </div>
                       </div>
                     </td>
                     
                     {activeColumns.map(col => {
                       const val = player[col.key] || 0;
                       return (
-                        <td key={col.key} style={{ padding: '25px 20px', textAlign: 'center', fontWeight: 'bold', fontSize: '1.4rem', color: col.color }}>
+                        <td key={col.key} style={{ padding: '25px 20px', textAlign: 'center', fontWeight: 'bold', fontSize: '1.4rem', color: col.color, verticalAlign: 'middle' }}>
                           {val.toLocaleString()}
                         </td>
                       );
