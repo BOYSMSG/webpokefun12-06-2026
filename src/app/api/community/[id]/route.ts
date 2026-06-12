@@ -67,7 +67,7 @@ export async function DELETE(req: Request, props: { params: Promise<{ id: string
 
     const userRole = (session.user as any)?.role;
     const permissions = (session.user as any)?.permissions || [];
-    const isPrivileged = userRole === 'OWNER' || permissions.includes('DELETE_POSTS');
+    const isPrivileged = userRole === 'OWNER' || userRole === 'ADMIN' || permissions.includes('DELETE_POSTS');
                     
     if (!isPrivileged) {
       return NextResponse.json({ error: "Forbidden: You don't have permission to delete posts" }, { status: 403 });

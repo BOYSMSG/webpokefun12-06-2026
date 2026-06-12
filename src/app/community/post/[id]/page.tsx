@@ -16,7 +16,7 @@ export default function PostPage() {
   const [loading, setLoading] = useState(true);
 
   const userRole = (session?.user as any)?.role;
-  const isPrivileged = userRole === 'ADMIN' || userRole === 'STAFF' || userRole === 'SUB_ADMIN' || 
+  const isPrivileged = userRole === 'OWNER' || userRole === 'ADMIN' || userRole === 'STAFF' || userRole === 'SUB_ADMIN' ||
                   session?.user?.email === 'boysmsg832@gmail.com' || 
                   (session?.user as any)?.discordId === 'boysmsg01';
 
@@ -121,7 +121,7 @@ export default function PostPage() {
   };
 
   const handleDeletePost = async () => {
-    if (!isAdmin) return;
+    if (!isPrivileged) return;
     const reason = window.prompt("Enter reason for deletion (Leave blank for no reason):");
     if (reason === null) return; // User cancelled the prompt
 
