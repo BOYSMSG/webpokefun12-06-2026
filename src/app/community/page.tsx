@@ -11,6 +11,20 @@ export default function CommunityPage() {
   const [filter, setFilter] = useState("All");
   const [sortBy, setSortBy] = useState("Newest");
 
+  // Stats Modal State
+  const [activeStatsReel, setActiveStatsReel] = useState<string | null>(null);
+  const [statsData, setStatsData] = useState<{ likes: any[], dislikes: any[], viewers: any[] }>({ likes: [], dislikes: [], viewers: [] });
+  const [activeStatsTab, setActiveStatsTab] = useState<'views' | 'likes' | 'dislikes'>('views');
+
+  const fetchStats = async (id: string) => {
+    setActiveStatsReel(id);
+    setActiveStatsTab('views');
+    try {
+      const res = await fetch(`/api/community/${id}/stats`);
+      if (res.ok) setStatsData(await res.json());
+    } catch (e) {}
+  };
+
   useEffect(() => {
     fetch('/api/community')
       .then(res => res.json())
@@ -261,6 +275,9 @@ export default function CommunityPage() {
                       <button onClick={(e) => handleFavorite(e, post.id)} style={{ background: 'transparent', border: 'none', color: post.isSaved ? '#fbbf24' : '#9ca3af', cursor: 'pointer', display: 'flex', gap: '5px', alignItems: 'center' }} onMouseOver={e => !post.isSaved && (e.currentTarget.style.color = '#fbbf24')} onMouseOut={e => !post.isSaved && (e.currentTarget.style.color = '#9ca3af')} title={post.isSaved ? "Remove from Favorites" : "Save to Favorites"}>
                         <i className={post.isSaved ? "fa-solid fa-star" : "fa-regular fa-star"}></i>
                       </button>
+                      <button onClick={(e) => { e.stopPropagation(); fetchStats(post.id); }} style={{ background: 'transparent', border: 'none', color: '#9ca3af', cursor: 'pointer', display: 'flex', gap: '5px', alignItems: 'center' }} onMouseOver={e => e.currentTarget.style.color = '#38bdf8'} onMouseOut={e => e.currentTarget.style.color = '#9ca3af'} title="Spy Insights">
+                        <i className="fa-solid fa-chart-simple"></i>
+                      </button>
                       <button style={{ background: 'transparent', border: 'none', color: '#9ca3af', cursor: 'pointer', display: 'flex', gap: '5px', alignItems: 'center' }} onMouseOver={e => e.currentTarget.style.color = '#8b5cf6'} onMouseOut={e => e.currentTarget.style.color = '#9ca3af'} onClick={(e) => { e.stopPropagation(); navigator.clipboard.writeText(window.location.origin + '/community/post/' + post.id); alert('Link copied!'); }}>
                         <i className="fa-solid fa-share"></i>
                       </button>
@@ -270,6 +287,43 @@ export default function CommunityPage() {
               </div>
             ))
           )}
+        </div>
+      )}
+
+      {/* Slide-up Stats Modal */}
+      {activeStatsReel && (
+        <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', background: 'rgba(0,0,0,0.5)', zIndex: 100002, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end' }} onClick={() => setActiveStatsReel(null)}>
+          <div style={{ background: '#111827', width: '100%', height: '60%', borderTopLeftRadius: '20px', borderTopRightRadius: '20px', padding: '20px', display: 'flex', flexDirection: 'column', animation: 'slideUp 0.3s ease-out' }} onClick={e => e.stopPropagation()}>
+            {/* Header */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px' }}>
+              <h3 style={{ margin: 0, color: 'white' }}>Post Insights</h3>
+              <button onClick={() => setActiveStatsReel(null)} style={{ background: 'transparent', border: 'none', color: 'gray', fontSize: '1.2rem', cursor: 'pointer' }}><i className="fa-solid fa-times"></i></button>
+            </div>
+            
+            {/* Tabs */}
+            <div style={{ display: 'flex', gap: '15px', borderBottom: '1px solid #374151', marginBottom: '15px' }}>
+              <button onClick={() => setActiveStatsTab('views')} style={{ background: 'transparent', border: 'none', color: activeStatsTab === 'views' ? 'white' : 'gray', paddingBottom: '10px', borderBottom: activeStatsTab === 'views' ? '2px solid white' : 'none', fontWeight: 'bold', cursor: 'pointer' }}>Views ({statsData.viewers.length})</button>
+              <button onClick={() => setActiveStatsTab('likes')} style={{ background: 'transparent', border: 'none', color: activeStatsTab === 'likes' ? 'white' : 'gray', paddingBottom: '10px', borderBottom: activeStatsTab === 'likes' ? '2px solid white' : 'none', fontWeight: 'bold', cursor: 'pointer' }}>Likes ({statsData.likes.length})</button>
+              <button onClick={() => setActiveStatsTab('dislikes')} style={{ background: 'transparent', border: 'none', color: activeStatsTab === 'dislikes' ? 'white' : 'gray', paddingBottom: '10px', borderBottom: activeStatsTab === 'dislikes' ? '2px solid white' : 'none', fontWeight: 'bold', cursor: 'pointer' }}>Dislikes ({statsData.dislikes.length})</button>
+            </div>
+
+            {/* List */}
+            <div style={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '15px' }}>
+              {statsData[activeStatsTab === 'views' ? 'viewers' : activeStatsTab].length === 0 ? (
+                <p style={{ color: 'gray', textAlign: 'center', marginTop: '20px' }}>No users found.</p>
+              ) : (
+                statsData[activeStatsTab === 'views' ? 'viewers' : activeStatsTab].map((u: any, idx) => (
+                  <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer' }} onClick={() => window.location.href = `/profile/${u.username}`}>
+                    <img src={u.avatar} alt={u.name} style={{ width: '40px', height: '40px', borderRadius: '50%' }} />
+                    <div style={{ display: 'flex', flexDirection: 'column' }}>
+                      <span style={{ color: 'white', fontWeight: 'bold', fontSize: '0.95rem' }}>{u.username}</span>
+                      <span style={{ color: 'gray', fontSize: '0.8rem' }}>{u.name}</span>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
         </div>
       )}
     </div>
