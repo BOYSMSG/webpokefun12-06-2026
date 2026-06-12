@@ -7,9 +7,18 @@ import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 
 export async function GET(req: Request, props: { params: Promise<{ id: string }> }) {
   try {
-    const { id } = await props.params;
+    const session = await getServerSession(authOptions);
+    const myEmail = session?.user?.email;
+
     await connectDB();
-    const post = await Post.findByIdAndUpdate(id, { $inc: { views: 1 } }, { new: true }).lean();
+    
+    // Increment total views and add to unique viewers if logged in
+    const updateQuery: any = { $inc: { views: 1 } };
+    if (myEmail) {
+      updateQuery.$addToSet = { viewers: myEmail };
+    }
+    
+    const post = await Post.findByIdAndUpdate(id, updateQuery, { new: true }).lean();
 
     if (!post) {
       return NextResponse.json({ error: "Post not found" }, { status: 404 });
@@ -17,8 +26,6 @@ export async function GET(req: Request, props: { params: Promise<{ id: string }>
 
     // Fetch author info to attach avatar/name
     const author = await User.findOne({ username: post.authorId }).lean();
-    const session = await getServerSession(authOptions);
-    const myEmail = session?.user?.email;
     let mySavedPosts: string[] = [];
     if (myEmail) {
       const me = await User.findOne({ email: myEmail }).lean();

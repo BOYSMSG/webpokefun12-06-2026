@@ -21,6 +21,11 @@ export default function ReelsPage() {
   const [activeComments, setActiveComments] = useState<any[]>([]);
   const [newComment, setNewComment] = useState("");
 
+  // Stats Modal State
+  const [activeStatsReel, setActiveStatsReel] = useState<string | null>(null);
+  const [statsData, setStatsData] = useState<{ likes: any[], dislikes: any[], viewers: any[] }>({ likes: [], dislikes: [], viewers: [] });
+  const [activeStatsTab, setActiveStatsTab] = useState<'views' | 'likes' | 'dislikes'>('views');
+
   useEffect(() => {
     fetchReels();
   }, []);
@@ -141,6 +146,15 @@ export default function ReelsPage() {
         setNewComment("");
         fetchComments(activeCommentsReel);
       }
+    } catch (e) {}
+  };
+
+  const fetchStats = async (id: string) => {
+    setActiveStatsReel(id);
+    setActiveStatsTab('views');
+    try {
+      const res = await fetch(`/api/community/${id}/stats`);
+      if (res.ok) setStatsData(await res.json());
     } catch (e) {}
   };
 
@@ -287,6 +301,9 @@ export default function ReelsPage() {
                   <button className="action-btn" onClick={() => { navigator.clipboard.writeText(window.location.origin + '/community/post/' + reel.id); alert('Link copied!'); }}>
                     <i className="fa-solid fa-share"></i>
                   </button>
+                  <button className="action-btn" onClick={() => fetchStats(reel.id)}>
+                    <i className="fa-solid fa-chart-simple" style={{ fontSize: '1.5rem' }}></i>
+                  </button>
                 </div>
               </div>
 
@@ -362,6 +379,43 @@ export default function ReelsPage() {
               <input type="text" value={newComment} onChange={e => setNewComment(e.target.value)} placeholder="Add a comment..." style={{ flex: 1, padding: '12px 15px', borderRadius: '20px', border: '1px solid #374151', background: '#1f2937', color: 'white', outline: 'none' }} />
               <button type="submit" style={{ background: '#8b5cf6', color: 'white', border: 'none', borderRadius: '20px', padding: '0 20px', fontWeight: 'bold', cursor: 'pointer' }}>Post</button>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Slide-up Stats Modal */}
+      {activeStatsReel && (
+        <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', background: 'rgba(0,0,0,0.5)', zIndex: 100002, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end' }} onClick={() => setActiveStatsReel(null)}>
+          <div style={{ background: '#111827', width: '100%', height: '60%', borderTopLeftRadius: '20px', borderTopRightRadius: '20px', padding: '20px', display: 'flex', flexDirection: 'column', animation: 'slideUp 0.3s ease-out' }} onClick={e => e.stopPropagation()}>
+            {/* Header */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px' }}>
+              <h3 style={{ margin: 0, color: 'white' }}>Post Insights</h3>
+              <button onClick={() => setActiveStatsReel(null)} style={{ background: 'transparent', border: 'none', color: 'gray', fontSize: '1.2rem', cursor: 'pointer' }}><i className="fa-solid fa-times"></i></button>
+            </div>
+            
+            {/* Tabs */}
+            <div style={{ display: 'flex', gap: '15px', borderBottom: '1px solid #374151', marginBottom: '15px' }}>
+              <button onClick={() => setActiveStatsTab('views')} style={{ background: 'transparent', border: 'none', color: activeStatsTab === 'views' ? 'white' : 'gray', paddingBottom: '10px', borderBottom: activeStatsTab === 'views' ? '2px solid white' : 'none', fontWeight: 'bold', cursor: 'pointer' }}>Views ({statsData.viewers.length})</button>
+              <button onClick={() => setActiveStatsTab('likes')} style={{ background: 'transparent', border: 'none', color: activeStatsTab === 'likes' ? 'white' : 'gray', paddingBottom: '10px', borderBottom: activeStatsTab === 'likes' ? '2px solid white' : 'none', fontWeight: 'bold', cursor: 'pointer' }}>Likes ({statsData.likes.length})</button>
+              <button onClick={() => setActiveStatsTab('dislikes')} style={{ background: 'transparent', border: 'none', color: activeStatsTab === 'dislikes' ? 'white' : 'gray', paddingBottom: '10px', borderBottom: activeStatsTab === 'dislikes' ? '2px solid white' : 'none', fontWeight: 'bold', cursor: 'pointer' }}>Dislikes ({statsData.dislikes.length})</button>
+            </div>
+
+            {/* List */}
+            <div style={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '15px' }}>
+              {statsData[activeStatsTab === 'views' ? 'viewers' : activeStatsTab].length === 0 ? (
+                <p style={{ color: 'gray', textAlign: 'center', marginTop: '20px' }}>No users found.</p>
+              ) : (
+                statsData[activeStatsTab === 'views' ? 'viewers' : activeStatsTab].map((u: any, idx) => (
+                  <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer' }} onClick={() => window.location.href = `/profile/${u.username}`}>
+                    <img src={u.avatar} alt={u.name} style={{ width: '40px', height: '40px', borderRadius: '50%' }} />
+                    <div style={{ display: 'flex', flexDirection: 'column' }}>
+                      <span style={{ color: 'white', fontWeight: 'bold', fontSize: '0.95rem' }}>{u.username}</span>
+                      <span style={{ color: 'gray', fontSize: '0.8rem' }}>{u.name}</span>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
           </div>
         </div>
       )}

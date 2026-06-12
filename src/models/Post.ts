@@ -10,6 +10,7 @@ export interface IPost extends Document {
   mediaType?: 'image' | 'video' | 'youtube';
   likes: string[]; // Array of User IDs
   dislikes: string[]; // Array of User IDs
+  viewers: string[]; // Array of User IDs (emails)
   views: number; // For reels
   impressions: number; // For feed
   createdAt: Date;
@@ -25,6 +26,7 @@ const PostSchema: Schema = new Schema({
   mediaType: { type: String, enum: ['image', 'video', 'youtube'] },
   likes: [{ type: String }],
   dislikes: [{ type: String }],
+  viewers: [{ type: String }],
   views: { type: Number, default: 0 },
   impressions: { type: Number, default: 0 },
   createdAt: { type: Date, default: Date.now }
