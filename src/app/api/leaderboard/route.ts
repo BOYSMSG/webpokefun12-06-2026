@@ -11,13 +11,16 @@ export async function GET(req: Request) {
 
     if (mode === 'alphazone') {
       tableName = 'alphazone_player_data';
-      orderBy = 'elo'; // or wins/kills
+      orderBy = 'elo'; // default sort for alphazone
     } else if (mode === 'dungeon') {
-      tableName = 'dungeon_player_data';
-      orderBy = 'boss_kills'; // as requested/implied for dungeon
+      tableName = 'dungeons_player_data';
+      orderBy = 'dungeons_completed'; // based on actual columns
     } else if (mode === 'raid') {
-      tableName = 'alphazone_player_data'; // raid shares alphazone table according to docs
-      orderBy = 'raid_points'; // assuming raid points exist, else fallback to elo
+      tableName = 'novaraids_player_data';
+      orderBy = 'points'; 
+    } else if (mode === 'battletower') {
+      tableName = 'battletower_player_data';
+      orderBy = 'highest_floor';
     }
 
     const pool = getMySQLConnection();
