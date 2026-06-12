@@ -41,13 +41,14 @@ export const authOptions: NextAuthOptions = {
               adminUser = await User.create({
                 email: credentials.email,
                 name: "Pokefun Admin",
-                role: "ADMIN",
+                role: "OWNER",
+                permissions: ['DELETE_POSTS', 'ANNOUNCEMENTS', 'MANAGE_ROLES', 'READ_DMS', 'BAN_USERS']
               });
             }
-            return { id: adminUser._id.toString(), name: adminUser.name, email: adminUser.email, role: adminUser.role };
+            return { id: adminUser._id.toString(), name: adminUser.name, email: adminUser.email, role: adminUser.role, permissions: adminUser.permissions };
           } catch (error) {
             console.warn("MongoDB connection failed in Admin Auth, allowing temporary admin session.");
-            return { id: "temp-admin-id", name: "Pokefun Admin", email: credentials.email, role: "ADMIN" };
+            return { id: "temp-admin-id", name: "Pokefun Admin", email: credentials.email, role: "OWNER", permissions: ['DELETE_POSTS', 'ANNOUNCEMENTS', 'MANAGE_ROLES', 'READ_DMS', 'BAN_USERS'] };
           }
         }
         return null;
@@ -69,13 +70,15 @@ export const authOptions: NextAuthOptions = {
               role: "USER"
             });
           }
-          // Attach role to user object
+          // Attach role and permissions to user object
           if (dbUser) {
              (user as any).role = dbUser.role;
+             (user as any).permissions = dbUser.permissions || [];
           }
         } catch (error) {
           console.warn("MongoDB connection failed in signIn, allowing temporary session for local testing.");
           (user as any).role = "USER";
+          (user as any).permissions = [];
         }
       }
       return true;
@@ -83,12 +86,14 @@ export const authOptions: NextAuthOptions = {
     async jwt({ token, user }) {
       if (user) {
         token.role = (user as any).role;
+        token.permissions = (user as any).permissions;
       }
       return token;
     },
     async session({ session, token }) {
       if (session.user) {
         (session.user as any).role = token.role;
+        (session.user as any).permissions = token.permissions || [];
       }
       return session;
     }

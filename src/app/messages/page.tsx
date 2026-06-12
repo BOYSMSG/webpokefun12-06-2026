@@ -12,6 +12,7 @@ export default function MessagesPage() {
   const [contacts, setContacts] = useState<Record<string, any>>({});
   const [allUsers, setAllUsers] = useState<any[]>([]);
   const [activeTab, setActiveTab] = useState<'RECENT' | 'ALL'>('RECENT');
+  const [myUsername, setMyUsername] = useState<string>("");
   
   const [activeContact, setActiveContact] = useState<string | null>(null);
   const [newMessage, setNewMessage] = useState("");
@@ -19,7 +20,7 @@ export default function MessagesPage() {
   const [menuOpen, setMenuOpen] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  const OWNER_EMAIL = "msgboys832@gmail.com";
+  const OWNER_USERNAME = "boysmsg01"; // Or whatever the admin username is
 
   useEffect(() => {
     if (status === 'unauthenticated') {
@@ -46,6 +47,7 @@ export default function MessagesPage() {
         if (!data.error) {
           setMessages(data.messages || []);
           setContacts(data.contacts || {});
+          if (data.myUsername) setMyUsername(data.myUsername);
         }
         setLoading(false);
       })
@@ -73,7 +75,7 @@ export default function MessagesPage() {
 
     const tempMsg = {
       _id: Date.now().toString(),
-      senderId: session?.user?.email,
+      senderId: myUsername || session?.user?.name,
       receiverId: activeContact,
       content,
       createdAt: new Date().toISOString()
@@ -96,7 +98,7 @@ export default function MessagesPage() {
 
   if (loading || status === 'loading') return <div style={{ textAlign: 'center', marginTop: '100px', color: 'gray' }}>Loading Messages...</div>;
 
-  const contactEmails = Object.keys(contacts);
+  const contactUsernames = Object.keys(contacts);
   
   // Sort all users so online users are at the top
   const sortedAllUsers = [...allUsers].sort((a, b) => {
@@ -104,26 +106,26 @@ export default function MessagesPage() {
     return a.isOnline ? -1 : 1;
   });
   
-  const displayList = activeTab === 'RECENT' ? contactEmails : sortedAllUsers.map(u => u.email);
+  const displayList = activeTab === 'RECENT' ? contactUsernames : sortedAllUsers.map(u => u.username || u.email);
 
   const activeChat = messages.filter(m => 
-    (m.senderId === session?.user?.email && m.receiverId === activeContact) ||
-    (m.receiverId === session?.user?.email && m.senderId === activeContact)
+    (m.senderId === myUsername && m.receiverId === activeContact) ||
+    (m.receiverId === myUsername && m.senderId === activeContact)
   );
 
   const unreadCounts: Record<string, number> = {};
   messages.forEach(m => {
-    if (m.receiverId === session?.user?.email && !m.read) {
+    if (m.receiverId === myUsername && !m.read) {
       unreadCounts[m.senderId] = (unreadCounts[m.senderId] || 0) + 1;
     }
   });
 
-  const getContactInfo = (email: string) => {
-    if (email === 'pokefun_actions') return { name: 'Pokefun Actions', image: 'https://ui-avatars.com/api/?name=PA&background=eab308&color=000' };
-    if (contacts[email]) return contacts[email];
-    const found = allUsers.find(u => u.email === email);
+  const getContactInfo = (username: string) => {
+    if (username === 'pokefun_actions') return { name: 'Pokefun Actions', username: 'system', image: 'https://ui-avatars.com/api/?name=PA&background=eab308&color=000' };
+    if (contacts[username]) return contacts[username];
+    const found = allUsers.find(u => u.username === username || u.email === username);
     if (found) return found;
-    return { name: email.split('@')[0], image: null };
+    return { name: username, username, image: null };
   };
 
   const activeContactInfo = activeContact ? getContactInfo(activeContact) : null;
@@ -199,44 +201,44 @@ export default function MessagesPage() {
             {displayList.length === 0 ? (
               <p style={{ color: 'gray', textAlign: 'center', marginTop: '20px' }}>No users found.</p>
             ) : (
-              displayList.map(email => {
-                const info = getContactInfo(email);
-                const isOwner = email === OWNER_EMAIL;
+              displayList.map(username => {
+                const info = getContactInfo(username);
+                const isOwner = username === OWNER_USERNAME;
                 return (
                   <div 
-                    key={email} 
+                    key={username} 
                     onClick={() => {
-                      setActiveContact(email);
+                      setActiveContact(username);
                       fetch('/api/messages/read', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ senderId: email })
+                        body: JSON.stringify({ senderId: username })
                       });
-                      setMessages(prev => prev.map(m => (m.senderId === email && m.receiverId === session?.user?.email) ? { ...m, read: true } : m));
+                      setMessages(prev => prev.map(m => (m.senderId === username && m.receiverId === myUsername) ? { ...m, read: true } : m));
                     }}
                     style={{ 
                       display: 'flex', alignItems: 'center', gap: '15px', padding: '15px 20px', cursor: 'pointer',
-                      background: activeContact === email ? 'rgba(59, 130, 246, 0.2)' : 'transparent',
-                      borderLeft: activeContact === email ? '4px solid #3b82f6' : '4px solid transparent',
+                      background: activeContact === username ? 'rgba(59, 130, 246, 0.2)' : 'transparent',
+                      borderLeft: activeContact === username ? '4px solid #3b82f6' : '4px solid transparent',
                       transition: '0.2s'
                     }}
-                    onMouseOver={e => e.currentTarget.style.background = activeContact === email ? 'rgba(59, 130, 246, 0.2)' : 'rgba(255,255,255,0.05)'}
-                    onMouseOut={e => e.currentTarget.style.background = activeContact === email ? 'rgba(59, 130, 246, 0.2)' : 'transparent'}
+                    onMouseOver={e => e.currentTarget.style.background = activeContact === username ? 'rgba(59, 130, 246, 0.2)' : 'rgba(255,255,255,0.05)'}
+                    onMouseOut={e => e.currentTarget.style.background = activeContact === username ? 'rgba(59, 130, 246, 0.2)' : 'transparent'}
                   >
                     <img src={info.image || `https://ui-avatars.com/api/?name=${info.name}&background=random`} style={{ width: '45px', height: '45px', borderRadius: '50%', objectFit: 'cover' }} />
                     <div style={{ flex: 1, overflow: 'hidden' }}>
-                      <h4 style={{ margin: 0, color: isOwner ? '#ef4444' : (email === 'pokefun_actions' ? '#facc15' : 'white'), display: 'flex', alignItems: 'center', gap: '5px' }}>
+                      <h4 style={{ margin: 0, color: isOwner ? '#ef4444' : (username === 'pokefun_actions' ? '#facc15' : 'white'), display: 'flex', alignItems: 'center', gap: '5px' }}>
                         {info.name}
                         {isOwner && <span style={{ fontSize: '0.7rem', background: 'rgba(239, 68, 68, 0.2)', padding: '2px 6px', borderRadius: '8px' }}>👑 OWNER</span>}
-                        {email === 'pokefun_actions' && <span style={{ fontSize: '0.7rem', background: 'rgba(250, 204, 21, 0.2)', color: '#facc15', padding: '2px 6px', borderRadius: '8px', border: '1px solid rgba(250,204,21,0.5)' }}>🛡️ SYSTEM</span>}
+                        {username === 'pokefun_actions' && <span style={{ fontSize: '0.7rem', background: 'rgba(250, 204, 21, 0.2)', color: '#facc15', padding: '2px 6px', borderRadius: '8px', border: '1px solid rgba(250,204,21,0.5)' }}>🛡️ SYSTEM</span>}
                       </h4>
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                         <p style={{ margin: 0, color: 'gray', fontSize: '0.8rem', textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }}>
-                          {email}
+                          @{username}
                         </p>
-                        {unreadCounts[email] > 0 && (
+                        {unreadCounts[username] > 0 && (
                           <span style={{ background: '#ef4444', color: 'white', padding: '2px 8px', borderRadius: '10px', fontSize: '0.7rem', fontWeight: 'bold' }}>
-                            {unreadCounts[email]}
+                            {unreadCounts[username]}
                           </span>
                         )}
                       </div>
@@ -260,9 +262,9 @@ export default function MessagesPage() {
                   </button>
                   <img src={activeContactInfo.image || `https://ui-avatars.com/api/?name=${activeContactInfo.name}&background=random`} style={{ width: '40px', height: '40px', borderRadius: '50%' }} />
                   <div>
-                    <h3 style={{ margin: 0, color: activeContact === OWNER_EMAIL ? '#ef4444' : (activeContact === 'pokefun_actions' ? '#facc15' : 'white'), display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <h3 style={{ margin: 0, color: activeContact === OWNER_USERNAME ? '#ef4444' : (activeContact === 'pokefun_actions' ? '#facc15' : 'white'), display: 'flex', alignItems: 'center', gap: '8px' }}>
                       {activeContactInfo.name}
-                      {activeContact === OWNER_EMAIL && <span style={{ fontSize: '0.7rem', background: 'rgba(239, 68, 68, 0.2)', padding: '2px 6px', borderRadius: '8px' }}>👑 OWNER</span>}
+                      {activeContact === OWNER_USERNAME && <span style={{ fontSize: '0.7rem', background: 'rgba(239, 68, 68, 0.2)', padding: '2px 6px', borderRadius: '8px' }}>👑 OWNER</span>}
                       {activeContact === 'pokefun_actions' && <span style={{ fontSize: '0.7rem', background: 'rgba(250, 204, 21, 0.2)', color: '#facc15', padding: '2px 6px', borderRadius: '8px', border: '1px solid rgba(250,204,21,0.5)' }}>🛡️ SYSTEM</span>}
                     </h3>
                     {activeContact !== 'pokefun_actions' && (
@@ -303,8 +305,8 @@ export default function MessagesPage() {
                   <div style={{ textAlign: 'center', color: 'gray', marginTop: '40px' }}>Say hi to start the conversation!</div>
                 ) : (
                   activeChat.map((msg, idx) => {
-                    const isMe = msg.senderId === session?.user?.email;
-                    const isMsgOwner = msg.senderId === OWNER_EMAIL;
+                    const isMe = msg.senderId === myUsername;
+                    const isMsgOwner = msg.senderId === OWNER_USERNAME;
                     return (
                       <div key={idx} style={{ alignSelf: isMe ? 'flex-end' : 'flex-start', maxWidth: '75%', marginRight: isMe ? '15px' : '0' }}>
                         {isMsgOwner && !isMe && <div style={{ fontSize: '0.7rem', color: '#ef4444', marginBottom: '5px', fontWeight: 'bold' }}>👑 OWNER</div>}

@@ -10,18 +10,21 @@ export async function GET(req: Request) {
     await connectDB();
     const { searchParams } = new URL(req.url);
     const email = searchParams.get('email');
+    const username = searchParams.get('username');
     
-    if (!email) {
-      return NextResponse.json({ error: 'Email parameter is required' }, { status: 400 });
+    if (!email && !username) {
+      return NextResponse.json({ error: 'Email or username parameter is required' }, { status: 400 });
     }
 
-    const user = await User.findOne({ email }).lean();
+    const query = username ? { username: username.toLowerCase() } : { email };
+    const user = await User.findOne(query).lean();
     if (!user) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
     // Fetch user's posts
-    const posts = await Post.find({ authorId: email }).sort({ createdAt: -1 }).lean();
+    // Fetch user's posts using email since authorId is still stored as email
+    const posts = await Post.find({ authorId: user.email }).sort({ createdAt: -1 }).lean();
 
     return NextResponse.json({ user, posts });
   } catch (error: any) {
@@ -38,11 +41,26 @@ export async function PUT(req: Request) {
     }
 
     await connectDB();
-    const { name, bio } = await req.json();
+    const { name, bio, username } = await req.json();
+
+    const updates: any = { name, bio };
+
+    if (username) {
+      const cleanUsername = username.toLowerCase().replace(/[^a-z0-9_]/g, '');
+      if (cleanUsername.length < 3) {
+        return NextResponse.json({ error: 'Username must be at least 3 characters' }, { status: 400 });
+      }
+      
+      const existingUser = await User.findOne({ username: cleanUsername });
+      if (existingUser && existingUser.email !== session.user.email) {
+        return NextResponse.json({ error: 'Username is already taken' }, { status: 400 });
+      }
+      updates.username = cleanUsername;
+    }
 
     const user = await User.findOneAndUpdate(
       { email: session.user.email },
-      { $set: { name, bio } },
+      { $set: updates },
       { new: true }
     );
 

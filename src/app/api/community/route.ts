@@ -11,6 +11,18 @@ export async function GET(req: Request) {
     const typeParam = searchParams.get('type') || 'ALL';
 
     await connectDB();
+    await connectDB();
+    const session = await getServerSession(authOptions);
+    const myEmail = session?.user?.email;
+    let myUsername = null;
+    let mySavedPosts: string[] = [];
+    if (myEmail) {
+      const me = await User.findOne({ email: myEmail }).lean();
+      if (me) {
+        myUsername = me.username;
+        mySavedPosts = me.savedPosts || [];
+      }
+    }
     
     // Fetch posts based on type
     let query = {};
@@ -30,22 +42,32 @@ export async function GET(req: Request) {
     users.forEach(u => {
       userMap[u.email] = {
         name: u.name,
+        username: u.username,
         image: u.image || `https://ui-avatars.com/api/?name=${u.name}&background=random`
       };
     });
 
     const formattedPosts = posts.map(post => {
       const isLegacyMedia = !post.media && (post.content && (post.content.startsWith('http') || post.content.startsWith('/uploads/')));
+      const authorData = userMap[post.authorId] || {};
+      const authorUsername = authorData.username || post.authorId.split('@')[0];
+      
       return {
         id: post._id.toString(),
-        author: userMap[post.authorId]?.name || post.authorId.split('@')[0],
-        avatar: userMap[post.authorId]?.image || `https://ui-avatars.com/api/?name=${post.authorId.split('@')[0]}&background=random`,
+        author: authorData.name || post.authorId.split('@')[0],
+        authorUsername: authorUsername,
+        avatar: authorData.image || `https://ui-avatars.com/api/?name=${post.authorId.split('@')[0]}&background=random`,
         title: post.title,
         content: isLegacyMedia ? "" : post.content, // Show content as text if it's not a URL
         media: post.media || (isLegacyMedia ? post.content : null), // Show media if it is a URL
         mediaType: post.mediaType || (isLegacyMedia ? 'image' : null), // Assuming legacy uploads are images for now
         category: post.category || ((post.type as any) === 'ANNOUNCEMENT' ? 'Announcements' : ((post.type as any) === 'GUIDE' ? 'Guides' : 'Showcase')), 
         upvotes: post.likes?.length || 0,
+        downvotes: post.dislikes?.length || 0,
+        views: post.views || 0,
+        isLiked: myEmail ? (post.likes || []).includes(myEmail) : false,
+        isDisliked: myEmail ? (post.dislikes || []).includes(myEmail) : false,
+        isSaved: mySavedPosts.includes(post._id.toString()),
         timestamp: post.createdAt
       };
     });
@@ -71,13 +93,13 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Title and content are required" }, { status: 400 });
     }
 
-    // Check Admin rights for Announcements and Guides
+    // Check Admin/Staff rights for Announcements and Guides
     if (type === 'ANNOUNCEMENT' || type === 'GUIDE') {
-      const isAdmin = (session?.user as any)?.role === 'ADMIN' || 
-                      session?.user?.email === 'boysmsg832@gmail.com' || 
-                      (session?.user as any)?.discordId === 'boysmsg01';
-      if (!isAdmin) {
-        return NextResponse.json({ error: "Only admins can post Announcements and Guides" }, { status: 403 });
+      const userRole = (session?.user as any)?.role;
+      const permissions = (session?.user as any)?.permissions || [];
+      const isPrivileged = userRole === 'OWNER' || permissions.includes('ANNOUNCEMENTS');
+      if (!isPrivileged) {
+        return NextResponse.json({ error: "Only staff with Announcements permission can post Guides and Announcements" }, { status: 403 });
       }
     }
 

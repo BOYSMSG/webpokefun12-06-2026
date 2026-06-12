@@ -4,6 +4,14 @@ import React, { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 
+const PERMISSIONS_LIST = [
+  { id: 'DELETE_POSTS', label: 'Delete Posts' },
+  { id: 'ANNOUNCEMENTS', label: 'Post Announcements/Guides' },
+  { id: 'MANAGE_ROLES', label: 'Manage Roles & Staff' },
+  { id: 'READ_DMS', label: 'Read Player DMs (Spy)' },
+  { id: 'BAN_USERS', label: 'Ban & Warn Users' }
+];
+
 export default function AdminUsersPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
@@ -11,9 +19,18 @@ export default function AdminUsersPage() {
   const [users, setUsers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
+  
+  const [editingUser, setEditingUser] = useState<any>(null);
+  const [editRole, setEditRole] = useState('');
+  const [editPermissions, setEditPermissions] = useState<string[]>([]);
+  const [saving, setSaving] = useState(false);
+
+  const myRole = (session?.user as any)?.role;
+  const myPermissions = (session?.user as any)?.permissions || [];
+  const canManageRoles = myRole === 'OWNER' || myRole === 'ADMIN' || myPermissions.includes('MANAGE_ROLES');
 
   useEffect(() => {
-    if (status === 'unauthenticated' || (session?.user as any)?.role !== 'ADMIN') {
+    if (status === 'unauthenticated' || !canManageRoles) {
       router.push('/admin');
       return;
     }
@@ -25,40 +42,44 @@ export default function AdminUsersPage() {
         setLoading(false);
       })
       .catch(() => setLoading(false));
-  }, [session, status, router]);
+  }, [session, status, router, canManageRoles]);
 
-  const handleMakeAdmin = async (email: string) => {
-    if (!confirm(`Are you sure you want to make ${email} an Admin?`)) return;
-
-    const res = await fetch('/api/admin/users', {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, role: 'ADMIN' })
-    });
-    
-    if (res.ok) {
-      setUsers(users.map(u => u.email === email ? { ...u, role: 'ADMIN' } : u));
-      alert(`Success! ${email} is now an Admin.`);
-    } else {
-      alert("Failed to update user role");
-    }
+  const openEditModal = (user: any) => {
+    setEditingUser(user);
+    setEditRole(user.role);
+    setEditPermissions(user.permissions || []);
   };
 
-  const handleDemote = async (email: string) => {
-    if (!confirm(`Are you sure you want to demote ${email} to User?`)) return;
+  const togglePermission = (permId: string) => {
+    setEditPermissions(prev => 
+      prev.includes(permId) ? prev.filter(p => p !== permId) : [...prev, permId]
+    );
+  };
 
+  const handleSave = async () => {
+    if (!editingUser) return;
+    setSaving(true);
+    
     const res = await fetch('/api/admin/users', {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, role: 'USER' })
+      body: JSON.stringify({ 
+        email: editingUser.email, 
+        role: editRole,
+        permissions: editPermissions
+      })
     });
     
     if (res.ok) {
-      setUsers(users.map(u => u.email === email ? { ...u, role: 'USER' } : u));
-      alert(`Success! ${email} is now a normal User.`);
+      const updated = await res.json();
+      setUsers(users.map(u => u.email === updated.email ? updated : u));
+      setEditingUser(null);
+      alert(`Success! Updated permissions for ${updated.name}.`);
     } else {
-      alert("Failed to update user role");
+      const data = await res.json();
+      alert(data.error || "Failed to update user");
     }
+    setSaving(false);
   };
 
   const filteredUsers = users.filter(u => 
@@ -87,8 +108,8 @@ export default function AdminUsersPage() {
         />
       </div>
 
-      <div style={{ background: 'rgba(255,255,255,0.05)', borderRadius: '16px', border: '1px solid #444', overflow: 'hidden' }}>
-        <table style={{ width: '100%', borderCollapse: 'collapse', color: 'white' }}>
+      <div style={{ background: 'rgba(255,255,255,0.05)', borderRadius: '16px', border: '1px solid #444', overflowX: 'auto' }}>
+        <table style={{ width: '100%', borderCollapse: 'collapse', color: 'white', minWidth: '600px' }}>
           <thead style={{ background: 'rgba(0,0,0,0.5)' }}>
             <tr>
               <th style={{ padding: '15px', textAlign: 'left', borderBottom: '1px solid #444' }}>Avatar</th>
@@ -107,21 +128,21 @@ export default function AdminUsersPage() {
                 <td style={{ padding: '15px', fontWeight: 'bold' }}>{u.name}</td>
                 <td style={{ padding: '15px', color: 'gray' }}>{u.email}</td>
                 <td style={{ padding: '15px' }}>
-                  {u.role === 'ADMIN' ? (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <span style={{ 
+                      padding: '4px 8px', 
+                      borderRadius: '4px', 
+                      background: u.role === 'OWNER' ? '#ff4757' : u.role === 'ADMIN' ? '#3b82f6' : u.role === 'SUB_ADMIN' ? '#10b981' : u.role === 'STAFF' ? '#8b5cf6' : 'rgba(255,255,255,0.1)',
+                      fontSize: '0.8rem',
+                      fontWeight: 'bold'
+                    }}>{u.role}</span>
                     <button 
-                      onClick={() => handleDemote(u.email)}
-                      style={{ padding: '8px 15px', background: 'rgba(239, 68, 68, 0.2)', color: '#ef4444', border: '1px solid #ef4444', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' }}
+                      onClick={() => openEditModal(u)}
+                      style={{ padding: '6px 12px', background: '#374151', color: 'white', border: '1px solid #4b5563', borderRadius: '6px', fontSize: '0.8rem', cursor: 'pointer' }}
                     >
-                      Demote to User
+                      <i className="fa-solid fa-pen"></i> Edit
                     </button>
-                  ) : (
-                    <button 
-                      onClick={() => handleMakeAdmin(u.email)}
-                      style={{ padding: '8px 15px', background: '#3b82f6', color: 'white', border: 'none', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' }}
-                    >
-                      Make Admin
-                    </button>
-                  )}
+                  </div>
                 </td>
                 <td style={{ padding: '15px', color: 'gray' }}>{new Date(u.createdAt).toLocaleDateString()}</td>
               </tr>
@@ -129,6 +150,53 @@ export default function AdminUsersPage() {
           </tbody>
         </table>
       </div>
+
+      {editingUser && (
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.8)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '20px' }}>
+          <div style={{ background: '#1f2937', padding: '30px', borderRadius: '16px', width: '100%', maxWidth: '500px', border: '1px solid #374151', maxHeight: '90vh', overflowY: 'auto' }}>
+            <h2 style={{ color: 'white', marginBottom: '20px', fontSize: '1.5rem' }}>Edit Staff: {editingUser.name}</h2>
+            
+            <div style={{ marginBottom: '20px' }}>
+              <label style={{ display: 'block', color: 'gray', marginBottom: '10px', fontWeight: 'bold' }}>Select Role</label>
+              <select 
+                value={editRole} 
+                onChange={e => setEditRole(e.target.value)}
+                style={{ width: '100%', padding: '12px', background: 'rgba(0,0,0,0.3)', border: '1px solid #444', borderRadius: '8px', color: 'white', outline: 'none' }}
+              >
+                <option value="USER">USER</option>
+                <option value="STAFF">STAFF</option>
+                <option value="SUB_ADMIN">SUB_ADMIN</option>
+                <option value="ADMIN">ADMIN</option>
+                {myRole === 'OWNER' && <option value="OWNER">OWNER</option>}
+              </select>
+            </div>
+
+            <div style={{ marginBottom: '30px' }}>
+              <label style={{ display: 'block', color: 'gray', marginBottom: '15px', fontWeight: 'bold' }}>Specific Permissions</label>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                {PERMISSIONS_LIST.map(perm => (
+                  <label key={perm.id} style={{ display: 'flex', alignItems: 'center', gap: '10px', color: 'white', cursor: 'pointer' }}>
+                    <input 
+                      type="checkbox" 
+                      checked={editPermissions.includes(perm.id)}
+                      onChange={() => togglePermission(perm.id)}
+                      style={{ width: '18px', height: '18px', accentColor: '#3b82f6' }}
+                    />
+                    {perm.label}
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', gap: '15px' }}>
+              <button onClick={() => setEditingUser(null)} style={{ flex: 1, padding: '12px', background: 'transparent', border: '1px solid #4b5563', color: 'white', borderRadius: '8px', cursor: 'pointer' }}>Cancel</button>
+              <button onClick={handleSave} disabled={saving} style={{ flex: 1, padding: '12px', background: '#3b82f6', border: 'none', color: 'white', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold', opacity: saving ? 0.7 : 1 }}>
+                {saving ? "Saving..." : "Save Changes"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

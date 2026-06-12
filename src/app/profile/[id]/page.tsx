@@ -13,6 +13,8 @@ export default function PublicProfilePage() {
   const [profile, setProfile] = useState<any>(null);
   const [posts, setPosts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [showConnectionsModal, setShowConnectionsModal] = useState(false);
+  const [platformInput, setPlatformInput] = useState({ platform: 'minecraft', value: '' });
 
   useEffect(() => {
     fetch(`/api/profile/${id}`)
@@ -33,7 +35,7 @@ export default function PublicProfilePage() {
   const handleFollow = async () => {
     if (!session) return alert("Please login to follow!");
     try {
-      const res = await fetch(`/api/profile/${profile.email}/follow`, { method: 'POST' });
+      const res = await fetch(`/api/profile/${profile.username}/follow`, { method: 'POST' });
       const data = await res.json();
       if (data.success) {
         setProfile({ 
@@ -44,6 +46,27 @@ export default function PublicProfilePage() {
       }
     } catch (e) {
       alert("Failed to update follow status.");
+    }
+  };
+
+  const handleUpdateConnection = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const res = await fetch('/api/profile/connections', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(platformInput)
+      });
+      const data = await res.json();
+      if (data.success) {
+        setProfile({ ...profile, connections: data.connections });
+        setShowConnectionsModal(false);
+        setPlatformInput({ platform: 'minecraft', value: '' });
+      } else {
+        alert(data.error);
+      }
+    } catch (err) {
+      alert("Failed to update connection.");
     }
   };
 
@@ -72,12 +95,12 @@ export default function PublicProfilePage() {
         
         {/* Action Buttons */}
         <div style={{ position: 'absolute', bottom: '-40px', right: '20px', display: 'flex', gap: '15px' }}>
-          {session?.user?.email !== profile.email ? (
+          {!profile.isOwnProfile ? (
             <>
               <button onClick={handleFollow} style={{ padding: '10px 25px', borderRadius: '30px', border: 'none', background: '#10b981', color: 'white', fontWeight: 'bold', fontSize: '1rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', boxShadow: '0 4px 15px rgba(16, 185, 129, 0.4)' }}>
                 <i className="fa-solid fa-user-plus"></i> Follow
               </button>
-              <Link href="/messages" style={{ padding: '10px 25px', borderRadius: '30px', border: 'none', background: '#3b82f6', color: 'white', fontWeight: 'bold', fontSize: '1rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', textDecoration: 'none', boxShadow: '0 4px 15px rgba(59, 130, 246, 0.4)' }}>
+              <Link href={`/messages?user=${profile.username}`} style={{ padding: '10px 25px', borderRadius: '30px', border: 'none', background: '#3b82f6', color: 'white', fontWeight: 'bold', fontSize: '1rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', textDecoration: 'none', boxShadow: '0 4px 15px rgba(59, 130, 246, 0.4)' }}>
                 <i className="fa-solid fa-message"></i> Message
               </Link>
             </>
@@ -93,19 +116,44 @@ export default function PublicProfilePage() {
       <div style={{ padding: '0 30px', marginBottom: '50px' }}>
         <h1 style={{ fontSize: '2.5rem', fontWeight: 800, margin: '0 0 5px 0', color: 'white', display: 'flex', alignItems: 'center', gap: '10px' }}>
           {profile.name}
-          {profile.email === "msgboys832@gmail.com" && (
+          {profile.username === "boysmsg01" && (
             <span style={{ fontSize: '1rem', background: 'rgba(239, 68, 68, 0.2)', color: '#ef4444', padding: '4px 10px', borderRadius: '8px', fontWeight: 'bold', border: '1px solid rgba(239,68,68,0.5)' }}>
               👑 OWNER
             </span>
           )}
         </h1>
         <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: '1rem', margin: '0 0 20px 0', display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <i className="fa-solid fa-fingerprint"></i> ID: {profile.email}
+          <i className="fa-solid fa-fingerprint"></i> @{profile.username}
         </p>
         
         <p style={{ color: '#d1d5db', fontSize: '1.1rem', lineHeight: '1.6', maxWidth: '600px', marginBottom: '25px' }}>
           {profile.bio}
         </p>
+
+        {/* Connections Section */}
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', marginBottom: '25px' }}>
+          {profile.connections?.minecraft && (
+            <span style={{ background: '#047857', color: 'white', padding: '6px 12px', borderRadius: '20px', fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '5px' }}>
+              <i className="fa-solid fa-cube"></i> Minecraft: {profile.connections.minecraft}
+            </span>
+          )}
+          {profile.connections?.discord && (
+            <span style={{ background: '#5865F2', color: 'white', padding: '6px 12px', borderRadius: '20px', fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '5px' }}>
+              <i className="fa-brands fa-discord"></i> Discord: {profile.connections.discord}
+            </span>
+          )}
+          {profile.connections?.google && (
+            <span style={{ background: '#DB4437', color: 'white', padding: '6px 12px', borderRadius: '20px', fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '5px' }}>
+              <i className="fa-brands fa-google"></i> Google: {profile.connections.google}
+            </span>
+          )}
+          
+          {profile.isOwnProfile && (
+            <button onClick={() => setShowConnectionsModal(true)} style={{ background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)', color: 'white', padding: '6px 12px', borderRadius: '20px', fontSize: '0.9rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '5px' }} onMouseOver={e => e.currentTarget.style.background='rgba(255,255,255,0.2)'} onMouseOut={e => e.currentTarget.style.background='rgba(255,255,255,0.1)'}>
+              <i className="fa-solid fa-link"></i> Add Connection
+            </button>
+          )}
+        </div>
 
         <div style={{ display: 'flex', gap: '30px', borderTop: '1px solid rgba(255,255,255,0.1)', borderBottom: '1px solid rgba(255,255,255,0.1)', padding: '20px 0' }}>
           <div>
@@ -168,6 +216,48 @@ export default function PublicProfilePage() {
       </div>
 
       </div>
+
+      {/* Connections Modal */}
+      {showConnectionsModal && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.8)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 100 }}>
+          <div style={{ background: '#1f2937', padding: '30px', borderRadius: '20px', width: '90%', maxWidth: '400px', border: '1px solid rgba(255,255,255,0.1)' }}>
+            <h3 style={{ margin: '0 0 20px 0', color: 'white', fontSize: '1.5rem' }}>Add Connection</h3>
+            <form onSubmit={handleUpdateConnection}>
+              <div style={{ marginBottom: '15px' }}>
+                <label style={{ display: 'block', color: 'gray', marginBottom: '8px' }}>Platform</label>
+                <select 
+                  value={platformInput.platform} 
+                  onChange={e => setPlatformInput({ ...platformInput, platform: e.target.value })}
+                  style={{ width: '100%', padding: '12px', borderRadius: '12px', background: '#111827', border: '1px solid #374151', color: 'white', outline: 'none' }}
+                >
+                  <option value="minecraft">Minecraft</option>
+                  <option value="discord">Discord</option>
+                  <option value="google">Google</option>
+                </select>
+              </div>
+              <div style={{ marginBottom: '25px' }}>
+                <label style={{ display: 'block', color: 'gray', marginBottom: '8px' }}>Username / ID</label>
+                <input 
+                  type="text" 
+                  required
+                  placeholder="e.g. Dream, Player123"
+                  value={platformInput.value} 
+                  onChange={e => setPlatformInput({ ...platformInput, value: e.target.value })}
+                  style={{ width: '100%', padding: '12px', borderRadius: '12px', background: '#111827', border: '1px solid #374151', color: 'white', outline: 'none' }}
+                />
+              </div>
+              <div style={{ display: 'flex', gap: '10px' }}>
+                <button type="button" onClick={() => setShowConnectionsModal(false)} style={{ flex: 1, padding: '12px', borderRadius: '12px', background: 'transparent', border: '1px solid #374151', color: 'white', cursor: 'pointer' }}>
+                  Cancel
+                </button>
+                <button type="submit" style={{ flex: 1, padding: '12px', borderRadius: '12px', background: '#3b82f6', border: 'none', color: 'white', cursor: 'pointer', fontWeight: 'bold' }}>
+                  Save
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

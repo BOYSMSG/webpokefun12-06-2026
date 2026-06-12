@@ -7,7 +7,10 @@ import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 export async function GET(req: Request) {
   try {
     const session = await getServerSession(authOptions);
-    if (!session || (session.user as any)?.role !== 'ADMIN') {
+    const userRole = (session?.user as any)?.role;
+    const permissions = (session?.user as any)?.permissions || [];
+
+    if (!session || (userRole !== 'OWNER' && userRole !== 'ADMIN' && !permissions.includes('MANAGE_ROLES'))) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -23,26 +26,42 @@ export async function GET(req: Request) {
 export async function PUT(req: Request) {
   try {
     const session = await getServerSession(authOptions);
-    if (!session || (session.user as any)?.role !== 'ADMIN') {
+    const myEmail = session?.user?.email;
+    const myRole = (session?.user as any)?.role;
+    const myPermissions = (session?.user as any)?.permissions || [];
+
+    if (!myEmail || (myRole !== 'OWNER' && myRole !== 'ADMIN' && !myPermissions.includes('MANAGE_ROLES'))) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     await connectDB();
-    const { email, role } = await req.json();
+    const { email, role, permissions } = await req.json();
 
-    if (!email || !role) {
-      return NextResponse.json({ error: 'Email and role are required' }, { status: 400 });
+    if (!email) {
+      return NextResponse.json({ error: 'Email is required' }, { status: 400 });
     }
+
+    const targetUser = await User.findOne({ email });
+    if (!targetUser) return NextResponse.json({ error: 'User not found' }, { status: 404 });
+
+    // Protect OWNERs from being demoted or modified by non-owners
+    if (targetUser.role === 'OWNER' && myRole !== 'OWNER') {
+      return NextResponse.json({ error: 'You cannot modify an OWNER account.' }, { status: 403 });
+    }
+
+    const updates: any = {};
+    if (role) updates.role = role;
+    if (permissions) updates.permissions = permissions;
 
     const updatedUser = await User.findOneAndUpdate(
       { email },
-      { $set: { role } },
+      { $set: updates },
       { new: true }
     );
 
     return NextResponse.json(updatedUser);
   } catch (error) {
-    console.error("Error updating user role", error);
+    console.error("Error updating user role/permissions", error);
     return NextResponse.json({ error: 'Failed to update user' }, { status: 500 });
   }
 }

@@ -9,14 +9,23 @@ export async function GET(req: Request, props: { params: Promise<{ id: string }>
   try {
     const { id } = await props.params;
     await connectDB();
-    const post = await Post.findById(id).lean();
+    const post = await Post.findByIdAndUpdate(id, { $inc: { views: 1 } }, { new: true }).lean();
 
     if (!post) {
       return NextResponse.json({ error: "Post not found" }, { status: 404 });
     }
 
     // Fetch author info to attach avatar/name
-    const author = await User.findOne({ email: post.authorId }).lean();
+    const author = await User.findOne({ username: post.authorId }).lean();
+    const session = await getServerSession(authOptions);
+    const myEmail = session?.user?.email;
+    let mySavedPosts: string[] = [];
+    if (myEmail) {
+      const me = await User.findOne({ email: myEmail }).lean();
+      if (me) {
+        mySavedPosts = me.savedPosts || [];
+      }
+    }
 
     const formattedPost = {
       ...post,
@@ -25,6 +34,10 @@ export async function GET(req: Request, props: { params: Promise<{ id: string }>
       avatar: author?.image || `https://ui-avatars.com/api/?name=${post.authorId.split('@')[0]}&background=random`,
       upvotes: (post.likes || []).length,
       downvotes: (post.dislikes || []).length,
+      views: post.views || 0,
+      isLiked: myEmail ? (post.likes || []).includes(myEmail) : false,
+      isDisliked: myEmail ? (post.dislikes || []).includes(myEmail) : false,
+      isSaved: mySavedPosts.includes(post._id.toString()),
       timestamp: post.createdAt,
     };
 
@@ -44,12 +57,12 @@ export async function DELETE(req: Request, props: { params: Promise<{ id: string
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const isAdmin = (session.user as any)?.role === 'ADMIN' || 
-                    session.user.email === 'boysmsg832@gmail.com' || 
-                    (session.user as any)?.discordId === 'boysmsg01';
+    const userRole = (session.user as any)?.role;
+    const permissions = (session.user as any)?.permissions || [];
+    const isPrivileged = userRole === 'OWNER' || permissions.includes('DELETE_POSTS');
                     
-    if (!isAdmin) {
-      return NextResponse.json({ error: "Forbidden: Admins only" }, { status: 403 });
+    if (!isPrivileged) {
+      return NextResponse.json({ error: "Forbidden: You don't have permission to delete posts" }, { status: 403 });
     }
 
     const { reason } = await req.json();

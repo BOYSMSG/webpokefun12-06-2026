@@ -47,7 +47,9 @@ export async function POST(req: Request, props: { params: Promise<{ id: string }
     return NextResponse.json({ 
       success: true, 
       likes: post.likes.length, 
-      dislikes: post.dislikes.length 
+      dislikes: post.dislikes.length,
+      isLiked: post.likes.includes(userEmail),
+      isDisliked: post.dislikes.includes(userEmail)
     });
   } catch (error: any) {
     console.error("Interact Post Error:", error);

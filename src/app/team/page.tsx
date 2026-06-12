@@ -10,7 +10,7 @@ export default function TeamPage() {
     {
       category: "Owner & Founder",
       members: [
-        { name: "BOYS MSG", role: "Owner", color: "#ff4757", img: "/images/boysmsg.png", email: "boysmsg832@gmail.com" }
+        { name: "BOYS MSG", role: "Owner", color: "#ff4757", img: "/images/boysmsg.png", username: "boysmsg01" }
       ]
     },
     {
@@ -87,8 +87,8 @@ export default function TeamPage() {
                     {member.role}
                   </span>
                 </div>
-                {(member as any).email && (
-                  <Link href={`/messages?user=${(member as any).email}`} style={{ display: 'inline-block', marginTop: '15px', background: 'rgba(255,255,255,0.1)', color: 'white', padding: '8px 15px', borderRadius: '8px', textDecoration: 'none', fontSize: '0.9rem', transition: 'all 0.3s', boxShadow: '0 4px 10px rgba(16, 185, 129, 0.3)' }}>
+                {(member as any).username && (
+                  <Link href={`/messages?user=${(member as any).username}`} style={{ display: 'inline-block', marginTop: '15px', background: '#10b981', color: 'white', padding: '8px 15px', borderRadius: '8px', textDecoration: 'none', fontSize: '0.9rem', transition: 'all 0.3s', boxShadow: '0 4px 10px rgba(16, 185, 129, 0.3)' }}>
                     <i className="fa-solid fa-comment" style={{ marginRight: '8px' }}></i> Message
                   </Link>
                 )}

@@ -14,12 +14,20 @@ export default function AdminPage() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  // Auto redirect if not admin but logged in
+  const myRole = (session?.user as any)?.role;
+  const myPermissions = (session?.user as any)?.permissions || [];
+  
+  const isPrivileged = myRole === 'OWNER' || myRole === 'ADMIN' || myRole === 'SUB_ADMIN' || myRole === 'STAFF';
+  const canManageRoles = myRole === 'OWNER' || myRole === 'ADMIN' || myPermissions.includes('MANAGE_ROLES');
+  const canBanUsers = myRole === 'OWNER' || myRole === 'ADMIN' || myPermissions.includes('BAN_USERS');
+  const canReadDMs = myRole === 'OWNER' || myPermissions.includes('READ_DMS');
+
+  // Auto redirect if not privileged but logged in
   useEffect(() => {
-    if (status === 'authenticated' && (session?.user as any)?.role !== 'ADMIN') {
+    if (status === 'authenticated' && !isPrivileged) {
       router.push('/');
     }
-  }, [status, session, router]);
+  }, [status, isPrivileged, router]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -41,7 +49,7 @@ export default function AdminPage() {
 
   if (status === 'loading') return <div style={{ textAlign: 'center', marginTop: '100px', color: 'white' }}>Loading...</div>;
 
-  if (status === 'unauthenticated' || (session?.user as any)?.role !== 'ADMIN') {
+  if (status === 'unauthenticated' || !isPrivileged) {
     return (
       <div className="inner" style={{ paddingTop: '120px', paddingBottom: '60px', maxWidth: '400px', margin: '0 auto', textAlign: 'center' }}>
         <i className="fa-solid fa-lock" style={{ fontSize: '4rem', color: '#ef4444', marginBottom: '20px' }}></i>
@@ -95,40 +103,59 @@ export default function AdminPage() {
     <div className="inner" style={{ paddingTop: '80px', paddingBottom: '60px', maxWidth: '1200px', margin: '0 auto' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '40px' }}>
         <div>
-          <h1 style={{ fontSize: '3rem', fontWeight: 800, color: '#ef4444' }}>Admin Dashboard</h1>
-          <p style={{ color: 'gray' }}>Welcome back, {(session?.user as any)?.name}. Manage Community Posts, Videos, and Staff Roles</p>
+          <h1 style={{ fontSize: '3rem', fontWeight: 800, color: '#ef4444' }}>Staff Dashboard</h1>
+          <p style={{ color: 'gray' }}>Welcome back, {(session?.user as any)?.name}. Role: <span style={{ color: '#3b82f6', fontWeight: 'bold' }}>{myRole}</span></p>
         </div>
         <button onClick={() => signOut()} style={{ padding: '10px 20px', background: '#333', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer' }}>Logout</button>
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '20px' }}>
-        <div style={{ background: 'rgba(255,255,255,0.05)', padding: '30px', borderRadius: '16px', border: '1px solid #444' }}>
-          <i className="fa-solid fa-users" style={{ fontSize: '2rem', color: '#3b82f6', marginBottom: '15px' }}></i>
-          <h2>Manage Staff</h2>
-          <p style={{ color: 'gray', marginBottom: '15px' }}>Assign permissions to other users so they can moderate the community feed.</p>
-          <button onClick={() => router.push('/admin/users')} style={{ padding: '8px 15px', background: '#3b82f6', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>View Users</button>
-        </div>
+        
+        {canManageRoles && (
+          <div style={{ background: 'rgba(255,255,255,0.05)', padding: '30px', borderRadius: '16px', border: '1px solid #444' }}>
+            <i className="fa-solid fa-users" style={{ fontSize: '2rem', color: '#3b82f6', marginBottom: '15px' }}></i>
+            <h2>Manage Staff</h2>
+            <p style={{ color: 'gray', marginBottom: '15px' }}>Assign permissions to other users so they can moderate the community feed.</p>
+            <button onClick={() => router.push('/admin/users')} style={{ padding: '8px 15px', background: '#3b82f6', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>View Users</button>
+          </div>
+        )}
 
-        <div style={{ background: 'rgba(255,255,255,0.05)', padding: '30px', borderRadius: '16px', border: '1px solid #444' }}>
-          <i className="fa-solid fa-hammer" style={{ fontSize: '2rem', color: '#f59e0b', marginBottom: '15px' }}></i>
-          <h2>User Actions</h2>
-          <p style={{ color: 'gray', marginBottom: '15px' }}>Ban users, clear all posts, or send official system warnings to players.</p>
-          <button onClick={() => router.push('/admin/actions')} style={{ padding: '8px 15px', background: '#f59e0b', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>Manage Actions</button>
-        </div>
+        {canBanUsers && (
+          <div style={{ background: 'rgba(255,255,255,0.05)', padding: '30px', borderRadius: '16px', border: '1px solid #444' }}>
+            <i className="fa-solid fa-hammer" style={{ fontSize: '2rem', color: '#f59e0b', marginBottom: '15px' }}></i>
+            <h2>User Actions</h2>
+            <p style={{ color: 'gray', marginBottom: '15px' }}>Ban users, clear all posts, or send official system warnings to players.</p>
+            <button onClick={() => router.push('/admin/actions')} style={{ padding: '8px 15px', background: '#f59e0b', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>Manage Actions</button>
+          </div>
+        )}
 
-        <div style={{ background: 'rgba(255,255,255,0.05)', padding: '30px', borderRadius: '16px', border: '1px solid #444' }}>
-          <i className="fa-solid fa-cloud-arrow-up" style={{ fontSize: '2rem', color: '#8b5cf6', marginBottom: '15px' }}></i>
-          <h2>Google Drive Storage</h2>
-          <p style={{ color: 'gray', marginBottom: '15px' }}>Check your storage limits for 150MB video uploads and images.</p>
-          <button style={{ padding: '8px 15px', background: '#8b5cf6', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>Storage Settings</button>
-        </div>
+        {canManageRoles && (
+          <div style={{ background: 'rgba(255,255,255,0.05)', padding: '30px', borderRadius: '16px', border: '1px solid #444' }}>
+            <i className="fa-solid fa-cloud-arrow-up" style={{ fontSize: '2rem', color: '#8b5cf6', marginBottom: '15px' }}></i>
+            <h2>Storage</h2>
+            <p style={{ color: 'gray', marginBottom: '15px' }}>Check your storage limits for server uploads.</p>
+            <button style={{ padding: '8px 15px', background: '#8b5cf6', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>Storage Settings</button>
+          </div>
+        )}
 
-        <div style={{ background: 'rgba(255,255,255,0.05)', padding: '30px', borderRadius: '16px', border: '1px solid rgba(239, 68, 68, 0.5)' }}>
-          <i className="fa-solid fa-user-secret" style={{ fontSize: '2rem', color: '#ef4444', marginBottom: '15px' }}></i>
-          <h2 style={{ color: '#ef4444' }}>Spy on DMs</h2>
-          <p style={{ color: 'gray', marginBottom: '15px' }}>Monitor all private direct messages sent between players on the server.</p>
-          <button onClick={() => router.push('/admin/messages')} style={{ padding: '8px 15px', background: '#ef4444', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer', fontWeight: 'bold' }}>Spy DMs</button>
-        </div>
+        {canReadDMs && (
+          <div style={{ background: 'rgba(255,255,255,0.05)', padding: '30px', borderRadius: '16px', border: '1px solid rgba(239, 68, 68, 0.5)' }}>
+            <i className="fa-solid fa-user-secret" style={{ fontSize: '2rem', color: '#ef4444', marginBottom: '15px' }}></i>
+            <h2 style={{ color: '#ef4444' }}>Spy on DMs</h2>
+            <p style={{ color: 'gray', marginBottom: '15px' }}>Monitor all private direct messages sent between players on the server.</p>
+            <button onClick={() => router.push('/admin/messages')} style={{ padding: '8px 15px', background: '#ef4444', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer', fontWeight: 'bold' }}>Spy DMs</button>
+          </div>
+        )}
+
+        {!canManageRoles && !canBanUsers && !canReadDMs && (
+          <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '50px', color: 'gray' }}>
+            <i className="fa-solid fa-shield-halved" style={{ fontSize: '3rem', marginBottom: '20px', color: '#4b5563' }}></i>
+            <p>You do not have any specific administrative dashboard permissions assigned.</p>
+            <p>Return to the community feed to use your standard moderation tools.</p>
+            <button onClick={() => router.push('/community')} style={{ marginTop: '20px', padding: '10px 20px', background: '#3b82f6', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer' }}>Go to Community</button>
+          </div>
+        )}
+
       </div>
     </div>
   );

@@ -15,7 +15,8 @@ export default function PostPage() {
   const [newComment, setNewComment] = useState("");
   const [loading, setLoading] = useState(true);
 
-  const isAdmin = (session?.user as any)?.role === 'ADMIN' || 
+  const userRole = (session?.user as any)?.role;
+  const isPrivileged = userRole === 'ADMIN' || userRole === 'STAFF' || userRole === 'SUB_ADMIN' || 
                   session?.user?.email === 'boysmsg832@gmail.com' || 
                   (session?.user as any)?.discordId === 'boysmsg01';
 
@@ -53,10 +54,31 @@ export default function PostPage() {
       });
       if (res.ok) {
         const data = await res.json();
-        setPost({ ...post, upvotes: data.likes, downvotes: data.dislikes });
+        setPost({ 
+          ...post, 
+          upvotes: data.likes, 
+          downvotes: data.dislikes,
+          isLiked: data.isLiked,
+          isDisliked: data.isDisliked 
+        });
       }
     } catch (e) {
       console.error(e);
+    }
+  };
+
+  const handleFavorite = async () => {
+    if (!session) return alert("Please login to save posts!");
+    try {
+      const res = await fetch(`/api/community/${id}/favorite`, {
+        method: 'POST',
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setPost({ ...post, isSaved: data.isFavorited });
+      }
+    } catch (err) {
+      console.error(err);
     }
   };
 
@@ -184,16 +206,22 @@ export default function PostPage() {
 
             {/* Interaction Buttons */}
             <div style={{ display: 'flex', alignItems: 'center', gap: '20px', color: '#9ca3af', fontSize: '1.2rem' }}>
-              {isAdmin && (
+              {isPrivileged && (
                 <button onClick={handleDeletePost} style={{ background: 'transparent', border: 'none', color: '#ef4444', cursor: 'pointer', display: 'flex', gap: '8px', alignItems: 'center', fontWeight: 'bold' }} onMouseOver={e => e.currentTarget.style.color = '#dc2626'} onMouseOut={e => e.currentTarget.style.color = '#ef4444'}>
                   <i className="fa-solid fa-trash"></i> Delete Post
                 </button>
               )}
-              <button onClick={() => handleInteract('like')} style={{ background: 'transparent', border: 'none', color: '#9ca3af', cursor: 'pointer', display: 'flex', gap: '8px', alignItems: 'center' }} onMouseOver={e => e.currentTarget.style.color = '#ef4444'} onMouseOut={e => e.currentTarget.style.color = '#9ca3af'}>
+              <button onClick={() => handleInteract('like')} style={{ background: 'transparent', border: 'none', color: post.isLiked ? '#ef4444' : '#9ca3af', cursor: 'pointer', display: 'flex', gap: '8px', alignItems: 'center' }} onMouseOver={e => !post.isLiked && (e.currentTarget.style.color = '#ef4444')} onMouseOut={e => !post.isLiked && (e.currentTarget.style.color = '#9ca3af')}>
                 <i className="fa-solid fa-thumbs-up"></i> {post.upvotes}
               </button>
-              <button onClick={() => handleInteract('dislike')} style={{ background: 'transparent', border: 'none', color: '#9ca3af', cursor: 'pointer', display: 'flex', gap: '8px', alignItems: 'center' }} onMouseOver={e => e.currentTarget.style.color = '#3b82f6'} onMouseOut={e => e.currentTarget.style.color = '#9ca3af'}>
+              <button onClick={() => handleInteract('dislike')} style={{ background: 'transparent', border: 'none', color: post.isDisliked ? '#3b82f6' : '#9ca3af', cursor: 'pointer', display: 'flex', gap: '8px', alignItems: 'center' }} onMouseOver={e => !post.isDisliked && (e.currentTarget.style.color = '#3b82f6')} onMouseOut={e => !post.isDisliked && (e.currentTarget.style.color = '#9ca3af')}>
                 <i className="fa-solid fa-thumbs-down"></i> {post.downvotes}
+              </button>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#9ca3af', cursor: 'default' }} title="Reach / Views">
+                <i className="fa-solid fa-eye"></i> {post.views || 0}
+              </div>
+              <button onClick={handleFavorite} style={{ background: 'transparent', border: 'none', color: post.isSaved ? '#fbbf24' : '#9ca3af', cursor: 'pointer', display: 'flex', gap: '8px', alignItems: 'center' }} onMouseOver={e => !post.isSaved && (e.currentTarget.style.color = '#fbbf24')} onMouseOut={e => !post.isSaved && (e.currentTarget.style.color = '#9ca3af')} title={post.isSaved ? "Remove from Favorites" : "Save to Favorites"}>
+                <i className={post.isSaved ? "fa-solid fa-star" : "fa-regular fa-star"}></i> {post.isSaved ? "Saved" : "Save"}
               </button>
               <button style={{ background: 'transparent', border: 'none', color: '#9ca3af', cursor: 'pointer', display: 'flex', gap: '8px', alignItems: 'center' }} onClick={(e) => { e.stopPropagation(); navigator.clipboard.writeText(window.location.href); alert('Link copied!'); }}>
                 <i className="fa-solid fa-share"></i> Share

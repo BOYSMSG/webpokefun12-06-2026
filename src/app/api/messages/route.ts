@@ -15,32 +15,36 @@ export async function GET(req: Request) {
 
     await connectDB();
     const myEmail = session.user.email;
+    const me = await User.findOne({ email: myEmail }).lean();
+    if (!me) return NextResponse.json({ error: 'User not found' }, { status: 404 });
+    const myUsername = me.username;
 
     // Fetch all messages where user is sender or receiver
     const messages = await Message.find({
-      $or: [{ senderId: myEmail }, { receiverId: myEmail }]
+      $or: [{ senderId: myUsername }, { receiverId: myUsername }]
     }).sort({ createdAt: 1 }).lean();
 
     // Fetch details of all users involved in these messages to show avatars/names
-    const userEmails = new Set<string>();
+    const userUsernames = new Set<string>();
     messages.forEach(msg => {
-      if (msg.senderId !== myEmail) userEmails.add(msg.senderId);
-      if (msg.receiverId !== myEmail) userEmails.add(msg.receiverId);
+      if (msg.senderId !== myUsername) userUsernames.add(msg.senderId);
+      if (msg.receiverId !== myUsername) userUsernames.add(msg.receiverId);
     });
 
-    const users = await User.find({ email: { $in: Array.from(userEmails) } }).lean();
+    const users = await User.find({ username: { $in: Array.from(userUsernames) } }).lean();
     const userMap: Record<string, any> = {};
     const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
     
     users.forEach(u => {
-      userMap[u.email] = { 
+      userMap[u.username] = { 
         name: u.name, 
+        username: u.username,
         image: u.image,
         isOnline: u.lastActive && new Date(u.lastActive) > fiveMinutesAgo 
       };
     });
 
-    return NextResponse.json({ messages, contacts: userMap });
+    return NextResponse.json({ messages, contacts: userMap, myUsername });
   } catch (error) {
     console.error("Error fetching messages", error);
     return NextResponse.json({ error: 'Failed to fetch messages' }, { status: 500 });
@@ -61,21 +65,28 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
+    const me = await User.findOne({ email: session.user.email }).lean();
+    if (!me) return NextResponse.json({ error: 'User not found' }, { status: 404 });
+
     const newMessage = await Message.create({
-      senderId: session.user.email,
+      senderId: me.username,
       receiverId,
       content,
       read: false
     });
 
-    await Notification.create({
-      title: 'New Message',
-      message: `You received a new message from ${session.user.name || session.user.email}`,
-      url: `/messages?user=${encodeURIComponent(session.user.email)}`,
-      isGlobal: false,
-      userId: receiverId,
-      createdAt: new Date()
-    });
+    const receiverUser = await User.findOne({ username: receiverId }).lean();
+
+    if (receiverUser) {
+      await Notification.create({
+        title: 'New Message',
+        message: `You received a new message from @${me.username}`,
+        url: `/messages?user=${encodeURIComponent(me.username)}`,
+        isGlobal: false,
+        userId: receiverUser.email, // Notification still uses email as userId for now
+        createdAt: new Date()
+      });
+    }
 
     return NextResponse.json(newMessage);
   } catch (error) {

@@ -36,9 +36,9 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Invalid message format" }, { status: 400 });
     }
 
-    // Use Gemini 1.5 Flash for fast chat responses
+    // Use Gemini 2.0 Flash for fast chat responses
     const model = genAI.getGenerativeModel({ 
-      model: "gemini-pro",
+      model: "gemini-2.0-flash",
       systemInstruction: SYSTEM_PROMPT
     });
 

@@ -15,14 +15,14 @@ export async function GET() {
     
     // Fetch all users except the current logged-in user
     const users = await User.find({ email: { $ne: session.user.email } })
-      .select('name email image role discordId lastActive')
+      .select('name username image role discordId lastActive')
       .lean();
 
     const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
 
     const formattedUsers = users.map(u => ({
       name: u.name,
-      email: u.email,
+      username: u.username,
       image: u.image,
       role: u.role,
       discordId: u.discordId,
