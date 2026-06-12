@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import connectDB from '@/lib/mongoose';
 import Post from '@/models/Post';
 import User from '@/models/User';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 
 export async function GET(req: Request, props: { params: Promise<{ id: string }> }) {
   try {
@@ -36,13 +38,13 @@ export async function GET(req: Request, props: { params: Promise<{ id: string }>
 export async function DELETE(req: Request, props: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await props.params;
-    const session = await import("next-auth").then(m => m.getServerSession(import("@/app/api/auth/[...nextauth]/route").then(m => m.authOptions)));
+    const session = await getServerSession(authOptions);
     
     if (!session?.user?.email) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const isAdmin = session.user.role === 'ADMIN' || 
+    const isAdmin = (session.user as any)?.role === 'ADMIN' || 
                     session.user.email === 'boysmsg832@gmail.com' || 
                     (session.user as any)?.discordId === 'boysmsg01';
                     

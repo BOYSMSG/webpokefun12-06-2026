@@ -1,10 +1,12 @@
 import { NextResponse } from "next/server";
 import connectDB from "@/lib/mongoose";
 import Notification from "@/models/Notification";
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 
 export async function GET() {
   try {
-    const session = await import("next-auth").then(m => m.getServerSession(import("@/app/api/auth/[...nextauth]/route").then(m => m.authOptions)));
+    const session = await getServerSession(authOptions);
     
     if (!session || !session.user?.email) {
       return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
@@ -31,7 +33,7 @@ export async function GET() {
 
 export async function PUT() {
   try {
-    const session = await import("next-auth").then(m => m.getServerSession(import("@/app/api/auth/[...nextauth]/route").then(m => m.authOptions)));
+    const session = await getServerSession(authOptions);
     
     if (!session || !session.user?.email) {
       return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });

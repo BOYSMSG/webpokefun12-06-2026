@@ -8,7 +8,7 @@ export default function CreatePostPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
 
-  const [postType, setPostType] = useState<'NOTE' | 'QUESTION' | 'DISCUSSION'>('NOTE');
+  const [postType, setPostType] = useState<string>('NOTE');
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [media, setMedia] = useState('');

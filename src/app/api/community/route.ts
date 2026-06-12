@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import connectDB from '@/lib/mongoose';
 import Post from '@/models/Post';
 import User from '@/models/User';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 
 export async function GET(req: Request) {
   try {
@@ -42,7 +44,7 @@ export async function GET(req: Request) {
         content: isLegacyMedia ? "" : post.content, // Show content as text if it's not a URL
         media: post.media || (isLegacyMedia ? post.content : null), // Show media if it is a URL
         mediaType: post.mediaType || (isLegacyMedia ? 'image' : null), // Assuming legacy uploads are images for now
-        category: post.category || (post.type === 'ANNOUNCEMENT' ? 'Announcements' : (post.type === 'GUIDE' ? 'Guides' : 'Showcase')), 
+        category: post.category || ((post.type as any) === 'ANNOUNCEMENT' ? 'Announcements' : ((post.type as any) === 'GUIDE' ? 'Guides' : 'Showcase')), 
         upvotes: post.likes?.length || 0,
         timestamp: post.createdAt
       };
@@ -57,7 +59,7 @@ export async function GET(req: Request) {
 
 export async function POST(req: Request) {
   try {
-    const session = await import("next-auth").then(m => m.getServerSession(import("@/app/api/auth/[...nextauth]/route").then(m => m.authOptions)));
+    const session = await getServerSession(authOptions);
     
     // Allow if session exists OR if we mock it for development
     const userEmail = session?.user?.email || "anonymous@pokefun.com";
@@ -71,7 +73,7 @@ export async function POST(req: Request) {
 
     // Check Admin rights for Announcements and Guides
     if (type === 'ANNOUNCEMENT' || type === 'GUIDE') {
-      const isAdmin = session?.user?.role === 'ADMIN' || 
+      const isAdmin = (session?.user as any)?.role === 'ADMIN' || 
                       session?.user?.email === 'boysmsg832@gmail.com' || 
                       (session?.user as any)?.discordId === 'boysmsg01';
       if (!isAdmin) {

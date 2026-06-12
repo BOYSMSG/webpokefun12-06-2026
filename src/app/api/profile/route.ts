@@ -23,7 +23,7 @@ export async function GET(req: Request) {
     const posts = await Post.find({ authorId: email }).sort({ createdAt: -1 }).lean();
 
     return NextResponse.json({ user, posts });
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error fetching profile", error);
     return NextResponse.json({ error: `Failed to fetch profile. Internal Error: ${error.message}` }, { status: 500 });
   }

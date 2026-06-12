@@ -50,7 +50,7 @@ export async function POST(req: NextRequest) {
     await connectDB();
     const newPost = await Post.create({
       authorId: session.user?.email || "unknown",
-      type: type || "REEL",
+      type: (type as any) || "REEL",
       title: title || "Untitled",
       content: fileUrl, // The local file URL
       likes: [],
