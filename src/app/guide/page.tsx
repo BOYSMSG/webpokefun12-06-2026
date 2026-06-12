@@ -8,10 +8,10 @@ import { useSession } from 'next-auth/react';
 export default function GuidePage() {
   const router = useRouter();
   const { data: session } = useSession();
-  const [posts, setPosts] = useState([]);
+  const [posts, setPosts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const isAdmin = session?.user?.role === 'ADMIN' || 
+  const isAdmin = (session?.user as any)?.role === 'ADMIN' || 
                   session?.user?.email === 'boysmsg832@gmail.com' || 
                   (session?.user as any)?.discordId === 'boysmsg01';
 

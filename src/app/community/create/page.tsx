@@ -45,7 +45,7 @@ export default function CreatePostPage() {
 
       // Quick frontend admin check
       if (submissionType === 'ANNOUNCEMENT' || submissionType === 'GUIDE') {
-        const isAdmin = session?.user?.role === 'ADMIN' || 
+        const isAdmin = (session?.user as any)?.role === 'ADMIN' || 
                         session?.user?.email === 'boysmsg832@gmail.com' || 
                         (session?.user as any)?.discordId === 'boysmsg01';
         if (!isAdmin) {

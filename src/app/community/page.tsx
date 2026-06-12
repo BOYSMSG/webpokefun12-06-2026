@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 
 export default function CommunityPage() {
   const router = useRouter();
-  const [posts, setPosts] = useState([]);
+  const [posts, setPosts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("All");
 

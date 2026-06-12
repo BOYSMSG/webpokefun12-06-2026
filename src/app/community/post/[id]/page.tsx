@@ -15,7 +15,7 @@ export default function PostPage() {
   const [newComment, setNewComment] = useState("");
   const [loading, setLoading] = useState(true);
 
-  const isAdmin = session?.user?.role === 'ADMIN' || 
+  const isAdmin = (session?.user as any)?.role === 'ADMIN' || 
                   session?.user?.email === 'boysmsg832@gmail.com' || 
                   (session?.user as any)?.discordId === 'boysmsg01';
 
