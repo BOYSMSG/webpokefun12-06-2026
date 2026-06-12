@@ -46,6 +46,14 @@ export async function PUT(req: Request) {
     const updates: any = { name, bio };
 
     if (connections) {
+      for (const [platform, value] of Object.entries(connections)) {
+        if (value && typeof value === 'string' && value.trim() !== '') {
+          const existing = await User.findOne({ [`connections.${platform}`]: value });
+          if (existing && existing.email !== session.user.email) {
+            return NextResponse.json({ error: `The ${platform} username "${value}" is already linked by another user.` }, { status: 400 });
+          }
+        }
+      }
       updates.connections = connections;
     }
 

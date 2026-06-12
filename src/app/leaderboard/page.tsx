@@ -171,7 +171,18 @@ export default function LeaderboardPage() {
                     </td>
                     <td style={{ padding: '25px 30px', display: 'flex', alignItems: 'center', gap: '20px' }}>
                       <img src={`https://minotar.net/helm/${playerName}/60.png`} alt={playerName} style={{ width: '60px', height: '60px', borderRadius: '12px', boxShadow: '0 4px 10px rgba(0,0,0,0.3)' }} onError={(e) => { e.currentTarget.src = 'https://ui-avatars.com/api/?name=' + playerName; }} />
-                      <span style={{ fontSize: '1.5rem', fontWeight: 700, color: 'white', letterSpacing: '0.5px' }}>{playerName}</span>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                        {player.webUsername ? (
+                          <Link href={`/profile/${player.webUsername}`} style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <span style={{ fontSize: '1.5rem', fontWeight: 700, color: '#3b82f6', letterSpacing: '0.5px' }} className="hover-link">{playerName}</span>
+                            <span style={{ fontSize: '0.8rem', background: '#3b82f622', color: '#60a5fa', padding: '2px 8px', borderRadius: '10px', fontWeight: 'bold' }}>
+                              <i className="fa-solid fa-link"></i> Web Profile
+                            </span>
+                          </Link>
+                        ) : (
+                          <span style={{ fontSize: '1.5rem', fontWeight: 700, color: 'white', letterSpacing: '0.5px' }}>{playerName}</span>
+                        )}
+                      </div>
                     </td>
                     <td style={{ padding: '25px 30px', textAlign: 'right', fontWeight: 'bold', fontSize: '1.5rem', color: '#10b981' }}>
                       {score.toLocaleString()}
@@ -187,6 +198,9 @@ export default function LeaderboardPage() {
       <style>{`
         .leaderboard-row:hover {
           background: rgba(255,255,255,0.08) !important;
+        }
+        .hover-link:hover {
+          text-decoration: underline;
         }
         @keyframes fadeIn {
           from { opacity: 0; transform: translateY(-10px); }

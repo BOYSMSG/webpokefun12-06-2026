@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getMySQLConnection } from '@/lib/mysql';
+import connectDB from '@/lib/mongoose';
+import User from '@/models/User';
 
 export async function GET(req: Request) {
   try {
@@ -47,8 +49,28 @@ export async function GET(req: Request) {
 
     const [rows]: any = await pool.query(`SELECT * FROM ?? ORDER BY ?? DESC LIMIT 50`, [tableName, orderBy]);
 
+    // Lookup linked web profiles
+    await connectDB();
+    const playerNames = rows.map((r: any) => r.name || r.player_name || r.uuid).filter(Boolean);
+    const linkedUsers = await User.find({ 'connections.minecraft': { $in: playerNames } }).select('connections.minecraft username').lean();
+    
+    const linkedMap: any = {};
+    for (const u of linkedUsers as any) {
+      if (u.connections?.minecraft) {
+        linkedMap[u.connections.minecraft] = u.username;
+      }
+    }
+
+    const enrichedRows = rows.map((r: any) => {
+      const pName = r.name || r.player_name || r.uuid;
+      return {
+        ...r,
+        webUsername: linkedMap[pName] || null
+      };
+    });
+
     // Sanitize output, remove internal ids if necessary, but returning all for now
-    return NextResponse.json({ success: true, data: rows, mode, sort: orderBy });
+    return NextResponse.json({ success: true, data: enrichedRows, mode, sort: orderBy });
   } catch (error: any) {
     console.error("Leaderboard API Error:", error);
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });

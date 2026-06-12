@@ -18,6 +18,13 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Invalid platform' }, { status: 400 });
     }
 
+    if (value && typeof value === 'string' && value.trim() !== '') {
+      const existing = await User.findOne({ [`connections.${platform}`]: value });
+      if (existing && existing.email !== session.user.email) {
+        return NextResponse.json({ error: `The ${platform} username/ID "${value}" is already linked to another Pokefun profile.` }, { status: 400 });
+      }
+    }
+
     const updateField = `connections.${platform}`;
     const user = await User.findOneAndUpdate(
       { email: session.user.email },
