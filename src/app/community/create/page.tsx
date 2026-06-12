@@ -30,10 +30,32 @@ export default function CreatePostPage() {
     setIsUploading(true);
 
     try {
+      let finalMedia = media;
       let determinedMediaType = media ? 'image' : undefined;
+
       if (media) {
-        if (media.includes('youtube.com/watch') || media.includes('youtu.be/')) {
+        if (media.includes('youtube.com/') || media.includes('youtu.be/')) {
           determinedMediaType = 'youtube';
+          let videoId = '';
+          if (media.includes('youtube.com/watch?v=')) {
+            videoId = media.split('watch?v=')[1].split('&')[0];
+          } else if (media.includes('youtu.be/')) {
+            videoId = media.split('youtu.be/')[1].split('?')[0];
+          } else if (media.includes('youtube.com/shorts/')) {
+            videoId = media.split('youtube.com/shorts/')[1].split('?')[0];
+          }
+          if (videoId) {
+             finalMedia = `https://www.youtube.com/embed/${videoId}`;
+          }
+        } else if (media.includes('instagram.com/reel/') || media.includes('instagram.com/p/')) {
+          determinedMediaType = 'instagram';
+          if (media.includes('instagram.com/reel/')) {
+            const instaId = media.split('instagram.com/reel/')[1].split('/')[0];
+            finalMedia = `https://www.instagram.com/reel/${instaId}/embed`;
+          } else {
+            const instaId = media.split('instagram.com/p/')[1].split('/')[0];
+            finalMedia = `https://www.instagram.com/p/${instaId}/embed`;
+          }
         } else if (media.endsWith('.mp4') || media.endsWith('.webm')) {
           determinedMediaType = 'video';
         }
@@ -65,7 +87,7 @@ export default function CreatePostPage() {
           content,
           type: submissionType,
           category: postType,
-          media: media || undefined,
+          media: finalMedia || undefined,
           mediaType: determinedMediaType
         })
       });

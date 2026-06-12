@@ -238,22 +238,19 @@ export default function CommunityPage() {
               onMouseOver={e => { e.currentTarget.style.transform = 'translateY(-5px)'; e.currentTarget.style.boxShadow = '0 10px 30px rgba(0,0,0,0.5)'; }}
               onMouseOut={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = 'none'; }}
               >
-                {post.media && post.mediaType === 'image' && (
-                  <img src={post.media} alt="Post media" style={{ width: '100%', height: '350px', objectFit: 'cover' }} />
-                )}
-                {post.media && post.mediaType === 'video' && (
-                  <video src={post.media} controls style={{ width: '100%', height: '350px', objectFit: 'cover', background: 'black' }} />
-                )}
-                {post.media && post.mediaType === 'youtube' && (
-                  <iframe 
-                    width="100%" 
-                    height="350" 
-                    src={post.media.replace("watch?v=", "embed/").replace("youtu.be/", "youtube.com/embed/")} 
-                    title="YouTube video player" 
-                    frameBorder="0" 
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-                    allowFullScreen
-                  ></iframe>
+                {/* Media if exists */}
+                {post.media && (
+                  <div style={{ width: '100%', maxHeight: '300px', overflow: 'hidden', background: '#111', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                    {post.mediaType === 'image' ? (
+                      <img src={post.media} alt={post.title} style={{ width: '100%', height: 'auto', objectFit: 'cover' }} />
+                    ) : post.mediaType === 'youtube' ? (
+                      <iframe width="100%" height="250" src={post.media.replace("watch?v=", "embed/")} title="YouTube video" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen onClick={e => e.stopPropagation()}></iframe>
+                    ) : post.mediaType === 'instagram' ? (
+                      <iframe width="100%" height="300" src={post.media} frameBorder="0" scrolling="no" allowTransparency onClick={e => e.stopPropagation()}></iframe>
+                    ) : post.mediaType === 'video' ? (
+                      <video src={post.media} controls style={{ width: '100%', height: '250px' }} onClick={e => e.stopPropagation()}></video>
+                    ) : null}
+                  </div>
                 )}
                 
                 <div style={{ padding: '20px' }}>

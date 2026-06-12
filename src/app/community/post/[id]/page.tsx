@@ -160,22 +160,18 @@ export default function PostPage() {
 
       {/* Main Post Card */}
       <div style={{ background: '#1f2937', borderRadius: '16px', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.05)', marginBottom: '30px' }}>
-        {post.media && post.mediaType === 'image' && (
-          <img src={post.media} alt="Post media" style={{ width: '100%', maxHeight: '500px', objectFit: 'contain', background: 'black' }} />
-        )}
-        {post.media && post.mediaType === 'video' && (
-          <video src={post.media} controls style={{ width: '100%', maxHeight: '500px', objectFit: 'contain', background: 'black' }} />
-        )}
-        {post.media && post.mediaType === 'youtube' && (
-          <iframe 
-            width="100%" 
-            height="500" 
-            src={post.media.replace("watch?v=", "embed/").replace("youtu.be/", "youtube.com/embed/")} 
-            title="YouTube video player" 
-            frameBorder="0" 
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-            allowFullScreen
-          ></iframe>
+        {post.media && (
+          <div style={{ width: '100%', maxHeight: '500px', overflow: 'hidden', background: '#111', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+            {post.mediaType === 'image' ? (
+              <img src={post.media} alt="Post media" style={{ width: '100%', height: 'auto', maxHeight: '500px', objectFit: 'contain' }} />
+            ) : post.mediaType === 'youtube' ? (
+              <iframe width="100%" height="500" src={post.media.replace("watch?v=", "embed/").replace("youtu.be/", "youtube.com/embed/")} title="YouTube video player" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen></iframe>
+            ) : post.mediaType === 'instagram' ? (
+              <iframe width="100%" height="500" src={post.media} frameBorder="0" scrolling="no" allowTransparency></iframe>
+            ) : post.mediaType === 'video' ? (
+              <video src={post.media} controls style={{ width: '100%', maxHeight: '500px', objectFit: 'contain' }} />
+            ) : null}
+          </div>
         )}
 
         <div style={{ padding: '30px' }}>
