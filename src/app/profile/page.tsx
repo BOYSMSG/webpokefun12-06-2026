@@ -107,10 +107,39 @@ export default function ProfilePage() {
           <p style={{ color: '#10b981', fontWeight: 'bold', margin: '0 0 15px 0' }}>{profile.role}</p>
           <p style={{ color: '#ccc', margin: '0 0 20px 0', lineHeight: 1.6, maxWidth: '600px' }}>{profile.bio || "A passionate Pokemon Trainer!"}</p>
           
-          <div style={{ display: 'flex', gap: '20px', color: 'gray', fontSize: '0.9rem' }}>
+          <div style={{ display: 'flex', gap: '20px', color: 'gray', fontSize: '0.9rem', marginBottom: '20px' }}>
             <span><strong style={{ color: 'white' }}>{posts.length}</strong> Posts</span>
             <span><strong style={{ color: 'white' }}>{profile.followers?.length || 0}</strong> Followers</span>
             <span><strong style={{ color: 'white' }}>{profile.following?.length || 0}</strong> Following</span>
+          </div>
+
+          {/* Connections Display */}
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
+            {profile.connections?.minecraft && (
+              <span style={{ background: '#047857', color: 'white', padding: '6px 12px', borderRadius: '20px', fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                <i className="fa-solid fa-cube"></i> Minecraft: {profile.connections.minecraft}
+              </span>
+            )}
+            {profile.connections?.discord && (
+              <span style={{ background: '#5865F2', color: 'white', padding: '6px 12px', borderRadius: '20px', fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                <i className="fa-brands fa-discord"></i> Discord: {profile.connections.discord}
+              </span>
+            )}
+            {profile.connections?.google && (
+              <span style={{ background: '#DB4437', color: 'white', padding: '6px 12px', borderRadius: '20px', fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                <i className="fa-brands fa-google"></i> Google: {profile.connections.google}
+              </span>
+            )}
+            {profile.connections?.youtube && (
+              <a href={`https://youtube.com/@${profile.connections.youtube.replace('@', '')}`} target="_blank" rel="noopener noreferrer" style={{ background: '#FF0000', color: 'white', padding: '6px 12px', borderRadius: '20px', fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '5px', textDecoration: 'none' }}>
+                <i className="fa-brands fa-youtube"></i> YouTube: {profile.connections.youtube}
+              </a>
+            )}
+            {profile.connections?.instagram && (
+              <a href={`https://instagram.com/${profile.connections.instagram.replace('@', '')}`} target="_blank" rel="noopener noreferrer" style={{ background: '#E1306C', color: 'white', padding: '6px 12px', borderRadius: '20px', fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '5px', textDecoration: 'none' }}>
+                <i className="fa-brands fa-instagram"></i> Instagram: {profile.connections.instagram}
+              </a>
+            )}
           </div>
         </div>
 

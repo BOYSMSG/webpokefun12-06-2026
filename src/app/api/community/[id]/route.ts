@@ -28,10 +28,12 @@ export async function GET(req: Request, props: { params: Promise<{ id: string }>
     // Fetch author info to attach avatar/name
     const author = await User.findOne({ username: post.authorId }).lean();
     let mySavedPosts: string[] = [];
+    let isFollowing = false;
     if (myEmail) {
       const me = await User.findOne({ email: myEmail }).lean();
       if (me) {
         mySavedPosts = me.savedPosts || [];
+        isFollowing = (me.following || []).includes(post.authorId);
       }
     }
 
@@ -46,6 +48,7 @@ export async function GET(req: Request, props: { params: Promise<{ id: string }>
       isLiked: myEmail ? (post.likes || []).includes(myEmail) : false,
       isDisliked: myEmail ? (post.dislikes || []).includes(myEmail) : false,
       isSaved: mySavedPosts.includes(post._id.toString()),
+      isFollowing: isFollowing,
       timestamp: post.createdAt,
     };
 

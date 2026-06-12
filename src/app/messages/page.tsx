@@ -18,7 +18,7 @@ export default function MessagesPage() {
   const [newMessage, setNewMessage] = useState("");
   const [loading, setLoading] = useState(true);
   const [menuOpen, setMenuOpen] = useState(false);
-  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const chatContainerRef = useRef<HTMLDivElement>(null);
 
   const OWNER_USERNAME = "boysmsg01"; // Or whatever the admin username is
 
@@ -63,7 +63,12 @@ export default function MessagesPage() {
   };
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTo({
+        top: chatContainerRef.current.scrollHeight,
+        behavior: 'smooth'
+      });
+    }
   }, [messages, activeContact]);
 
   const handleSendMessage = async (e: React.FormEvent) => {
@@ -306,7 +311,7 @@ export default function MessagesPage() {
               </div>
 
               {/* Chat Messages */}
-              <div style={{ flex: 1, overflowY: 'auto', padding: '20px', display: 'flex', flexDirection: 'column', gap: '15px' }} onClick={() => setMenuOpen(false)}>
+              <div ref={chatContainerRef} style={{ flex: 1, overflowY: 'auto', padding: '20px', display: 'flex', flexDirection: 'column', gap: '15px' }} onClick={() => setMenuOpen(false)}>
                 {activeChat.length === 0 ? (
                   <div style={{ textAlign: 'center', color: 'gray', marginTop: '40px' }}>Say hi to start the conversation!</div>
                 ) : (
@@ -338,7 +343,6 @@ export default function MessagesPage() {
                     )
                   })
                 )}
-                <div ref={messagesEndRef} />
               </div>
 
               {/* Chat Input */}

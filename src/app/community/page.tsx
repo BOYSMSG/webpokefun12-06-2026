@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { createPortal } from 'react-dom';
 
 export default function CommunityPage() {
   const router = useRouter();
@@ -15,14 +16,29 @@ export default function CommunityPage() {
   const [activeStatsReel, setActiveStatsReel] = useState<string | null>(null);
   const [statsData, setStatsData] = useState<{ likes: any[], dislikes: any[], viewers: any[] }>({ likes: [], dislikes: [], viewers: [] });
   const [activeStatsTab, setActiveStatsTab] = useState<'views' | 'likes' | 'dislikes'>('views');
+  const [isStatsLoading, setIsStatsLoading] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const fetchStats = async (id: string) => {
     setActiveStatsReel(id);
     setActiveStatsTab('views');
+    setIsStatsLoading(true);
     try {
       const res = await fetch(`/api/community/${id}/stats`);
-      if (res.ok) setStatsData(await res.json());
-    } catch (e) {}
+      if (res.ok) {
+        setStatsData(await res.json());
+      } else {
+        setStatsData({ likes: [], dislikes: [], viewers: [] });
+      }
+    } catch (e) {
+      setStatsData({ likes: [], dislikes: [], viewers: [] });
+    } finally {
+      setIsStatsLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -291,7 +307,7 @@ export default function CommunityPage() {
       )}
 
       {/* Slide-up Stats Modal */}
-      {activeStatsReel && (
+      {mounted && activeStatsReel && createPortal(
         <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', background: 'rgba(0,0,0,0.5)', zIndex: 100002, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end' }} onClick={() => setActiveStatsReel(null)}>
           <div style={{ background: '#111827', width: '100%', height: '60%', borderTopLeftRadius: '20px', borderTopRightRadius: '20px', padding: '20px', display: 'flex', flexDirection: 'column', animation: 'slideUp 0.3s ease-out' }} onClick={e => e.stopPropagation()}>
             {/* Header */}
@@ -302,29 +318,35 @@ export default function CommunityPage() {
             
             {/* Tabs */}
             <div style={{ display: 'flex', gap: '15px', borderBottom: '1px solid #374151', marginBottom: '15px' }}>
-              <button onClick={() => setActiveStatsTab('views')} style={{ background: 'transparent', border: 'none', color: activeStatsTab === 'views' ? 'white' : 'gray', paddingBottom: '10px', borderBottom: activeStatsTab === 'views' ? '2px solid white' : 'none', fontWeight: 'bold', cursor: 'pointer' }}>Views ({statsData.viewers.length})</button>
-              <button onClick={() => setActiveStatsTab('likes')} style={{ background: 'transparent', border: 'none', color: activeStatsTab === 'likes' ? 'white' : 'gray', paddingBottom: '10px', borderBottom: activeStatsTab === 'likes' ? '2px solid white' : 'none', fontWeight: 'bold', cursor: 'pointer' }}>Likes ({statsData.likes.length})</button>
-              <button onClick={() => setActiveStatsTab('dislikes')} style={{ background: 'transparent', border: 'none', color: activeStatsTab === 'dislikes' ? 'white' : 'gray', paddingBottom: '10px', borderBottom: activeStatsTab === 'dislikes' ? '2px solid white' : 'none', fontWeight: 'bold', cursor: 'pointer' }}>Dislikes ({statsData.dislikes.length})</button>
+              <button onClick={() => setActiveStatsTab('views')} style={{ background: 'transparent', border: 'none', color: activeStatsTab === 'views' ? 'white' : 'gray', paddingBottom: '10px', borderBottom: activeStatsTab === 'views' ? '2px solid white' : 'none', fontWeight: 'bold', cursor: 'pointer' }}>Views ({statsData?.viewers?.length || 0})</button>
+              <button onClick={() => setActiveStatsTab('likes')} style={{ background: 'transparent', border: 'none', color: activeStatsTab === 'likes' ? 'white' : 'gray', paddingBottom: '10px', borderBottom: activeStatsTab === 'likes' ? '2px solid white' : 'none', fontWeight: 'bold', cursor: 'pointer' }}>Likes ({statsData?.likes?.length || 0})</button>
+              <button onClick={() => setActiveStatsTab('dislikes')} style={{ background: 'transparent', border: 'none', color: activeStatsTab === 'dislikes' ? 'white' : 'gray', paddingBottom: '10px', borderBottom: activeStatsTab === 'dislikes' ? '2px solid white' : 'none', fontWeight: 'bold', cursor: 'pointer' }}>Dislikes ({statsData?.dislikes?.length || 0})</button>
             </div>
 
             {/* List */}
             <div style={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '15px' }}>
-              {statsData[activeStatsTab === 'views' ? 'viewers' : activeStatsTab].length === 0 ? (
+              {isStatsLoading ? (
+                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%', flexDirection: 'column', gap: '10px' }}>
+                  <i className="fa-solid fa-circle-notch fa-spin" style={{ color: '#8b5cf6', fontSize: '2rem' }}></i>
+                  <span style={{ color: 'gray', fontSize: '0.9rem' }}>Loading insights...</span>
+                </div>
+              ) : !(statsData?.[activeStatsTab === 'views' ? 'viewers' : activeStatsTab]?.length > 0) ? (
                 <p style={{ color: 'gray', textAlign: 'center', marginTop: '20px' }}>No users found.</p>
               ) : (
-                statsData[activeStatsTab === 'views' ? 'viewers' : activeStatsTab].map((u: any, idx) => (
+                statsData[activeStatsTab === 'views' ? 'viewers' : activeStatsTab].map((u: any, idx: number) => (
                   <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer' }} onClick={() => window.location.href = `/profile/${u.username}`}>
-                    <img src={u.avatar} alt={u.name} style={{ width: '40px', height: '40px', borderRadius: '50%' }} />
+                    <img src={u.avatar || `https://ui-avatars.com/api/?name=${u.username}&background=random`} alt={u.name || 'User'} style={{ width: '40px', height: '40px', borderRadius: '50%' }} />
                     <div style={{ display: 'flex', flexDirection: 'column' }}>
-                      <span style={{ color: 'white', fontWeight: 'bold', fontSize: '0.95rem' }}>{u.username}</span>
-                      <span style={{ color: 'gray', fontSize: '0.8rem' }}>{u.name}</span>
+                      <span style={{ color: 'white', fontWeight: 'bold', fontSize: '0.95rem' }}>{u.username || 'Unknown'}</span>
+                      <span style={{ color: 'gray', fontSize: '0.8rem' }}>{u.name || ''}</span>
                     </div>
                   </div>
                 ))
               )}
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );

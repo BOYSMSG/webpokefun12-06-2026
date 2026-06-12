@@ -12,8 +12,11 @@ export async function GET() {
     }
 
     await connectDB();
+    const me = await User.findOne({ email: session.user.email }).lean();
+    if (!me) return NextResponse.json({ count: 0 });
+
     const count = await Message.countDocuments({
-      receiverId: session.user.email,
+      receiverId: me.username,
       read: false
     });
 

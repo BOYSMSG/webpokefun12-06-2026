@@ -4,11 +4,13 @@ import React, { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
+import { useToast } from '@/components/Toast';
 
 export default function PostPage() {
   const params = useParams();
   const id = params?.id as string;
   const router = useRouter();
+  const toast = useToast();
   const { data: session } = useSession();
   const [post, setPost] = useState<any>(null);
   const [comments, setComments] = useState<any[]>([]);
@@ -45,7 +47,7 @@ export default function PostPage() {
   };
 
   const handleInteract = async (action: 'like' | 'dislike') => {
-    if (!session) return alert("Please login to vote!");
+    if (!session) return toast.error("Please login to vote!");
     try {
       const res = await fetch(`/api/community/${id}/interact`, {
         method: 'POST',
@@ -68,7 +70,7 @@ export default function PostPage() {
   };
 
   const handleFavorite = async () => {
-    if (!session) return alert("Please login to save posts!");
+    if (!session) return toast.error("Please login to save posts!");
     try {
       const res = await fetch(`/api/community/${id}/favorite`, {
         method: 'POST',
@@ -84,7 +86,7 @@ export default function PostPage() {
 
   const handleComment = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!session) return alert("Please login to comment!");
+    if (!session) return toast.error("Please login to comment!");
     if (!newComment.trim()) return;
 
     try {
@@ -103,20 +105,21 @@ export default function PostPage() {
   };
 
   const handleFollow = async () => {
-    if (!session) return alert("Please login to follow!");
+    if (!session) return toast.error("Please login to follow!");
     try {
       const res = await fetch(`/api/profile/${post.authorId}/follow`, {
         method: 'POST'
       });
       const data = await res.json();
       if (data.success) {
-        alert(data.isFollowing ? "You are now following this user!" : "You unfollowed this user.");
+        setPost({ ...post, isFollowing: data.isFollowing });
+        toast.success(data.isFollowing ? "You are now following this user!" : "You unfollowed this user.");
       } else {
-        alert(data.error);
+        toast.error(data.error);
       }
     } catch (e) {
       console.error(e);
-      alert("Failed to follow.");
+      toast.error("Failed to follow.");
     }
   };
 
@@ -132,15 +135,15 @@ export default function PostPage() {
         body: JSON.stringify({ reason })
       });
       if (res.ok) {
-        alert("Post deleted successfully.");
+        toast.success("Post deleted successfully.");
         router.push('/community');
       } else {
         const data = await res.json();
-        alert(data.error || "Failed to delete post");
+        toast.error(data.error || "Failed to delete post");
       }
     } catch (e) {
       console.error(e);
-      alert("Error deleting post.");
+      toast.error("Error deleting post.");
     }
   };
 
@@ -194,8 +197,8 @@ export default function PostPage() {
               <div>
                 <h4 style={{ margin: 0, color: '#f3f4f6', fontSize: '1.1rem' }}>{post.author}</h4>
                 <div style={{ display: 'flex', gap: '10px', marginTop: '5px' }}>
-                  <button onClick={handleFollow} style={{ background: '#10b981', color: 'white', border: 'none', padding: '3px 10px', borderRadius: '20px', fontSize: '0.8rem', fontWeight: 'bold', cursor: 'pointer' }}>
-                    <i className="fa-solid fa-user-plus"></i> Follow
+                  <button onClick={handleFollow} style={{ background: post.isFollowing ? '#3b82f6' : '#10b981', color: 'white', border: 'none', padding: '3px 10px', borderRadius: '20px', fontSize: '0.8rem', fontWeight: 'bold', cursor: 'pointer', transition: '0.2s' }}>
+                    <i className={`fa-solid ${post.isFollowing ? 'fa-user-check' : 'fa-user-plus'}`}></i> {post.isFollowing ? 'Following' : 'Follow'}
                   </button>
                   <Link href="/messages" style={{ background: '#3b82f6', color: 'white', textDecoration: 'none', padding: '3px 10px', borderRadius: '20px', fontSize: '0.8rem', fontWeight: 'bold' }}>
                     <i className="fa-solid fa-comment-dots"></i> Message
@@ -223,7 +226,7 @@ export default function PostPage() {
               <button onClick={handleFavorite} style={{ background: 'transparent', border: 'none', color: post.isSaved ? '#fbbf24' : '#9ca3af', cursor: 'pointer', display: 'flex', gap: '8px', alignItems: 'center' }} onMouseOver={e => !post.isSaved && (e.currentTarget.style.color = '#fbbf24')} onMouseOut={e => !post.isSaved && (e.currentTarget.style.color = '#9ca3af')} title={post.isSaved ? "Remove from Favorites" : "Save to Favorites"}>
                 <i className={post.isSaved ? "fa-solid fa-star" : "fa-regular fa-star"}></i> {post.isSaved ? "Saved" : "Save"}
               </button>
-              <button style={{ background: 'transparent', border: 'none', color: '#9ca3af', cursor: 'pointer', display: 'flex', gap: '8px', alignItems: 'center' }} onClick={(e) => { e.stopPropagation(); navigator.clipboard.writeText(window.location.href); alert('Link copied!'); }}>
+              <button style={{ background: 'transparent', border: 'none', color: '#9ca3af', cursor: 'pointer', display: 'flex', gap: '8px', alignItems: 'center' }} onClick={(e) => { e.stopPropagation(); navigator.clipboard.writeText(window.location.href); toast.success('Link copied!'); }}>
                 <i className="fa-solid fa-share"></i> Share
               </button>
             </div>
