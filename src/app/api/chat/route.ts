@@ -1,49 +1,42 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
-const apiKey = process.env.GEMINI_API_KEY || "";
-const genAI = new GoogleGenerativeAI(apiKey);
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
 
-// Define the system instructions for the AI
-const SYSTEM_PROMPT = `
-You are the official Pokefun AI Assistant, an expert on the Pokefun Minecraft SMP Server and the Cobblemon mod.
-Your goal is to help players by answering their questions in a friendly, enthusiastic, and helpful manner.
-Use Hindi and English mixed (Hinglish) sometimes to sound relatable to the Indian player base, but keep it mostly English if the user asks in English.
-Always be polite and act as a staff member of Pokefun.
+const SYSTEM_PROMPT = `You are "Professor Oak" (or a helpful guide for the Pokefun server). 
+You must act as a friendly, knowledgeable Minecraft Cobblemon SMP assistant.
+Never break character. Provide short, fun, and helpful answers. 
+If someone asks about the server, it's called Pokefun.
+Server IP: play.pokefun.in
+Store: store.pokefun.in
+Discord: https://discord.gg/pokefun
+The server has custom Fakemons, crates, gyms, and more!
+Always respond warmly!`;
 
-Here is the knowledge base you must use to answer questions:
-- Server IP: play.pokefunsmp.com (Bedrock Port: 19132)
-- Modpack: "Pokefun Cobblemon" on Modrinth/CurseForge
-- Features: We have Custom Fakemons, Fusions, Battle Tower, 8 Gyms, Elite 4, Custom Cosmetics, Dungeons, and Raids.
-- Rules: No hacking, no x-ray, no griefing, no scamming. Treat everyone with respect.
-- Gyms: We have 8 player-run Gyms and NPC gyms.
-- Economy: We use PokeDollars. Players can earn money by selling items, battling trainers, or voting.
-- Community: We have a Discord server and a dedicated website community page for Reels and Posts.
-
-If a player asks a question you don't know the answer to, tell them to "Open a ticket on our Discord server so our Staff Team can help you out!"
-Never break character. You are a Pokefun AI.
-`;
-
-export async function POST(req: NextRequest) {
+export async function POST(req: Request) {
   try {
-    if (!apiKey) {
-      return NextResponse.json({ error: "Gemini API Key is missing. Please contact admin to set it up." }, { status: 500 });
-    }
-
     const { messages } = await req.json();
 
     if (!messages || !Array.isArray(messages)) {
       return NextResponse.json({ error: "Invalid message format" }, { status: 400 });
     }
 
-    // Use Gemini 2.0 Flash for fast chat responses
+    if (!process.env.GEMINI_API_KEY) {
+      return NextResponse.json({ error: "Gemini API key is missing from environment" }, { status: 500 });
+    }
+
+    // Use Gemini 2.0 Flash as it is the only model supported by this API key
     const model = genAI.getGenerativeModel({ 
       model: "gemini-2.0-flash",
       systemInstruction: SYSTEM_PROMPT
     });
 
-    // Extract the latest user message
-    const latestMessage = messages[messages.length - 1].content;
+    // Extract the latest user message. The frontend sends msg.content
+    const latestMessage = messages[messages.length - 1].content || messages[messages.length - 1].text || "";
+
+    if (!latestMessage) {
+        return NextResponse.json({ error: "Empty message content" }, { status: 400 });
+    }
 
     // Call Gemini API
     const result = await model.generateContent(latestMessage);
@@ -52,6 +45,17 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ response: responseText });
   } catch (error: any) {
     console.error("AI Chat error:", error);
-    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+    
+    // Attempt to parse rate limits to give user a clean error
+    if (error?.message?.includes("429")) {
+        return NextResponse.json({ error: "Google API Limit reached! Please try again later or use a different Google account for the API key." }, { status: 429 });
+    }
+
+    if (error?.message?.includes("404")) {
+        // Fallback if gemini-1.5-flash isn't available
+        return NextResponse.json({ error: "The AI model is currently disabled for this API key. Please generate a new key from Google AI Studio." }, { status: 404 });
+    }
+
+    return NextResponse.json({ error: "Internal Server Error. Check console logs." }, { status: 500 });
   }
 }

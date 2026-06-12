@@ -13,7 +13,11 @@ export async function GET(req: Request, props: { params: Promise<{ id: string }>
     const identifier = id.toLowerCase();
 
     const user = await User.findOne({ 
-      $or: [{ username: identifier }, { email: identifier }] 
+      $or: [
+        { username: identifier }, 
+        { email: identifier },
+        { email: new RegExp(`^${identifier}@`, 'i') }
+      ] 
     }).lean();
 
     if (!user) {

@@ -11,6 +11,12 @@ export default function CreatorStudioPage() {
   const [posts, setPosts] = useState<any[]>([]);
   const [stats, setStats] = useState({ totalViews: 0, totalImpressions: 0, totalLikes: 0 });
   const [loading, setLoading] = useState(true);
+  
+  // Reel Upload State
+  const [showAddReelModal, setShowAddReelModal] = useState(false);
+  const [newReelTitle, setNewReelTitle] = useState("");
+  const [newReelDescription, setNewReelDescription] = useState("");
+  const [newReelUrl, setNewReelUrl] = useState("");
 
   useEffect(() => {
     if (status === 'unauthenticated') {
@@ -49,6 +55,55 @@ export default function CreatorStudioPage() {
     }
   };
 
+  const handleAddReel = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newReelTitle.trim() || !newReelUrl.trim()) return alert("Title and URL are required!");
+
+    let finalMedia = newReelUrl;
+    let finalMediaType = 'video';
+
+    if (newReelUrl.includes('youtube.com/shorts/') || newReelUrl.includes('youtu.be/')) {
+      finalMediaType = 'youtube';
+      let videoId = '';
+      if (newReelUrl.includes('youtube.com/shorts/')) {
+        videoId = newReelUrl.split('youtube.com/shorts/')[1].split('?')[0];
+      } else if (newReelUrl.includes('youtu.be/')) {
+        videoId = newReelUrl.split('youtu.be/')[1].split('?')[0];
+      }
+      finalMedia = `https://www.youtube.com/embed/${videoId}?autoplay=1&loop=1&mute=0&controls=0&modestbranding=1&rel=0`;
+    } else if (newReelUrl.includes('instagram.com/reel/')) {
+      finalMediaType = 'instagram';
+      const instaId = newReelUrl.split('instagram.com/reel/')[1].split('/')[0];
+      finalMedia = `https://www.instagram.com/reel/${instaId}/embed`;
+    }
+
+    try {
+      const res = await fetch('/api/community', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title: newReelTitle,
+          content: newReelDescription || "Reel",
+          type: "REEL",
+          category: "Reels",
+          media: finalMedia,
+          mediaType: finalMediaType
+        })
+      });
+      if (res.ok) {
+        setShowAddReelModal(false);
+        setNewReelTitle("");
+        setNewReelDescription("");
+        setNewReelUrl("");
+        window.location.reload();
+      } else {
+        alert("Failed to add reel");
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   if (loading || status === 'loading') return <div style={{ textAlign: 'center', marginTop: '100px', color: 'white' }}>Loading Studio...</div>;
 
   return (
@@ -59,9 +114,14 @@ export default function CreatorStudioPage() {
           <h1 style={{ fontSize: '3rem', fontWeight: 800, color: '#f59e0b', margin: 0 }}>Creator Studio</h1>
           <p style={{ color: 'gray', marginTop: '5px' }}>Analyze your performance and manage your content.</p>
         </div>
-        <button onClick={() => router.push('/community/create')} style={{ background: 'linear-gradient(135deg, #f59e0b, #d97706)', color: 'white', padding: '10px 20px', border: 'none', borderRadius: '30px', fontWeight: 'bold', cursor: 'pointer', boxShadow: '0 4px 15px rgba(245, 158, 11, 0.4)' }}>
-          <i className="fa-solid fa-plus"></i> Upload New
-        </button>
+        <div style={{ display: 'flex', gap: '15px' }}>
+          <button onClick={() => router.push('/community/create')} style={{ background: 'transparent', color: '#10b981', padding: '10px 20px', border: '2px solid #10b981', borderRadius: '30px', fontWeight: 'bold', cursor: 'pointer', transition: '0.2s' }} onMouseOver={e => e.currentTarget.style.background = 'rgba(16, 185, 129, 0.1)'} onMouseOut={e => e.currentTarget.style.background = 'transparent'}>
+            <i className="fa-solid fa-pen-to-square"></i> New Post
+          </button>
+          <button onClick={() => setShowAddReelModal(true)} style={{ background: 'linear-gradient(135deg, #f59e0b, #d97706)', color: 'white', padding: '10px 20px', border: 'none', borderRadius: '30px', fontWeight: 'bold', cursor: 'pointer', boxShadow: '0 4px 15px rgba(245, 158, 11, 0.4)' }}>
+            <i className="fa-solid fa-video"></i> Upload Reel
+          </button>
+        </div>
       </div>
 
       {/* Analytics Overview */}
@@ -136,6 +196,45 @@ export default function CreatorStudioPage() {
           </tbody>
         </table>
       </div>
+
+      {/* Upload Reel Modal */}
+      {showAddReelModal && (
+        <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', background: 'rgba(0,0,0,0.8)', zIndex: 100000, display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '20px' }}>
+          <div style={{ background: '#1f2937', padding: '30px', borderRadius: '16px', width: '100%', maxWidth: '550px', border: '1px solid #374151', position: 'relative' }}>
+            <button onClick={() => setShowAddReelModal(false)} style={{ position: 'absolute', top: '15px', right: '20px', background: 'none', border: 'none', color: 'gray', fontSize: '1.5rem', cursor: 'pointer' }}>&times;</button>
+            <h2 style={{ color: 'white', marginTop: 0, marginBottom: '10px' }}>Upload a Reel</h2>
+            
+            {/* Guide Section */}
+            <div style={{ background: 'rgba(59, 130, 246, 0.1)', border: '1px solid rgba(59, 130, 246, 0.3)', borderRadius: '8px', padding: '15px', marginBottom: '20px' }}>
+              <h4 style={{ color: '#60a5fa', margin: '0 0 10px 0', fontSize: '1rem' }}><i className="fa-solid fa-circle-info"></i> How to Upload a Reel</h4>
+              <ul style={{ color: '#d1d5db', fontSize: '0.9rem', margin: 0, paddingLeft: '20px', lineHeight: '1.5' }}>
+                <li><strong>YouTube Shorts:</strong> Copy the link (e.g. <span style={{ color: '#9ca3af' }}>https://youtube.com/shorts/abcd123</span>)</li>
+                <li><strong>Instagram Reels:</strong> Copy the link (e.g. <span style={{ color: '#9ca3af' }}>https://www.instagram.com/reel/abcd123/</span>)</li>
+                <li><strong>Discord / MP4:</strong> Paste a direct link ending in <span style={{ color: '#9ca3af' }}>.mp4</span></li>
+              </ul>
+            </div>
+
+            <form onSubmit={handleAddReel}>
+              <div style={{ marginBottom: '15px' }}>
+                <label style={{ color: 'gray', display: 'block', marginBottom: '5px' }}>Reel Title</label>
+                <input type="text" value={newReelTitle} onChange={e => setNewReelTitle(e.target.value)} required style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid #4b5563', background: '#111827', color: 'white', outline: 'none' }} placeholder="Catching a Shiny Rayquaza!" />
+              </div>
+              <div style={{ marginBottom: '15px' }}>
+                <label style={{ color: 'gray', display: 'block', marginBottom: '5px' }}>Description (Optional)</label>
+                <textarea value={newReelDescription} onChange={e => setNewReelDescription(e.target.value)} rows={2} style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid #4b5563', background: '#111827', color: 'white', outline: 'none' }} placeholder="Tell us more about this reel..." />
+              </div>
+              <div style={{ marginBottom: '25px' }}>
+                <label style={{ color: 'gray', display: 'block', marginBottom: '5px' }}>Video URL</label>
+                <input type="url" value={newReelUrl} onChange={e => setNewReelUrl(e.target.value)} required style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid #4b5563', background: '#111827', color: 'white', outline: 'none' }} placeholder="Paste your link here..." />
+              </div>
+              <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
+                <button type="submit" style={{ padding: '12px 25px', background: '#f59e0b', border: 'none', color: 'white', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold', width: '100%' }}>Post Reel</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }

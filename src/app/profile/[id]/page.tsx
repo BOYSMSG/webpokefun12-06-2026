@@ -147,6 +147,16 @@ export default function PublicProfilePage() {
               <i className="fa-brands fa-google"></i> Google: {profile.connections.google}
             </span>
           )}
+          {profile.connections?.youtube && (
+            <a href={`https://youtube.com/@${profile.connections.youtube.replace('@', '')}`} target="_blank" rel="noopener noreferrer" style={{ background: '#FF0000', color: 'white', padding: '6px 12px', borderRadius: '20px', fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '5px', textDecoration: 'none' }}>
+              <i className="fa-brands fa-youtube"></i> YouTube: {profile.connections.youtube}
+            </a>
+          )}
+          {profile.connections?.instagram && (
+            <a href={`https://instagram.com/${profile.connections.instagram.replace('@', '')}`} target="_blank" rel="noopener noreferrer" style={{ background: '#E1306C', color: 'white', padding: '6px 12px', borderRadius: '20px', fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '5px', textDecoration: 'none' }}>
+              <i className="fa-brands fa-instagram"></i> Instagram: {profile.connections.instagram}
+            </a>
+          )}
           
           {profile.isOwnProfile && (
             <button onClick={() => setShowConnectionsModal(true)} style={{ background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)', color: 'white', padding: '6px 12px', borderRadius: '20px', fontSize: '0.9rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '5px' }} onMouseOver={e => e.currentTarget.style.background='rgba(255,255,255,0.2)'} onMouseOut={e => e.currentTarget.style.background='rgba(255,255,255,0.1)'}>
@@ -232,6 +242,8 @@ export default function PublicProfilePage() {
                 >
                   <option value="minecraft">Minecraft</option>
                   <option value="discord">Discord</option>
+                  <option value="youtube">YouTube</option>
+                  <option value="instagram">Instagram</option>
                   <option value="google">Google</option>
                 </select>
               </div>

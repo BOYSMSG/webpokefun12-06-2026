@@ -235,45 +235,14 @@ export default function AIChatWidget() {
             </button>
           </div>
 
-          {/* Tab Content: CHAT */}
-          <div style={{ display: activeWindow === 'chat' ? "flex" : "none", flex: 1, flexDirection: "column", overflow: "hidden" }}>
-            <div style={{ flex: 1, padding: "15px", overflowY: "auto", display: "flex", flexDirection: "column", gap: "10px", background: "#111" }}>
-              {messages.map((msg, idx) => (
-                <div key={idx} style={{
-                  alignSelf: msg.role === 'user' ? 'flex-end' : 'flex-start',
-                  background: msg.role === 'user' ? '#3b82f6' : '#2d3748',
-                  color: 'white',
-                  padding: '10px 15px',
-                  borderRadius: '15px',
-                  borderBottomRightRadius: msg.role === 'user' ? '0' : '15px',
-                  borderBottomLeftRadius: msg.role === 'ai' ? '0' : '15px',
-                  maxWidth: '80%',
-                  fontSize: '0.95rem',
-                  lineHeight: '1.4'
-                }}>
-                  {msg.content}
-                </div>
-              ))}
-              {isLoading && (
-                <div style={{ alignSelf: 'flex-start', background: '#2d3748', color: 'gray', padding: '10px 15px', borderRadius: '15px', borderBottomLeftRadius: '0', fontSize: '0.9rem' }}>
-                  <i className="fa-solid fa-ellipsis fa-fade"></i> AI is thinking...
-                </div>
-              )}
-              <div ref={messagesEndRef} />
-            </div>
-            <div style={{ padding: "10px", background: "#1c1f21", borderTop: "1px solid rgba(255,255,255,0.1)", display: "flex", gap: "10px" }}>
-              <input 
-                type="text" 
-                placeholder="Ask about Pokefun..." 
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && handleSend()}
-                style={{ flex: 1, padding: "10px", borderRadius: "10px", border: "none", background: "rgba(0,0,0,0.5)", color: "white", outline: "none" }}
-              />
-              <button onClick={handleSend} disabled={isLoading} style={{ background: "#10b981", color: "white", border: "none", borderRadius: "10px", width: "40px", cursor: "pointer", display: "flex", justifyContent: "center", alignItems: "center" }}>
-                <i className="fa-solid fa-paper-plane"></i>
-              </button>
-            </div>
+          {/* Tab Content: CHAT (Coming Soon) */}
+          <div style={{ display: activeWindow === 'chat' ? "flex" : "none", flex: 1, flexDirection: "column", overflow: "hidden", justifyContent: "center", alignItems: "center", background: "#111", padding: "20px", textAlign: "center" }}>
+            <i className="fa-solid fa-robot" style={{ fontSize: "4rem", color: "#3b82f6", marginBottom: "15px", opacity: 0.8 }}></i>
+            <h2 style={{ color: "white", marginBottom: "10px" }}>Pokefun AI</h2>
+            <p style={{ color: "gray", fontSize: "1rem", lineHeight: "1.5" }}>
+              Our AI Assistant is currently undergoing upgrades. <br/><br/>
+              <strong style={{ color: "#10b981" }}>Coming Soon!</strong>
+            </p>
           </div>
 
           {/* Tab Content: NOTIFICATIONS */}

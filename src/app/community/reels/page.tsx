@@ -1,34 +1,288 @@
 "use client";
 
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import Link from 'next/link';
+import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 
 export default function ReelsPage() {
+  const router = useRouter();
+  const { data: session } = useSession();
+  const [reels, setReels] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [newReelTitle, setNewReelTitle] = useState("");
+  const [newReelDescription, setNewReelDescription] = useState("");
+  const [newReelUrl, setNewReelUrl] = useState("");
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    fetchReels();
+  }, []);
+
+  const fetchReels = async () => {
+    try {
+      const res = await fetch('/api/community?type=REEL');
+      if (res.ok) {
+        setReels(await res.json());
+      }
+    } catch (e) {
+      console.error(e);
+    }
+    setLoading(false);
+  };
+
+  const handleAddReel = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!session) return alert("Please login to post a reel!");
+    if (!newReelTitle.trim() || !newReelUrl.trim()) return alert("Title and URL are required!");
+
+    let finalMedia = newReelUrl;
+    let finalMediaType = 'video';
+
+    // Parse URL
+    if (newReelUrl.includes('youtube.com/shorts/') || newReelUrl.includes('youtu.be/')) {
+      finalMediaType = 'youtube';
+      let videoId = '';
+      if (newReelUrl.includes('youtube.com/shorts/')) {
+        videoId = newReelUrl.split('youtube.com/shorts/')[1].split('?')[0];
+      } else if (newReelUrl.includes('youtu.be/')) {
+        videoId = newReelUrl.split('youtu.be/')[1].split('?')[0];
+      }
+      finalMedia = `https://www.youtube.com/embed/${videoId}?autoplay=1&loop=1&mute=0&controls=0&modestbranding=1&rel=0`;
+    } else if (newReelUrl.includes('instagram.com/reel/')) {
+      finalMediaType = 'instagram';
+      const instaId = newReelUrl.split('instagram.com/reel/')[1].split('/')[0];
+      finalMedia = `https://www.instagram.com/reel/${instaId}/embed`;
+    }
+
+    try {
+      const res = await fetch('/api/community', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title: newReelTitle,
+          content: newReelDescription || "Reel",
+          type: "REEL",
+          category: "Reels",
+          media: finalMedia,
+          mediaType: finalMediaType
+        })
+      });
+      if (res.ok) {
+        setShowAddModal(false);
+        setNewReelTitle("");
+        setNewReelDescription("");
+        setNewReelUrl("");
+        fetchReels();
+      } else {
+        alert("Failed to add reel");
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleInteract = async (postId: string, action: 'like' | 'dislike' | 'favorite') => {
+    if (!session) return alert("Please login to interact!");
+    try {
+      if (action === 'favorite') {
+        const res = await fetch(`/api/community/${postId}/favorite`, { method: 'POST' });
+        if (res.ok) {
+          const data = await res.json();
+          setReels(prev => prev.map(p => p.id === postId ? { ...p, isSaved: data.isFavorited } : p));
+        }
+      } else {
+        const res = await fetch(`/api/community/${postId}/interact`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action })
+        });
+        if (res.ok) {
+          const data = await res.json();
+          setReels(prev => prev.map(p => p.id === postId ? {
+            ...p,
+            upvotes: data.likes,
+            downvotes: data.dislikes,
+            isLiked: data.isLiked,
+            isDisliked: data.isDisliked
+          } : p));
+        }
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
   return (
-    <div style={{ background: '#0a0a0a', width: '100vw', height: '100vh', position: 'fixed', top: 0, left: 0, zIndex: 10000, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
-      
-      {/* Top Navigation */}
-      <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', padding: '30px', display: 'flex', alignItems: 'center', zIndex: 10001 }}>
-        <a href="/community" style={{ color: 'white', textDecoration: 'none', fontSize: '1.2rem', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <i className="fa-solid fa-arrow-left"></i> Back to Community
-        </a>
-      </div>
-
-      <div style={{ textAlign: 'center', color: 'white', padding: '40px' }}>
-        <i className="fa-solid fa-film" style={{ fontSize: '5rem', color: '#8b5cf6', marginBottom: '20px' }}></i>
-        <h1 style={{ fontSize: '3rem', fontWeight: 800, margin: '0 0 10px 0' }}>Pokefun Reels</h1>
-        <p style={{ fontSize: '1.2rem', color: 'gray', maxWidth: '500px', margin: '0 auto 30px auto' }}>
-          We are currently upgrading our storage systems to handle high-quality video reels for all players. This feature will be back online soon!
-        </p>
-        <div style={{ display: 'inline-block', background: 'rgba(139, 92, 246, 0.2)', color: '#c084fc', padding: '10px 20px', borderRadius: '30px', fontWeight: 'bold', border: '1px solid rgba(139, 92, 246, 0.5)' }}>
-          Coming Soon
-        </div>
-      </div>
-
+    <div style={{ background: 'black', width: '100vw', height: '100vh', position: 'fixed', top: 0, left: 0, zIndex: 10000, overflow: 'hidden' }}>
+      {/* Global CSS to hide website layout elements */}
       <style>{`
         #gh-header, #nav, #footer, .desktop-sidebar-container, .global-sidebar-toggle, .global-sidebar, #ai-chat-widget {
           display: none !important;
         }
+        .snap-container {
+          height: 100vh;
+          overflow-y: scroll;
+          scroll-snap-type: y mandatory;
+          scroll-behavior: smooth;
+        }
+        .snap-container::-webkit-scrollbar {
+          display: none;
+        }
+        .reel-item {
+          height: 100vh;
+          width: 100vw;
+          scroll-snap-align: start;
+          position: relative;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          background: black;
+        }
+        .reel-media {
+          height: 100%;
+          max-width: 500px;
+          width: 100%;
+          object-fit: cover;
+          background: #111;
+        }
+        .reel-overlay {
+          position: absolute;
+          bottom: 0;
+          left: 50%;
+          transform: translateX(-50%);
+          max-width: 500px;
+          width: 100%;
+          padding: 20px;
+          display: flex;
+          justify-content: space-between;
+          align-items: flex-end;
+          background: linear-gradient(transparent, rgba(0,0,0,0.8));
+        }
+        .reel-actions {
+          display: flex;
+          flex-direction: column;
+          gap: 20px;
+          align-items: center;
+        }
+        .action-btn {
+          background: transparent;
+          border: none;
+          color: white;
+          font-size: 2rem;
+          cursor: pointer;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 5px;
+          text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+          transition: transform 0.2s;
+        }
+        .action-btn:hover {
+          transform: scale(1.1);
+        }
+        .action-text {
+          font-size: 0.9rem;
+          font-weight: bold;
+        }
       `}</style>
+
+      {/* Top Nav */}
+      <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', padding: '20px 30px', display: 'flex', justifyContent: 'flex-start', alignItems: 'center', gap: '30px', zIndex: 10001, background: 'linear-gradient(rgba(0,0,0,0.8), transparent)' }}>
+        <Link href="/community" style={{ color: 'white', textDecoration: 'none', fontSize: '1.2rem', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '10px', textShadow: '0 2px 4px rgba(0,0,0,0.8)' }}>
+          <i className="fa-solid fa-arrow-left"></i> Community
+        </Link>
+        <button onClick={() => setShowAddModal(true)} style={{ background: '#8b5cf6', color: 'white', border: 'none', padding: '10px 20px', borderRadius: '20px', fontWeight: 'bold', cursor: 'pointer', boxShadow: '0 4px 15px rgba(139,92,246,0.5)' }}>
+          + Add Reel
+        </button>
+      </div>
+
+      {loading ? (
+        <div style={{ height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', color: 'gray', fontSize: '1.5rem' }}>Loading Reels...</div>
+      ) : reels.length === 0 ? (
+        <div style={{ height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', color: 'gray', flexDirection: 'column' }}>
+          <i className="fa-solid fa-film" style={{ fontSize: '4rem', marginBottom: '20px', opacity: 0.5 }}></i>
+          <h2>No Reels yet!</h2>
+          <p>Be the first to add a Pokemon short or clip.</p>
+        </div>
+      ) : (
+        <div className="snap-container" ref={containerRef}>
+          {reels.map(reel => (
+            <div key={reel.id} className="reel-item">
+              
+              {/* Media Renderer */}
+              {reel.mediaType === 'youtube' ? (
+                <iframe src={reel.media} className="reel-media" style={{ border: 'none' }} allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe>
+              ) : reel.mediaType === 'instagram' ? (
+                <iframe src={reel.media} className="reel-media" style={{ border: 'none' }} scrolling="no" allowTransparency></iframe>
+              ) : (
+                <video src={reel.media} className="reel-media" autoPlay loop muted playsInline controls={false} />
+              )}
+
+              {/* Overlay Content */}
+              <div className="reel-overlay">
+                <div style={{ color: 'white', paddingRight: '20px', paddingBottom: '10px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px' }} onClick={() => router.push(`/profile/${reel.authorUsername}`)}>
+                    <img src={reel.avatar} alt={reel.author} style={{ width: '40px', height: '40px', borderRadius: '50%', border: '2px solid white', cursor: 'pointer' }} />
+                    <span style={{ fontWeight: 'bold', fontSize: '1.1rem', cursor: 'pointer', textShadow: '0 1px 3px black' }}>@{reel.authorUsername}</span>
+                  </div>
+                  <h3 style={{ margin: '0 0 5px 0', fontSize: '1.2rem', textShadow: '0 1px 3px black' }}>{reel.title}</h3>
+                  <p style={{ margin: 0, fontSize: '0.9rem', opacity: 0.8, textShadow: '0 1px 3px black' }}>{new Date(reel.timestamp).toLocaleDateString()}</p>
+                </div>
+                
+                {/* Actions Sidebar */}
+                <div className="reel-actions">
+                  <button className="action-btn" onClick={() => handleInteract(reel.id, 'like')} style={{ color: reel.isLiked ? '#ef4444' : 'white' }}>
+                    <i className="fa-solid fa-heart"></i>
+                    <span className="action-text">{reel.upvotes}</span>
+                  </button>
+                  <button className="action-btn" onClick={() => router.push(`/community/post/${reel.id}`)}>
+                    <i className="fa-solid fa-comment-dots"></i>
+                    <span className="action-text">Chat</span>
+                  </button>
+                  <button className="action-btn" onClick={() => handleInteract(reel.id, 'favorite')} style={{ color: reel.isSaved ? '#fbbf24' : 'white' }}>
+                    <i className={reel.isSaved ? "fa-solid fa-star" : "fa-regular fa-star"}></i>
+                    <span className="action-text">Save</span>
+                  </button>
+                  <button className="action-btn" onClick={() => { navigator.clipboard.writeText(window.location.origin + '/community/post/' + reel.id); alert('Link copied!'); }}>
+                    <i className="fa-solid fa-share"></i>
+                    <span className="action-text">Share</span>
+                  </button>
+                </div>
+              </div>
+
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Add Modal */}
+      {showAddModal && (
+        <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', background: 'rgba(0,0,0,0.9)', zIndex: 100000, display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '20px' }}>
+          <div style={{ background: '#1f2937', padding: '30px', borderRadius: '16px', width: '100%', maxWidth: '500px', border: '1px solid #374151' }}>
+            <h2 style={{ color: 'white', marginTop: 0, marginBottom: '20px' }}>Add a Reel</h2>
+            <form onSubmit={handleAddReel}>
+              <div style={{ marginBottom: '15px' }}>
+                <label style={{ color: 'gray', display: 'block', marginBottom: '5px' }}>Reel Title</label>
+                <input type="text" value={newReelTitle} onChange={e => setNewReelTitle(e.target.value)} required style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid #4b5563', background: '#374151', color: 'white', outline: 'none' }} placeholder="e.g. My epic shiny catch!" />
+              </div>
+              <div style={{ marginBottom: '15px' }}>
+                <label style={{ color: 'gray', display: 'block', marginBottom: '5px' }}>Description (Optional)</label>
+                <textarea value={newReelDescription} onChange={e => setNewReelDescription(e.target.value)} rows={2} style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid #4b5563', background: '#374151', color: 'white', outline: 'none' }} placeholder="Tell us more about this reel..." />
+              </div>
+              <div style={{ marginBottom: '25px' }}>
+                <label style={{ color: 'gray', display: 'block', marginBottom: '5px' }}>Video URL (YouTube Shorts, Discord .mp4)</label>
+                <input type="url" value={newReelUrl} onChange={e => setNewReelUrl(e.target.value)} required style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid #4b5563', background: '#374151', color: 'white', outline: 'none' }} placeholder="https://youtube.com/shorts/..." />
+              </div>
+              <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
+                <button type="button" onClick={() => setShowAddModal(false)} style={{ padding: '10px 20px', background: 'transparent', border: '1px solid #4b5563', color: 'white', borderRadius: '20px', cursor: 'pointer' }}>Cancel</button>
+                <button type="submit" style={{ padding: '10px 20px', background: '#8b5cf6', border: 'none', color: 'white', borderRadius: '20px', cursor: 'pointer', fontWeight: 'bold' }}>Post Reel</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

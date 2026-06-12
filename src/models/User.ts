@@ -12,6 +12,8 @@ export interface IUser extends Document {
     minecraft?: string;
     discord?: string;
     google?: string;
+    youtube?: string;
+    instagram?: string;
   };
   followers: string[];
   following: string[];
@@ -33,7 +35,9 @@ const UserSchema: Schema = new Schema({
   connections: {
     minecraft: { type: String },
     discord: { type: String },
-    google: { type: String }
+    google: { type: String },
+    youtube: { type: String },
+    instagram: { type: String }
   },
   followers: [{ type: String }],
   following: [{ type: String }],

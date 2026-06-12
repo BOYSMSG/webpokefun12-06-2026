@@ -41,9 +41,13 @@ export async function PUT(req: Request) {
     }
 
     await connectDB();
-    const { name, bio, username } = await req.json();
+    const { name, bio, username, connections } = await req.json();
 
     const updates: any = { name, bio };
+
+    if (connections) {
+      updates.connections = connections;
+    }
 
     if (username) {
       const cleanUsername = username.toLowerCase().replace(/[^a-z0-9_]/g, '');

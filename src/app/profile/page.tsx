@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { useSession } from 'next-auth/react';
+import { useSession, signIn } from "next-auth/react";
 import { useRouter } from 'next/navigation';
 
 export default function ProfilePage() {
@@ -12,10 +12,13 @@ export default function ProfilePage() {
   const [posts, setPosts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Edit Modal State
   const [isEditing, setIsEditing] = useState(false);
   const [editName, setEditName] = useState('');
+  const [editUsername, setEditUsername] = useState('');
   const [editBio, setEditBio] = useState('');
+  const [editConnections, setEditConnections] = useState({
+    minecraft: '', discord: '', youtube: '', instagram: '', google: ''
+  });
 
   useEffect(() => {
     if (status === 'unauthenticated') {
@@ -31,7 +34,15 @@ export default function ProfilePage() {
             setProfile(data.user);
             setPosts(data.posts || []);
             setEditName(data.user.name);
+            setEditUsername(data.user.username || '');
             setEditBio(data.user.bio || '');
+            setEditConnections({
+              minecraft: data.user.connections?.minecraft || '',
+              discord: data.user.connections?.discord || '',
+              youtube: data.user.connections?.youtube || '',
+              instagram: data.user.connections?.instagram || '',
+              google: data.user.connections?.google || ''
+            });
           }
           setLoading(false);
         })
@@ -47,7 +58,12 @@ export default function ProfilePage() {
       const res = await fetch('/api/profile', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: editName, bio: editBio })
+        body: JSON.stringify({ 
+          name: editName, 
+          username: editUsername, 
+          bio: editBio,
+          connections: editConnections
+        })
       });
       if (res.ok) {
         const updated = await res.json();
@@ -55,7 +71,8 @@ export default function ProfilePage() {
         setIsEditing(false);
         alert("Profile updated successfully!");
       } else {
-        alert("Failed to update profile");
+        const errData = await res.json();
+        alert(errData.error || "Failed to update profile");
       }
     } catch (e) {
       alert("An error occurred");
@@ -157,8 +174,8 @@ export default function ProfilePage() {
 
       {/* Edit Modal */}
       {isEditing && (
-        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.8)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 9999 }}>
-          <div style={{ background: '#1c1f21', padding: '30px', borderRadius: '20px', width: '100%', maxWidth: '500px', border: '1px solid rgba(255,255,255,0.1)' }}>
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.8)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 9999, overflowY: 'auto', padding: '20px' }}>
+          <div style={{ background: '#1c1f21', padding: '30px', borderRadius: '20px', width: '100%', maxWidth: '550px', border: '1px solid rgba(255,255,255,0.1)', maxHeight: '90vh', overflowY: 'auto' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
               <h2 style={{ color: 'white', margin: 0 }}>Edit Profile</h2>
               <button onClick={() => setIsEditing(false)} style={{ background: 'none', border: 'none', color: 'gray', fontSize: '1.5rem', cursor: 'pointer' }}>&times;</button>
@@ -169,11 +186,52 @@ export default function ProfilePage() {
               <input value={editName} onChange={e => setEditName(e.target.value)} style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #444', background: '#111', color: 'white' }} />
             </div>
 
+            <div style={{ marginBottom: '15px' }}>
+              <label style={{ display: 'block', color: 'gray', marginBottom: '5px' }}>Pokefun Web ID (Username)</label>
+              <input value={editUsername} onChange={e => setEditUsername(e.target.value.toLowerCase().replace(/[^a-z0-9_]/g, ''))} style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #444', background: '#111', color: 'white' }} placeholder="No spaces, only lowercase and numbers" />
+            </div>
 
-
-            <div style={{ marginBottom: '25px' }}>
+            <div style={{ marginBottom: '15px' }}>
               <label style={{ display: 'block', color: 'gray', marginBottom: '5px' }}>Bio</label>
               <textarea value={editBio} onChange={e => setEditBio(e.target.value)} rows={3} style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #444', background: '#111', color: 'white' }} />
+            </div>
+
+            <hr style={{ border: 'none', borderTop: '1px solid #333', margin: '20px 0' }} />
+            <h3 style={{ color: 'white', marginTop: 0, marginBottom: '15px', fontSize: '1.1rem' }}>Linked Accounts</h3>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px', marginBottom: '25px' }}>
+              <div>
+                <label style={{ display: 'block', color: 'gray', marginBottom: '5px', fontSize: '0.85rem' }}><i className="fa-solid fa-cube"></i> Minecraft</label>
+                <input value={editConnections.minecraft} onChange={e => setEditConnections({...editConnections, minecraft: e.target.value})} placeholder="In-game name" style={{ width: '100%', padding: '8px', borderRadius: '6px', border: '1px solid #444', background: '#111', color: 'white', fontSize: '0.9rem' }} />
+              </div>
+              <div>
+                <label style={{ display: 'block', color: 'gray', marginBottom: '5px', fontSize: '0.85rem' }}><i className="fa-brands fa-discord"></i> Discord</label>
+                {editConnections.discord ? (
+                  <input value={editConnections.discord} disabled title="Discord is automatically linked" style={{ width: '100%', padding: '8px', borderRadius: '6px', border: '1px solid #333', background: '#222', color: 'gray', fontSize: '0.9rem', cursor: 'not-allowed' }} />
+                ) : (
+                  <button onClick={() => signIn('discord')} style={{ width: '100%', padding: '8px', borderRadius: '6px', border: 'none', background: '#5865F2', color: 'white', fontSize: '0.9rem', cursor: 'pointer', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '10px', fontWeight: 'bold' }}>
+                    <i className="fa-brands fa-discord"></i> Connect Discord
+                  </button>
+                )}
+              </div>
+              <div>
+                <label style={{ display: 'block', color: 'gray', marginBottom: '5px', fontSize: '0.85rem' }}><i className="fa-brands fa-youtube"></i> YouTube</label>
+                <input value={editConnections.youtube} onChange={e => setEditConnections({...editConnections, youtube: e.target.value})} placeholder="Channel name" style={{ width: '100%', padding: '8px', borderRadius: '6px', border: '1px solid #444', background: '#111', color: 'white', fontSize: '0.9rem' }} />
+              </div>
+              <div>
+                <label style={{ display: 'block', color: 'gray', marginBottom: '5px', fontSize: '0.85rem' }}><i className="fa-brands fa-instagram"></i> Instagram</label>
+                <input value={editConnections.instagram} onChange={e => setEditConnections({...editConnections, instagram: e.target.value})} placeholder="@username" style={{ width: '100%', padding: '8px', borderRadius: '6px', border: '1px solid #444', background: '#111', color: 'white', fontSize: '0.9rem' }} />
+              </div>
+              <div style={{ gridColumn: '1 / -1' }}>
+                <label style={{ display: 'block', color: 'gray', marginBottom: '5px', fontSize: '0.85rem' }}><i className="fa-brands fa-google"></i> Google/Gmail</label>
+                {editConnections.google ? (
+                  <input value={editConnections.google} disabled title="Gmail is automatically linked" style={{ width: '100%', padding: '8px', borderRadius: '6px', border: '1px solid #333', background: '#222', color: 'gray', fontSize: '0.9rem', cursor: 'not-allowed' }} />
+                ) : (
+                  <button onClick={() => signIn('google')} style={{ width: '100%', padding: '8px', borderRadius: '6px', border: 'none', background: '#DB4437', color: 'white', fontSize: '0.9rem', cursor: 'pointer', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '10px', fontWeight: 'bold' }}>
+                    <i className="fa-brands fa-google"></i> Connect Google
+                  </button>
+                )}
+              </div>
             </div>
 
             <button onClick={handleSaveProfile} style={{ width: '100%', padding: '12px', background: '#10b981', color: 'white', border: 'none', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' }}>

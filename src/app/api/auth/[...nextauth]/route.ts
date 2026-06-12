@@ -40,6 +40,7 @@ export const authOptions: NextAuthOptions = {
             if (!adminUser) {
               adminUser = await User.create({
                 email: credentials.email,
+                username: credentials.email.split('@')[0].toLowerCase().replace(/[^a-z0-9_]/g, ''),
                 name: "Pokefun Admin",
                 role: "OWNER",
                 permissions: ['DELETE_POSTS', 'ANNOUNCEMENTS', 'MANAGE_ROLES', 'READ_DMS', 'BAN_USERS']
@@ -62,13 +63,39 @@ export const authOptions: NextAuthOptions = {
           await dbConnect();
           let dbUser = await User.findOne({ email: user.email });
           if (!dbUser && user.email) {
+            const baseName = (user.name || "trainer").toLowerCase().replace(/[^a-z0-9_]/g, '');
+            const randomSuffix = Math.floor(Math.random() * 10000).toString();
+            const newUsername = `${baseName}${randomSuffix}`;
+
             dbUser = await User.create({
               email: user.email,
+              username: newUsername,
               name: user.name || "Trainer",
               image: user.image ?? undefined,
               discordId: account?.provider === "discord" ? account?.providerAccountId : undefined,
-              role: "USER"
+              role: "USER",
+              connections: {
+                discord: account?.provider === "discord" ? user.name : undefined,
+                google: account?.provider === "google" ? user.email : undefined
+              }
             });
+          } else if (dbUser) {
+            // If user exists, check if we need to link a new connection
+            let isUpdated = false;
+            if (!dbUser.connections) dbUser.connections = {};
+            
+            if (account?.provider === "discord" && !dbUser.connections.discord) {
+              dbUser.connections.discord = user.name;
+              dbUser.discordId = account.providerAccountId;
+              isUpdated = true;
+            }
+            if (account?.provider === "google" && !dbUser.connections.google) {
+              dbUser.connections.google = user.email;
+              isUpdated = true;
+            }
+            if (isUpdated) {
+              await User.updateOne({ _id: dbUser._id }, { $set: { connections: dbUser.connections, discordId: dbUser.discordId } });
+            }
           }
           // Attach role and permissions to user object
           if (dbUser) {

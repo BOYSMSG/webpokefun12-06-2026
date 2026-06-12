@@ -14,7 +14,7 @@ export async function POST(req: Request) {
     await connectDB();
     const { platform, value } = await req.json();
 
-    if (!['minecraft', 'discord', 'google'].includes(platform)) {
+    if (!['minecraft', 'discord', 'google', 'youtube', 'instagram'].includes(platform)) {
       return NextResponse.json({ error: 'Invalid platform' }, { status: 400 });
     }
 
