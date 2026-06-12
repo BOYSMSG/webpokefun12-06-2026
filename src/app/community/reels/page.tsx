@@ -87,10 +87,15 @@ export default function ReelsPage() {
         videoId = newReelUrl.split('youtu.be/')[1].split('?')[0];
       }
       finalMedia = `https://www.youtube.com/embed/${videoId}?autoplay=1&loop=1&mute=0&controls=0&modestbranding=1&rel=0`;
-    } else if (newReelUrl.includes('instagram.com/reel/')) {
+    } else if (newReelUrl.includes('instagram.com/reel/') || newReelUrl.includes('instagram.com/p/')) {
       finalMediaType = 'instagram';
-      const instaId = newReelUrl.split('instagram.com/reel/')[1].split('/')[0];
-      finalMedia = `https://www.instagram.com/reel/${instaId}/embed`;
+      if (newReelUrl.includes('instagram.com/reel/')) {
+        const instaId = newReelUrl.split('instagram.com/reel/')[1].split('/')[0];
+        finalMedia = `https://www.instagram.com/reel/${instaId}/embed`;
+      } else {
+        const instaId = newReelUrl.split('instagram.com/p/')[1].split('/')[0];
+        finalMedia = `https://www.instagram.com/p/${instaId}/embed`;
+      }
     }
 
     try {
