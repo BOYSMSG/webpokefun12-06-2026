@@ -76,6 +76,10 @@ export default async function RootLayout({
           .gh-head-menu .nav a { font-size: 2.5rem !important; }
           .desktop-sidebar-container a, .desktop-sidebar-container span { font-size: 2.5rem !important; }
           .desktop-sidebar-container h2 { font-size: 1.8rem !important; }
+
+          @media (max-width: 900px) {
+             #nav { display: none !important; }
+          }
         `}</style>
       </head>
       <body>

@@ -152,7 +152,7 @@ export default function ReelsPage() {
           display: none !important;
         }
         .snap-container {
-          height: 100vh;
+          height: 100dvh;
           overflow-y: scroll;
           scroll-snap-type: y mandatory;
           scroll-behavior: smooth;
@@ -161,7 +161,7 @@ export default function ReelsPage() {
           display: none;
         }
         .reel-item {
-          height: 100vh;
+          height: 100dvh;
           width: 100vw;
           scroll-snap-align: start;
           position: relative;
@@ -184,17 +184,27 @@ export default function ReelsPage() {
           transform: translateX(-50%);
           max-width: 500px;
           width: 100%;
-          padding: 20px;
-          display: flex;
-          justify-content: space-between;
-          align-items: flex-end;
-          background: linear-gradient(transparent, rgba(0,0,0,0.8));
+          height: 100%;
+          pointer-events: none;
+          background: linear-gradient(to top, rgba(0,0,0,0.6) 0%, transparent 25%);
+        }
+        .reel-info {
+          position: absolute;
+          bottom: 20px;
+          left: 15px;
+          right: 70px;
+          color: white;
+          pointer-events: auto;
         }
         .reel-actions {
+          position: absolute;
+          bottom: 20px;
+          right: 15px;
           display: flex;
           flex-direction: column;
-          gap: 20px;
+          gap: 25px;
           align-items: center;
+          pointer-events: auto;
         }
         .action-btn {
           background: transparent;
@@ -206,25 +216,25 @@ export default function ReelsPage() {
           flex-direction: column;
           align-items: center;
           gap: 5px;
-          text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+          text-shadow: 0 2px 4px rgba(0,0,0,0.8);
           transition: transform 0.2s;
         }
         .action-btn:hover {
           transform: scale(1.1);
         }
         .action-text {
-          font-size: 0.9rem;
-          font-weight: bold;
+          font-size: 0.85rem;
+          font-weight: 600;
         }
       `}</style>
 
       {/* Top Nav */}
-      <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', padding: '20px 30px', display: 'flex', justifyContent: 'flex-start', alignItems: 'center', gap: '30px', zIndex: 10001, background: 'linear-gradient(rgba(0,0,0,0.8), transparent)' }}>
-        <Link href="/community" style={{ color: 'white', textDecoration: 'none', fontSize: '1.2rem', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '10px', textShadow: '0 2px 4px rgba(0,0,0,0.8)' }}>
-          <i className="fa-solid fa-arrow-left"></i> Community
+      <div style={{ position: 'absolute', top: 0, left: '50%', transform: 'translateX(-50%)', width: '100%', maxWidth: '500px', padding: '15px 20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', zIndex: 10001, background: 'linear-gradient(rgba(0,0,0,0.5), transparent)' }}>
+        <Link href="/community" style={{ color: 'white', textDecoration: 'none', fontSize: '1.4rem', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '10px', textShadow: '0 2px 4px rgba(0,0,0,0.8)' }}>
+          <i className="fa-solid fa-arrow-left"></i> Reels
         </Link>
-        <button onClick={() => setShowAddModal(true)} style={{ background: '#8b5cf6', color: 'white', border: 'none', padding: '10px 20px', borderRadius: '20px', fontWeight: 'bold', cursor: 'pointer', boxShadow: '0 4px 15px rgba(139,92,246,0.5)' }}>
-          + Add Reel
+        <button onClick={() => setShowAddModal(true)} style={{ background: 'transparent', color: 'white', border: 'none', fontSize: '1.6rem', cursor: 'pointer', textShadow: '0 2px 4px rgba(0,0,0,0.5)' }}>
+          <i className="fa-solid fa-camera"></i>
         </button>
       </div>
 
@@ -252,13 +262,13 @@ export default function ReelsPage() {
 
               {/* Overlay Content */}
               <div className="reel-overlay">
-                <div style={{ color: 'white', paddingRight: '20px', paddingBottom: '10px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px' }} onClick={() => router.push(`/profile/${reel.authorUsername}`)}>
-                    <img src={reel.avatar} alt={reel.author} style={{ width: '40px', height: '40px', borderRadius: '50%', border: '2px solid white', cursor: 'pointer' }} />
-                    <span style={{ fontWeight: 'bold', fontSize: '1.1rem', cursor: 'pointer', textShadow: '0 1px 3px black' }}>@{reel.authorUsername}</span>
+                <div className="reel-info">
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }} onClick={() => router.push(`/profile/${reel.authorUsername}`)}>
+                    <img src={reel.avatar} alt={reel.author} style={{ width: '35px', height: '35px', borderRadius: '50%', border: '1px solid white', cursor: 'pointer' }} />
+                    <span style={{ fontWeight: 'bold', fontSize: '1rem', cursor: 'pointer', textShadow: '0 1px 3px black' }}>{reel.authorUsername}</span>
+                    <button style={{ background: 'transparent', border: '1px solid white', color: 'white', borderRadius: '4px', padding: '2px 8px', fontSize: '0.7rem', fontWeight: 'bold', marginLeft: '5px' }}>Follow</button>
                   </div>
-                  <h3 style={{ margin: '0 0 5px 0', fontSize: '1.2rem', textShadow: '0 1px 3px black' }}>{reel.title}</h3>
-                  <p style={{ margin: 0, fontSize: '0.9rem', opacity: 0.8, textShadow: '0 1px 3px black' }}>{new Date(reel.timestamp).toLocaleDateString()}</p>
+                  <h3 style={{ margin: '0 0 5px 0', fontSize: '1rem', fontWeight: 'normal', textShadow: '0 1px 3px black', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{reel.title}</h3>
                 </div>
                 
                 {/* Actions Sidebar */}
@@ -268,16 +278,14 @@ export default function ReelsPage() {
                     <span className="action-text">{reel.upvotes}</span>
                   </button>
                   <button className="action-btn" onClick={() => { setActiveCommentsReel(reel.id); fetchComments(reel.id); }}>
-                    <i className="fa-solid fa-comment-dots"></i>
-                    <span className="action-text">Chat</span>
+                    <i className="fa-solid fa-comment"></i>
+                    <span className="action-text">1</span>
                   </button>
                   <button className="action-btn" onClick={() => handleInteract(reel.id, 'favorite')} style={{ color: reel.isSaved ? '#fbbf24' : 'white' }}>
-                    <i className={reel.isSaved ? "fa-solid fa-star" : "fa-regular fa-star"}></i>
-                    <span className="action-text">Save</span>
+                    <i className={reel.isSaved ? "fa-solid fa-bookmark" : "fa-regular fa-bookmark"}></i>
                   </button>
                   <button className="action-btn" onClick={() => { navigator.clipboard.writeText(window.location.origin + '/community/post/' + reel.id); alert('Link copied!'); }}>
                     <i className="fa-solid fa-share"></i>
-                    <span className="action-text">Share</span>
                   </button>
                 </div>
               </div>
