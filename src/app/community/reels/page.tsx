@@ -53,13 +53,20 @@ export default function ReelsPage() {
   const fetchReels = async () => {
     try {
       const res = await fetch('/api/community?type=REEL');
-      if (res.ok) {
-        setReels(await res.json());
-      }
+      const data = await res.json();
+      setReels(data.posts || []);
     } catch (e) {
       console.error(e);
     }
     setLoading(false);
+  };
+
+  const getInstagramEmbedUrl = (url: string) => {
+    if (!url) return '';
+    if (url.includes('/embed')) return url;
+    let baseUrl = url.split('?')[0];
+    if (!baseUrl.endsWith('/')) baseUrl += '/';
+    return baseUrl + 'embed/';
   };
 
   const handleAddReel = async (e: React.FormEvent) => {
@@ -287,9 +294,9 @@ export default function ReelsPage() {
               
               {/* Media Renderer */}
               {reel.mediaType === 'youtube' ? (
-                activeIndex === index ? <iframe src={reel.media} className="reel-media" style={{ border: 'none' }} allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe> : <div className="reel-media" style={{background: '#111', display: 'flex', justifyContent: 'center', alignItems: 'center'}}><i className="fa-solid fa-spinner fa-spin" style={{ color: 'white', fontSize: '2rem' }}></i></div>
+                activeIndex === index ? <iframe src={reel.media} className="reel-media" style={{ border: 'none', background: 'black' }} allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe> : <div className="reel-media" style={{background: '#111', display: 'flex', justifyContent: 'center', alignItems: 'center'}}><i className="fa-solid fa-spinner fa-spin" style={{ color: 'white', fontSize: '2rem' }}></i></div>
               ) : reel.mediaType === 'instagram' ? (
-                activeIndex === index ? <iframe src={reel.media} className="reel-media" style={{ border: 'none' }} scrolling="no" allowTransparency></iframe> : <div className="reel-media" style={{background: '#111', display: 'flex', justifyContent: 'center', alignItems: 'center'}}><i className="fa-solid fa-spinner fa-spin" style={{ color: 'white', fontSize: '2rem' }}></i></div>
+                activeIndex === index ? <iframe src={getInstagramEmbedUrl(reel.media)} className="reel-media" style={{ border: 'none', background: 'black' }} scrolling="no" allowTransparency></iframe> : <div className="reel-media" style={{background: '#111', display: 'flex', justifyContent: 'center', alignItems: 'center'}}><i className="fa-solid fa-spinner fa-spin" style={{ color: 'white', fontSize: '2rem' }}></i></div>
               ) : (
                 <video src={reel.media} className="reel-media" autoPlay={activeIndex === index} loop muted playsInline controls={false} ref={el => {
                   if (el) {
