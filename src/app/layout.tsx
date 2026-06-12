@@ -25,7 +25,7 @@ export default async function RootLayout({
     <html lang="en">
       <head>
         <meta name="HandheldFriendly" content="True" />
-        <meta name="viewport" content="width=1200" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="stylesheet" href="/css/screen.css" />
         <link rel="stylesheet" href="/css/custom.css" />
         <link rel="stylesheet" type="text/css" href="/css/style.css" />
