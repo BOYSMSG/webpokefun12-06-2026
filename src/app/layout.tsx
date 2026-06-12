@@ -76,14 +76,13 @@ export default async function RootLayout({
           .gh-head-menu .nav a { font-size: 2.5rem !important; }
           .desktop-sidebar-container a, .desktop-sidebar-container span { font-size: 2.5rem !important; }
           .desktop-sidebar-container h2 { font-size: 1.8rem !important; }
-          .gh-burger { display: none !important; }
-          .gh-head-menu { display: none !important; }
 
           .custom-global-nav {
              padding: 0 200px 0 20px;
           }
 
           @media (max-width: 900px) {
+             #nav { display: none !important; }
              .custom-global-nav { 
                padding: 0 20px !important; 
              }
