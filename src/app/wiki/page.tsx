@@ -40,8 +40,8 @@ export default function WikiIndex() {
             <div style={{ background: "#e6f7ff", width: "80px", height: "80px", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 20px", fontSize: "2rem" }}>
               🐉
             </div>
-            <h2 style={{ fontSize: "1.8rem", fontWeight: 800, marginBottom: "10px" }}>Cobblemon Dex</h2>
-            <p style={{ color: "gray" }}>Explore all the custom Cobblemons, their stats, types, abilities, and learnable moves.</p>
+            <h2 style={{ fontSize: "1.8rem", fontWeight: 800, marginBottom: "10px" }}>Fakemon Dex</h2>
+            <p style={{ color: "gray" }}>Explore all the custom Fakemons, their stats, types, abilities, and learnable moves.</p>
           </div>
         </Link>
 

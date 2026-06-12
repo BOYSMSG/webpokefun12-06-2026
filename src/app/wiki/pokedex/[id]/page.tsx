@@ -32,6 +32,7 @@ export default function PokemonDetailPage() {
   
   const [pokemon, setPokemon] = useState<any>(null);
   const [species, setSpecies] = useState<any>(null);
+  const [weaknesses, setWeaknesses] = useState<Record<string, number>>({});
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -41,9 +42,26 @@ export default function PokemonDetailPage() {
       fetch(`https://pokeapi.co/api/v2/pokemon/${id}`).then(res => res.json()),
       fetch(`https://pokeapi.co/api/v2/pokemon-species/${id}`).then(res => res.json())
     ])
-    .then(([pokeData, speciesData]) => {
+    .then(async ([pokeData, speciesData]) => {
       setPokemon(pokeData);
       setSpecies(speciesData);
+      
+      try {
+        const typePromises = pokeData.types.map((t: any) => fetch(t.type.url).then(res => res.json()));
+        const typesData = await Promise.all(typePromises);
+        
+        const damageRelations: Record<string, number> = {};
+        typesData.forEach((typeData: any) => {
+          const relations = typeData.damage_relations;
+          relations.double_damage_from.forEach((t: any) => damageRelations[t.name] = (damageRelations[t.name] ?? 1) * 2);
+          relations.half_damage_from.forEach((t: any) => damageRelations[t.name] = (damageRelations[t.name] ?? 1) * 0.5);
+          relations.no_damage_from.forEach((t: any) => damageRelations[t.name] = 0);
+        });
+        setWeaknesses(damageRelations);
+      } catch (e) {
+        console.error("Error fetching types", e);
+      }
+      
       setLoading(false);
     })
     .catch(err => {
@@ -53,8 +71,10 @@ export default function PokemonDetailPage() {
   }, [id]);
 
   const playCry = () => {
-    if (pokemon?.cries?.latest) {
-      const audio = new Audio(pokemon.cries.latest);
+    // Prefer legacy (normal/GameBoy) sound if available, otherwise latest
+    const cryUrl = pokemon?.cries?.legacy || pokemon?.cries?.latest;
+    if (cryUrl) {
+      const audio = new Audio(cryUrl);
       audio.volume = 0.5;
       audio.play();
     }
@@ -82,16 +102,32 @@ export default function PokemonDetailPage() {
   const mainType = pokemon.types[0].type.name;
   const mainColor = TYPE_COLORS[mainType] || '#8b5cf6';
 
-  // Get English flavor text
   const flavorTextEntry = species?.flavor_text_entries?.find((f: any) => f.language.name === 'en');
   const description = flavorTextEntry ? flavorTextEntry.flavor_text.replace(/\f/g, ' ') : "No description available.";
 
+  // Group weaknesses
+  const groupedWeaknesses: Record<number, string[]> = { 4: [], 2: [], 0.5: [], 0.25: [], 0: [] };
+  Object.entries(weaknesses).forEach(([type, mult]) => {
+    if (groupedWeaknesses[mult]) groupedWeaknesses[mult].push(type);
+  });
+
+  // Level up moves
+  const levelUpMoves = pokemon.moves
+    .filter((m: any) => m.version_group_details.some((v: any) => v.move_learn_method.name === 'level-up'))
+    .map((m: any) => {
+      const details = m.version_group_details.find((v: any) => v.move_learn_method.name === 'level-up');
+      return { name: m.move.name.replace('-', ' '), level: details.level_learned_at };
+    })
+    .sort((a: any, b: any) => a.level - b.level);
+
+  // Remove duplicate moves that might have different levels across generations (take earliest)
+  const uniqueMoves = Array.from(new Map(levelUpMoves.map((item: any) => [item.name, item])).values());
+
   return (
     <div style={{ minHeight: '100vh', background: '#111827', width: '100%' }}>
-      {/* Dynamic Header Background based on Type */}
       <div style={{ height: '350px', background: `linear-gradient(to bottom, ${mainColor}40, transparent)`, position: 'absolute', top: 0, left: 0, width: '100%', zIndex: 0 }}></div>
       
-      <div className="inner" style={{ paddingTop: '100px', paddingBottom: '80px', maxWidth: '1000px', margin: '0 auto', position: 'relative', zIndex: 1, paddingLeft: '20px', paddingRight: '20px' }}>
+      <div className="inner" style={{ paddingTop: '100px', paddingBottom: '80px', maxWidth: '1200px', margin: '0 auto', position: 'relative', zIndex: 1, paddingLeft: '20px', paddingRight: '20px' }}>
         
         <Link href="/wiki/pokedex" style={{ color: 'gray', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '8px', marginBottom: '30px', fontWeight: 'bold', fontSize: '1.1rem' }}>
           <i className="fa-solid fa-arrow-left"></i> Back to Pokédex
@@ -182,7 +218,7 @@ export default function PokemonDetailPage() {
           </div>
 
           {/* Right Column: Stats and Info */}
-          <div style={{ flex: '1 1 450px', display: 'flex', flexDirection: 'column', gap: '30px' }}>
+          <div style={{ flex: '1 1 500px', display: 'flex', flexDirection: 'column', gap: '30px' }}>
             
             {/* Dex Entry */}
             <div>
@@ -192,18 +228,68 @@ export default function PokemonDetailPage() {
               </p>
             </div>
 
-            {/* Abilities */}
+            {/* Abilities & Items Grid */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+              <div>
+                <h2 style={{ fontSize: '1.8rem', color: 'white', marginBottom: '15px' }}>Abilities</h2>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                  {pokemon.abilities.map((a: any) => (
+                    <div key={a.ability.name} style={{ background: '#1f2937', border: '1px solid rgba(255,255,255,0.05)', padding: '15px 20px', borderRadius: '15px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <span style={{ color: 'white', fontSize: '1.1rem', fontWeight: 'bold', textTransform: 'capitalize' }}>
+                        {a.ability.name.replace('-', ' ')}
+                      </span>
+                      {a.is_hidden && <span style={{ background: 'rgba(239, 68, 68, 0.2)', color: '#ef4444', padding: '3px 8px', borderRadius: '8px', fontSize: '0.75rem', fontWeight: 'bold' }}>Hidden</span>}
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <h2 style={{ fontSize: '1.8rem', color: 'white', marginBottom: '15px' }}>Held Items</h2>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                  {pokemon.held_items.length === 0 ? (
+                    <div style={{ background: '#1f2937', border: '1px solid rgba(255,255,255,0.05)', padding: '15px 20px', borderRadius: '15px', color: 'gray' }}>
+                      No held items in the wild.
+                    </div>
+                  ) : pokemon.held_items.map((i: any) => (
+                    <div key={i.item.name} style={{ background: '#1f2937', border: '1px solid rgba(255,255,255,0.05)', padding: '15px 20px', borderRadius: '15px' }}>
+                      <span style={{ color: 'white', fontSize: '1.1rem', fontWeight: 'bold', textTransform: 'capitalize' }}>
+                        {i.item.name.replace('-', ' ')}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Type Matchups */}
             <div>
-              <h2 style={{ fontSize: '1.8rem', color: 'white', marginBottom: '15px' }}>Abilities</h2>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '15px' }}>
-                {pokemon.abilities.map((a: any) => (
-                  <div key={a.ability.name} style={{ background: '#1f2937', border: '1px solid rgba(255,255,255,0.05)', padding: '15px 25px', borderRadius: '15px', flex: 1, minWidth: '150px' }}>
-                    <span style={{ color: 'white', fontSize: '1.2rem', fontWeight: 'bold', textTransform: 'capitalize', display: 'block', marginBottom: '5px' }}>
-                      {a.ability.name.replace('-', ' ')}
-                    </span>
-                    {a.is_hidden && <span style={{ background: 'rgba(239, 68, 68, 0.2)', color: '#ef4444', padding: '3px 8px', borderRadius: '8px', fontSize: '0.8rem', fontWeight: 'bold' }}>Hidden Ability</span>}
-                  </div>
-                ))}
+              <h2 style={{ fontSize: '1.8rem', color: 'white', marginBottom: '15px' }}>Type Matchups</h2>
+              <div style={{ background: '#1f2937', padding: '20px', borderRadius: '20px', border: '1px solid rgba(255,255,255,0.05)', display: 'flex', flexDirection: 'column', gap: '15px' }}>
+                
+                {[
+                  { label: "Takes 4x Damage From", mult: 4, color: '#ef4444' },
+                  { label: "Takes 2x Damage From", mult: 2, color: '#f87171' },
+                  { label: "Takes 0.5x Damage From", mult: 0.5, color: '#34d399' },
+                  { label: "Takes 0.25x Damage From", mult: 0.25, color: '#10b981' },
+                  { label: "Immune To", mult: 0, color: '#9ca3af' },
+                ].map(({ label, mult, color }) => {
+                  const types = groupedWeaknesses[mult];
+                  if (!types || types.length === 0) return null;
+                  return (
+                    <div key={mult} style={{ display: 'flex', alignItems: 'flex-start', flexDirection: 'column', gap: '8px' }}>
+                      <span style={{ color: 'gray', fontSize: '0.9rem', fontWeight: 'bold' }}>{label}</span>
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                        {types.map(t => (
+                          <span key={t} style={{ background: TYPE_COLORS[t] || 'gray', color: 'white', padding: '4px 12px', borderRadius: '12px', fontSize: '0.8rem', fontWeight: 'bold', textTransform: 'uppercase' }}>
+                            {t}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                })}
+
               </div>
             </div>
 
@@ -216,11 +302,10 @@ export default function PokemonDetailPage() {
                   const maxStat = 255;
                   const percentage = (s.base_stat / maxStat) * 100;
                   
-                  // Color logic based on stat value
-                  let barColor = '#ef4444'; // Red for low
-                  if (s.base_stat > 60) barColor = '#f59e0b'; // Orange
-                  if (s.base_stat > 90) barColor = '#10b981'; // Green
-                  if (s.base_stat > 120) barColor = '#3b82f6'; // Blue
+                  let barColor = '#ef4444';
+                  if (s.base_stat > 60) barColor = '#f59e0b';
+                  if (s.base_stat > 90) barColor = '#10b981';
+                  if (s.base_stat > 120) barColor = '#3b82f6';
 
                   return (
                     <div key={s.stat.name} style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
@@ -236,6 +321,29 @@ export default function PokemonDetailPage() {
                   <span>Total</span>
                   <span style={{ color: 'white', fontSize: '1.2rem' }}>{pokemon.stats.reduce((acc: number, s: any) => acc + s.base_stat, 0)}</span>
                 </div>
+              </div>
+            </div>
+
+            {/* Moves List */}
+            <div>
+              <h2 style={{ fontSize: '1.8rem', color: 'white', marginBottom: '15px' }}>Level Up Moves</h2>
+              <div style={{ background: '#1f2937', padding: '10px', borderRadius: '20px', border: '1px solid rgba(255,255,255,0.05)', maxHeight: '400px', overflowY: 'auto' }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse', color: 'white' }}>
+                  <thead>
+                    <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.1)', textAlign: 'left' }}>
+                      <th style={{ padding: '15px', color: 'gray' }}>Level</th>
+                      <th style={{ padding: '15px', color: 'gray' }}>Move Name</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {(uniqueMoves as any[]).map((move: any, index: number) => (
+                      <tr key={index} style={{ borderBottom: index === uniqueMoves.length - 1 ? 'none' : '1px solid rgba(255,255,255,0.05)' }}>
+                        <td style={{ padding: '15px', fontWeight: 'bold', color: mainColor }}>{move.level === 0 ? 'Evo' : move.level}</td>
+                        <td style={{ padding: '15px', textTransform: 'capitalize', fontWeight: 'bold' }}>{move.name}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
             </div>
 
