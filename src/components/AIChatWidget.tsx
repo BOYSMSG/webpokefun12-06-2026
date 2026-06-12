@@ -101,14 +101,7 @@ export default function AIChatWidget() {
     // Audio setup via HTMLAudioElement Ref
     if (audioRef.current) {
       audioRef.current.volume = 0.2;
-      // Check if we are on the reels page; if so, don't autoplay music!
-      if (!window.location.pathname.includes('/reels')) {
-        // Try to autoplay music
-        const playPromise = audioRef.current.play();
-        if (playPromise !== undefined) {
-          playPromise.then(() => setMusicPlaying(true)).catch(() => setMusicPlaying(false));
-        }
-      }
+      // Music is now OFF by default. User can turn it on via the settings widget.
     }
 
     // Load Google Translate script
