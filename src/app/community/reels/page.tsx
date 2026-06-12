@@ -54,7 +54,7 @@ export default function ReelsPage() {
     try {
       const res = await fetch('/api/community?type=REEL');
       const data = await res.json();
-      setReels(data.posts || []);
+      setReels(Array.isArray(data) ? data : []);
     } catch (e) {
       console.error(e);
     }
