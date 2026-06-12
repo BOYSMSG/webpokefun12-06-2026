@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import connectDB from '@/lib/mongodb';
+import connectDB from '@/lib/mongoose';
 import User from '@/models/User';
 
 export async function GET(request: Request, { params }: { params: { username: string } }) {
