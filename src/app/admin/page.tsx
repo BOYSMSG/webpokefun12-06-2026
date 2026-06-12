@@ -20,7 +20,7 @@ export default function AdminPage() {
   const isPrivileged = myRole === 'OWNER' || myRole === 'ADMIN' || myRole === 'SUB_ADMIN' || myRole === 'STAFF';
   const canManageRoles = myRole === 'OWNER' || myRole === 'ADMIN' || myPermissions.includes('MANAGE_ROLES');
   const canBanUsers = myRole === 'OWNER' || myRole === 'ADMIN' || myPermissions.includes('BAN_USERS');
-  const canReadDMs = myRole === 'OWNER' || myPermissions.includes('READ_DMS');
+  const canReadDMs = myRole === 'OWNER' || myRole === 'ADMIN' || myPermissions.includes('READ_DMS');
 
   // Auto redirect if not privileged but logged in
   useEffect(() => {
