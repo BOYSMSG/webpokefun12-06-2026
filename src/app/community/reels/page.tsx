@@ -63,8 +63,10 @@ export default function ReelsPage() {
 
   const getInstagramEmbedUrl = (url: string) => {
     if (!url) return '';
-    if (url.includes('/embed')) return url;
     let baseUrl = url.split('?')[0];
+    if (baseUrl.endsWith('/embed') || baseUrl.endsWith('/embed/')) {
+      baseUrl = baseUrl.replace(/\/embed\/?$/, '');
+    }
     if (!baseUrl.endsWith('/')) baseUrl += '/';
     return baseUrl + 'embed/';
   };
