@@ -388,13 +388,13 @@ export default function AIChatWidget() {
         }}>
           
           <button 
-            onClick={() => handleOpenWindow('chat')}
+            onClick={toggleMusic}
             className="fab-btn"
-            title="AI Assistant"
+            title="Toggle Music"
           >
-            <span>Pokefun AI</span>
-            <div className="fab-icon-box" style={{ background: '#3b82f6' }}>
-              <i className="fa-solid fa-robot"></i>
+            <span>{musicPlaying ? 'Music Off' : 'Music On'}</span>
+            <div className="fab-icon-box" style={{ background: musicPlaying ? '#10b981' : '#ef4444' }}>
+              <i className={`fa-solid ${musicPlaying ? 'fa-volume-high' : 'fa-volume-xmark'}`}></i>
             </div>
           </button>
           
@@ -469,7 +469,7 @@ export default function AIChatWidget() {
             }}
             title="Pokefun Menu"
           >
-            <i className={`fa-solid ${isMenuOpen ? "fa-plus" : "fa-robot"}`}></i>
+            <i className={`fa-solid ${isMenuOpen ? "fa-plus" : "fa-cog"}`}></i>
             {unreadCount > 0 && !isMenuOpen && (
               <div style={{ position: 'absolute', top: 0, right: 0, width: '18px', height: '18px', background: 'red', borderRadius: '50%', border: '3px solid #111' }}></div>
             )}

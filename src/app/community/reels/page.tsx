@@ -26,9 +26,29 @@ export default function ReelsPage() {
   const [statsData, setStatsData] = useState<{ likes: any[], dislikes: any[], viewers: any[] }>({ likes: [], dislikes: [], viewers: [] });
   const [activeStatsTab, setActiveStatsTab] = useState<'views' | 'likes' | 'dislikes'>('views');
 
+  // Active Reel Tracker
+  const [activeIndex, setActiveIndex] = useState(0);
+
   useEffect(() => {
     fetchReels();
+    // Pause global website music when entering Reels page
+    window.dispatchEvent(new Event('pauseGlobalMusic'));
   }, []);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (containerRef.current) {
+        // Calculate which reel is currently in the viewport
+        const index = Math.round(containerRef.current.scrollTop / window.innerHeight);
+        if (index !== activeIndex) {
+          setActiveIndex(index);
+        }
+      }
+    };
+    const el = containerRef.current;
+    if (el) el.addEventListener('scroll', handleScroll);
+    return () => { if (el) el.removeEventListener('scroll', handleScroll); };
+  }, [activeIndex, reels]);
 
   const fetchReels = async () => {
     try {
@@ -262,16 +282,21 @@ export default function ReelsPage() {
         </div>
       ) : (
         <div className="snap-container" ref={containerRef}>
-          {reels.map(reel => (
+          {reels.map((reel, index) => (
             <div key={reel.id} className="reel-item">
               
               {/* Media Renderer */}
               {reel.mediaType === 'youtube' ? (
-                <iframe src={reel.media} className="reel-media" style={{ border: 'none' }} allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe>
+                activeIndex === index ? <iframe src={reel.media} className="reel-media" style={{ border: 'none' }} allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe> : <div className="reel-media" style={{background: '#111', display: 'flex', justifyContent: 'center', alignItems: 'center'}}><i className="fa-solid fa-spinner fa-spin" style={{ color: 'white', fontSize: '2rem' }}></i></div>
               ) : reel.mediaType === 'instagram' ? (
-                <iframe src={reel.media} className="reel-media" style={{ border: 'none' }} scrolling="no" allowTransparency></iframe>
+                activeIndex === index ? <iframe src={reel.media} className="reel-media" style={{ border: 'none' }} scrolling="no" allowTransparency></iframe> : <div className="reel-media" style={{background: '#111', display: 'flex', justifyContent: 'center', alignItems: 'center'}}><i className="fa-solid fa-spinner fa-spin" style={{ color: 'white', fontSize: '2rem' }}></i></div>
               ) : (
-                <video src={reel.media} className="reel-media" autoPlay loop muted playsInline controls={false} />
+                <video src={reel.media} className="reel-media" autoPlay={activeIndex === index} loop muted playsInline controls={false} ref={el => {
+                  if (el) {
+                    if (activeIndex === index) el.play().catch(()=>{});
+                    else el.pause();
+                  }
+                }} />
               )}
 
               {/* Overlay Content */}
