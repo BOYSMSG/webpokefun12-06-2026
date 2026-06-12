@@ -288,30 +288,64 @@ export default function PokemonDetailPage() {
               </div>
             </div>
 
-            {/* A to Z Type Matchups */}
+            {/* Type Effectiveness (Bulbapedia Style) */}
             <div>
-              <h2 style={{ fontSize: '1.8rem', color: 'white', marginBottom: '15px' }}>Defensive Type Matchups</h2>
-              <div style={{ background: '#1f2937', padding: '20px', borderRadius: '20px', border: '1px solid rgba(255,255,255,0.05)', display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(110px, 1fr))', gap: '10px' }}>
-                {[...ALL_TYPES].sort((a, b) => (weaknesses[b] ?? 1) - (weaknesses[a] ?? 1)).map(type => {
-                  const mult = weaknesses[type] ?? 1;
-                  let badgeColor = '#6b7280'; // 1x gray
-                  if (mult === 4) badgeColor = '#dc2626'; // Red
-                  else if (mult === 2) badgeColor = '#f87171'; // Light red
-                  else if (mult === 0.5) badgeColor = '#34d399'; // Light green
-                  else if (mult === 0.25) badgeColor = '#10b981'; // Green
-                  else if (mult === 0) badgeColor = '#111827'; // Black/Dark
-                  
-                  return (
-                    <div key={type} style={{ background: TYPE_COLORS[type], borderRadius: '10px', overflow: 'hidden', display: 'flex', flexDirection: 'column', border: '1px solid rgba(0,0,0,0.2)' }}>
-                      <span style={{ color: 'white', padding: '6px', textAlign: 'center', fontSize: '0.85rem', fontWeight: 'bold', textTransform: 'uppercase', textShadow: '0 1px 2px rgba(0,0,0,0.5)' }}>
-                        {type}
-                      </span>
-                      <div style={{ background: badgeColor, color: 'white', textAlign: 'center', padding: '4px', fontSize: '0.9rem', fontWeight: 900 }}>
-                        {mult}x
-                      </div>
+              <h2 style={{ fontSize: '1.8rem', color: 'white', marginBottom: '5px' }}>Type Effectiveness</h2>
+              <p style={{ color: 'gray', marginBottom: '15px' }}>Under normal battle conditions, this Pokémon is:</p>
+              
+              <div style={{ background: '#1f2937', padding: '20px', borderRadius: '20px', border: '1px solid rgba(255,255,255,0.05)', display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                {(() => {
+                  const normal = ALL_TYPES.filter(t => (weaknesses[t] ?? 1) === 1);
+                  const weak = ALL_TYPES.filter(t => (weaknesses[t] ?? 1) > 1).sort((a, b) => (weaknesses[b] ?? 1) - (weaknesses[a] ?? 1));
+                  const resistant = ALL_TYPES.filter(t => (weaknesses[t] ?? 1) > 0 && (weaknesses[t] ?? 1) < 1).sort((a, b) => (weaknesses[b] ?? 1) - (weaknesses[a] ?? 1));
+                  const immune = ALL_TYPES.filter(t => (weaknesses[t] ?? 1) === 0);
+
+                  const renderGroup = (title: string, types: string[]) => (
+                    <div>
+                      <h3 style={{ color: 'gray', fontSize: '1.1rem', marginBottom: '10px', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '5px' }}>{title}</h3>
+                      {types.length === 0 ? (
+                        <span style={{ color: 'white', fontWeight: 'bold' }}>None</span>
+                      ) : (
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
+                          {types.map(type => {
+                            const mult = weaknesses[type] ?? 1;
+                            let badgeColor = '#6b7280'; // 1x gray
+                            if (mult === 4) badgeColor = '#dc2626'; // Red
+                            else if (mult === 2) badgeColor = '#f87171'; // Light red
+                            else if (mult === 0.5) badgeColor = '#34d399'; // Light green
+                            else if (mult === 0.25) badgeColor = '#10b981'; // Green
+                            else if (mult === 0) badgeColor = '#111827'; // Black
+                            
+                            let multStr = `${mult}×`;
+                            if (mult === 0.5) multStr = '½×';
+                            if (mult === 0.25) multStr = '¼×';
+                            if (mult === 0) multStr = '0×';
+                            
+                            return (
+                              <div key={type} style={{ background: TYPE_COLORS[type], borderRadius: '8px', overflow: 'hidden', display: 'flex', border: '1px solid rgba(0,0,0,0.2)', minWidth: '110px', boxShadow: '0 2px 4px rgba(0,0,0,0.2)' }}>
+                                <span style={{ color: 'white', padding: '6px 10px', flex: 1, textAlign: 'center', fontSize: '0.85rem', fontWeight: 'bold', textTransform: 'uppercase', textShadow: '0 1px 2px rgba(0,0,0,0.5)' }}>
+                                  {type}
+                                </span>
+                                <div style={{ background: badgeColor, color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 10px', fontSize: '0.9rem', fontWeight: 900 }}>
+                                  {multStr}
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      )}
                     </div>
                   );
-                })}
+
+                  return (
+                    <>
+                      {renderGroup('Damaged normally by:', normal)}
+                      {renderGroup('Weak to:', weak)}
+                      {renderGroup('Immune to:', immune)}
+                      {renderGroup('Resistant to:', resistant)}
+                    </>
+                  );
+                })()}
               </div>
             </div>
 
