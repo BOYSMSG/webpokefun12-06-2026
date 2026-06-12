@@ -1,0 +1,1374 @@
+[
+  {
+    "filename": "Acideon - Poison Type.png",
+    "name": "Acideon   Poison Type",
+    "image": "/images/fakemons/Acideon - Poison Type.png"
+  },
+  {
+    "filename": "Aereon - Flying Type.png",
+    "name": "Aereon   Flying Type",
+    "image": "/images/fakemons/Aereon - Flying Type.png"
+  },
+  {
+    "filename": "Alloette_Vex.png",
+    "name": "Alloette Vex",
+    "image": "/images/fakemons/Alloette_Vex.png"
+  },
+  {
+    "filename": "Alloette_Vex_shiny.png",
+    "name": "Alloette Vex shiny",
+    "image": "/images/fakemons/Alloette_Vex_shiny.png"
+  },
+  {
+    "filename": "Automeon - Steel Type.png",
+    "name": "Automeon   Steel Type",
+    "image": "/images/fakemons/Automeon - Steel Type.png"
+  },
+  {
+    "filename": "Breezior_render.png",
+    "name": "Breezior render",
+    "image": "/images/fakemons/Breezior_render.png"
+  },
+  {
+    "filename": "Breezior_render_shiny.png",
+    "name": "Breezior render shiny",
+    "image": "/images/fakemons/Breezior_render_shiny.png"
+  },
+  {
+    "filename": "Carbink_Quartz.png",
+    "name": "Carbink Quartz",
+    "image": "/images/fakemons/Carbink_Quartz.png"
+  },
+  {
+    "filename": "Carbink_Quartz_shiny.png",
+    "name": "Carbink Quartz shiny",
+    "image": "/images/fakemons/Carbink_Quartz_shiny.png"
+  },
+  {
+    "filename": "Ceruclone_render.png",
+    "name": "Ceruclone render",
+    "image": "/images/fakemons/Ceruclone_render.png"
+  },
+  {
+    "filename": "Ceruclone_render_shiny.png",
+    "name": "Ceruclone render shiny",
+    "image": "/images/fakemons/Ceruclone_render_shiny.png"
+  },
+  {
+    "filename": "Champeon - Fighting Type.png",
+    "name": "Champeon   Fighting Type",
+    "image": "/images/fakemons/Champeon - Fighting Type.png"
+  },
+  {
+    "filename": "Dungeon - Ground Type.png",
+    "name": "Dungeon   Ground Type",
+    "image": "/images/fakemons/Dungeon - Ground Type.png"
+  },
+  {
+    "filename": "Eeveeon - Normal Type.png",
+    "name": "Eeveeon   Normal Type",
+    "image": "/images/fakemons/Eeveeon - Normal Type.png"
+  },
+  {
+    "filename": "Evereon - Normal Type.png",
+    "name": "Evereon   Normal Type",
+    "image": "/images/fakemons/Evereon - Normal Type.png"
+  },
+  {
+    "filename": "Galecadet_render.png",
+    "name": "Galecadet render",
+    "image": "/images/fakemons/Galecadet_render.png"
+  },
+  {
+    "filename": "Galecadet_render_shiny.png",
+    "name": "Galecadet render shiny",
+    "image": "/images/fakemons/Galecadet_render_shiny.png"
+  },
+  {
+    "filename": "Golett_Copper.gif",
+    "name": "Golett Copper",
+    "image": "/images/fakemons/Golett_Copper.gif"
+  },
+  {
+    "filename": "Golett_Copper_shiny.gif",
+    "name": "Golett Copper shiny",
+    "image": "/images/fakemons/Golett_Copper_shiny.gif"
+  },
+  {
+    "filename": "Golisopede_render.png",
+    "name": "Golisopede render",
+    "image": "/images/fakemons/Golisopede_render.png"
+  },
+  {
+    "filename": "Golisopede_render_shiny.png",
+    "name": "Golisopede render shiny",
+    "image": "/images/fakemons/Golisopede_render_shiny.png"
+  },
+  {
+    "filename": "Golurk_Copper_flying.png",
+    "name": "Golurk Copper flying",
+    "image": "/images/fakemons/Golurk_Copper_flying.png"
+  },
+  {
+    "filename": "Golurk_Copper_flying_shiny.png",
+    "name": "Golurk Copper flying shiny",
+    "image": "/images/fakemons/Golurk_Copper_flying_shiny.png"
+  },
+  {
+    "filename": "Golurk_Copper_Mega.gif",
+    "name": "Golurk Copper Mega",
+    "image": "/images/fakemons/Golurk_Copper_Mega.gif"
+  },
+  {
+    "filename": "golurk_copper_mega_1.gif",
+    "name": "golurk copper mega 1",
+    "image": "/images/fakemons/golurk_copper_mega_1.gif"
+  },
+  {
+    "filename": "Golurk_Copper_Mega_shiny.gif",
+    "name": "Golurk Copper Mega shiny",
+    "image": "/images/fakemons/Golurk_Copper_Mega_shiny.gif"
+  },
+  {
+    "filename": "golurk_copper_updated_group_photo.png",
+    "name": "golurk copper updated group photo",
+    "image": "/images/fakemons/golurk_copper_updated_group_photo.png"
+  },
+  {
+    "filename": "golurk_copper_updated_shiny_group_photo.png",
+    "name": "golurk copper updated shiny group photo",
+    "image": "/images/fakemons/golurk_copper_updated_shiny_group_photo.png"
+  },
+  {
+    "filename": "goodra_boglands.png",
+    "name": "goodra boglands",
+    "image": "/images/fakemons/goodra_boglands.png"
+  },
+  {
+    "filename": "goodra_boglands_shiny.png",
+    "name": "goodra boglands shiny",
+    "image": "/images/fakemons/goodra_boglands_shiny.png"
+  },
+  {
+    "filename": "goodra_wetlands.png",
+    "name": "goodra wetlands",
+    "image": "/images/fakemons/goodra_wetlands.png"
+  },
+  {
+    "filename": "goodra_wetlands_shiny.png",
+    "name": "goodra wetlands shiny",
+    "image": "/images/fakemons/goodra_wetlands_shiny.png"
+  },
+  {
+    "filename": "hattertainer.png",
+    "name": "hattertainer",
+    "image": "/images/fakemons/hattertainer.png",
+    "allImages": [
+      "/images/fakemons/hattertainer.png",
+      "/images/fakemons/hattertainer_hattertainer.png",
+      "/images/fakemons/hattertainer_hattertainer_shiny.png",
+      "/images/fakemons/hattertainer_shiny.png"
+    ]
+  },
+  {
+    "filename": "hattertainer_shiny.png",
+    "name": "hattertainer shiny",
+    "image": "/images/fakemons/hattertainer_shiny.png"
+  },
+  {
+    "filename": "Hiveon - Bug Type.png",
+    "name": "Hiveon   Bug Type",
+    "image": "/images/fakemons/Hiveon - Bug Type.png"
+  },
+  {
+    "filename": "image.png",
+    "name": "image",
+    "image": "/images/fakemons/image.png",
+    "allImages": [
+      "/images/fakemons/image.png"
+    ]
+  },
+  {
+    "filename": "Jellicent_Apathy_Ghast_ride.gif",
+    "name": "Jellicent Apathy Ghast ride",
+    "image": "/images/fakemons/Jellicent_Apathy_Ghast_ride.gif"
+  },
+  {
+    "filename": "Jellicent_Apathy_Ghast_shiny_ride.gif",
+    "name": "Jellicent Apathy Ghast shiny ride",
+    "image": "/images/fakemons/Jellicent_Apathy_Ghast_shiny_ride.gif"
+  },
+  {
+    "filename": "Jellicent_Grumpy_Ghast_ride.gif",
+    "name": "Jellicent Grumpy Ghast ride",
+    "image": "/images/fakemons/Jellicent_Grumpy_Ghast_ride.gif"
+  },
+  {
+    "filename": "Jellicent_Grumpy_Ghast_shiny_ride.gif",
+    "name": "Jellicent Grumpy Ghast shiny ride",
+    "image": "/images/fakemons/Jellicent_Grumpy_Ghast_shiny_ride.gif"
+  },
+  {
+    "filename": "Jellicent_Happy_Ghast_ride.gif",
+    "name": "Jellicent Happy Ghast ride",
+    "image": "/images/fakemons/Jellicent_Happy_Ghast_ride.gif"
+  },
+  {
+    "filename": "Jellicent_Happy_Ghast_shiny_ride.gif",
+    "name": "Jellicent Happy Ghast shiny ride",
+    "image": "/images/fakemons/Jellicent_Happy_Ghast_shiny_ride.gif"
+  },
+  {
+    "filename": "mega_alloette_vex.png",
+    "name": "mega alloette vex",
+    "image": "/images/fakemons/mega_alloette_vex.png"
+  },
+  {
+    "filename": "mega_alloette_vex_idle.gif",
+    "name": "mega alloette vex idle",
+    "image": "/images/fakemons/mega_alloette_vex_idle.gif"
+  },
+  {
+    "filename": "mega_alloette_vex_shiny.png",
+    "name": "mega alloette vex shiny",
+    "image": "/images/fakemons/mega_alloette_vex_shiny.png"
+  },
+  {
+    "filename": "Mega_Golisopede.png",
+    "name": "Mega Golisopede",
+    "image": "/images/fakemons/Mega_Golisopede.png"
+  },
+  {
+    "filename": "Mega_Golisopede_shiny.png",
+    "name": "Mega Golisopede shiny",
+    "image": "/images/fakemons/Mega_Golisopede_shiny.png"
+  },
+  {
+    "filename": "Melofly_Render.png",
+    "name": "Melofly Render",
+    "image": "/images/fakemons/Melofly_Render.png"
+  },
+  {
+    "filename": "Melofly_Render_shiny.png",
+    "name": "Melofly Render shiny",
+    "image": "/images/fakemons/Melofly_Render_shiny.png"
+  },
+  {
+    "filename": "Minereon - Rock Type.png",
+    "name": "Minereon   Rock Type",
+    "image": "/images/fakemons/Minereon - Rock Type.png"
+  },
+  {
+    "filename": "spiritube_render.png",
+    "name": "spiritube render",
+    "image": "/images/fakemons/spiritube_render.png"
+  },
+  {
+    "filename": "spiritube_render_shiny.png",
+    "name": "spiritube render shiny",
+    "image": "/images/fakemons/spiritube_render_shiny.png"
+  },
+  {
+    "filename": "tomledger.png",
+    "name": "tomledger",
+    "image": "/images/fakemons/tomledger.png",
+    "allImages": [
+      "/images/fakemons/tomledger.png",
+      "/images/fakemons/tomledger_shiny.png",
+      "/images/fakemons/tomledger_tomledger.png",
+      "/images/fakemons/tomledger_tomledger_shiny.png"
+    ]
+  },
+  {
+    "filename": "tomledger_shiny.png",
+    "name": "tomledger shiny",
+    "image": "/images/fakemons/tomledger_shiny.png"
+  },
+  {
+    "filename": "Torchflyer_idle_animation.gif",
+    "name": "Torchflyer idle animation",
+    "image": "/images/fakemons/Torchflyer_idle_animation.gif"
+  },
+  {
+    "filename": "Torchflyer_render.png",
+    "name": "Torchflyer render",
+    "image": "/images/fakemons/Torchflyer_render.png"
+  },
+  {
+    "filename": "Torchflyer_render_shiny.png",
+    "name": "Torchflyer render shiny",
+    "image": "/images/fakemons/Torchflyer_render_shiny.png"
+  },
+  {
+    "filename": "twinledger.png",
+    "name": "twinledger",
+    "image": "/images/fakemons/twinledger.png",
+    "allImages": [
+      "/images/fakemons/twinledger.png",
+      "/images/fakemons/twinledger_shiny.png",
+      "/images/fakemons/twinledger_twinledger.png",
+      "/images/fakemons/twinledger_twinledger_shiny.png"
+    ]
+  },
+  {
+    "filename": "twinledger_shiny.png",
+    "name": "twinledger shiny",
+    "image": "/images/fakemons/twinledger_shiny.png"
+  },
+  {
+    "filename": "Typecast_Dark.png",
+    "name": "Typecast Dark",
+    "image": "/images/fakemons/Typecast_Dark.png"
+  },
+  {
+    "filename": "Typecast_Dark_shiny.png",
+    "name": "Typecast Dark shiny",
+    "image": "/images/fakemons/Typecast_Dark_shiny.png"
+  },
+  {
+    "filename": "Typecast_Electric.png",
+    "name": "Typecast Electric",
+    "image": "/images/fakemons/Typecast_Electric.png"
+  },
+  {
+    "filename": "Typecast_Electric_shiny.png",
+    "name": "Typecast Electric shiny",
+    "image": "/images/fakemons/Typecast_Electric_shiny.png"
+  },
+  {
+    "filename": "Typecast_Fire.png",
+    "name": "Typecast Fire",
+    "image": "/images/fakemons/Typecast_Fire.png"
+  },
+  {
+    "filename": "Typecast_Fire_shiny.png",
+    "name": "Typecast Fire shiny",
+    "image": "/images/fakemons/Typecast_Fire_shiny.png"
+  },
+  {
+    "filename": "Typecast_Grass.png",
+    "name": "Typecast Grass",
+    "image": "/images/fakemons/Typecast_Grass.png"
+  },
+  {
+    "filename": "Typecast_Grass_shiny.png",
+    "name": "Typecast Grass shiny",
+    "image": "/images/fakemons/Typecast_Grass_shiny.png"
+  },
+  {
+    "filename": "Typecast_Ice.png",
+    "name": "Typecast Ice",
+    "image": "/images/fakemons/Typecast_Ice.png"
+  },
+  {
+    "filename": "Typecast_Ice_shiny.png",
+    "name": "Typecast Ice shiny",
+    "image": "/images/fakemons/Typecast_Ice_shiny.png"
+  },
+  {
+    "filename": "Typecast_Psychic.png",
+    "name": "Typecast Psychic",
+    "image": "/images/fakemons/Typecast_Psychic.png"
+  },
+  {
+    "filename": "Typecast_Psychic_shiny.png",
+    "name": "Typecast Psychic shiny",
+    "image": "/images/fakemons/Typecast_Psychic_shiny.png"
+  },
+  {
+    "filename": "Typecast_Render.png",
+    "name": "Typecast Render",
+    "image": "/images/fakemons/Typecast_Render.png"
+  },
+  {
+    "filename": "Typecast_Render_shiny.png",
+    "name": "Typecast Render shiny",
+    "image": "/images/fakemons/Typecast_Render_shiny.png"
+  },
+  {
+    "filename": "Typecast_Water.png",
+    "name": "Typecast Water",
+    "image": "/images/fakemons/Typecast_Water.png"
+  },
+  {
+    "filename": "Typecast_Water_shiny.png",
+    "name": "Typecast Water shiny",
+    "image": "/images/fakemons/Typecast_Water_shiny.png"
+  },
+  {
+    "filename": "Velvettia.png",
+    "name": "Velvettia",
+    "image": "/images/fakemons/Velvettia.png",
+    "allImages": [
+      "/images/fakemons/Velvettia.png",
+      "/images/fakemons/velvettia_physical_attack_animation.gif",
+      "/images/fakemons/Velvettia_shiny.png",
+      "/images/fakemons/velvettia_Velvettia.png",
+      "/images/fakemons/velvettia_Velvettia_shiny.png"
+    ]
+  },
+  {
+    "filename": "velvettia_physical_attack_animation.gif",
+    "name": "velvettia physical attack animation",
+    "image": "/images/fakemons/velvettia_physical_attack_animation.gif"
+  },
+  {
+    "filename": "Velvettia_shiny.png",
+    "name": "Velvettia shiny",
+    "image": "/images/fakemons/Velvettia_shiny.png"
+  },
+  {
+    "filename": "Wimpod_Silverfish.png",
+    "name": "Wimpod Silverfish",
+    "image": "/images/fakemons/Wimpod_Silverfish.png"
+  },
+  {
+    "filename": "Wimpod_Silverfish_shiny.png",
+    "name": "Wimpod Silverfish shiny",
+    "image": "/images/fakemons/Wimpod_Silverfish_shiny.png"
+  },
+  {
+    "filename": "Wimpod_Silverfish_Swarm.png",
+    "name": "Wimpod Silverfish Swarm",
+    "image": "/images/fakemons/Wimpod_Silverfish_Swarm.png"
+  },
+  {
+    "filename": "Wimpod_Silverfish_Swarm_shiny.png",
+    "name": "Wimpod Silverfish Swarm shiny",
+    "image": "/images/fakemons/Wimpod_Silverfish_Swarm_shiny.png"
+  },
+  {
+    "filename": "Wizledger_Fire_Spell.gif",
+    "name": "Wizledger Fire Spell",
+    "image": "/images/fakemons/Wizledger_Fire_Spell.gif"
+  },
+  {
+    "filename": "Wizledger_Fire_Spell_pose.gif",
+    "name": "Wizledger Fire Spell pose",
+    "image": "/images/fakemons/Wizledger_Fire_Spell_pose.gif"
+  },
+  {
+    "filename": "Wizledger_Fire_Spell_pose_shiny.gif",
+    "name": "Wizledger Fire Spell pose shiny",
+    "image": "/images/fakemons/Wizledger_Fire_Spell_pose_shiny.gif"
+  },
+  {
+    "filename": "Wizledger_Fire_Spell_shiny.gif",
+    "name": "Wizledger Fire Spell shiny",
+    "image": "/images/fakemons/Wizledger_Fire_Spell_shiny.gif"
+  },
+  {
+    "filename": "Wyveon - Dragon Type.png",
+    "name": "Wyveon   Dragon Type",
+    "image": "/images/fakemons/Wyveon - Dragon Type.png"
+  },
+  {
+    "filename": "Zephyrouge_render.png",
+    "name": "Zephyrouge render",
+    "image": "/images/fakemons/Zephyrouge_render.png"
+  },
+  {
+    "filename": "Zephyrouge_render_shiny.png",
+    "name": "Zephyrouge render shiny",
+    "image": "/images/fakemons/Zephyrouge_render_shiny.png"
+  },
+  {
+    "filename": "Arcevoir.gif",
+    "name": "Arcevoir",
+    "image": "/images/fakemons/Arcevoir.gif",
+    "allImages": [
+      "/images/fakemons/Arcevoir.gif"
+    ]
+  },
+  {
+    "filename": "Armaraeon.gif",
+    "name": "Armaraeon",
+    "image": "/images/fakemons/Armaraeon.gif",
+    "allImages": [
+      "/images/fakemons/Armaraeon.gif"
+    ]
+  },
+  {
+    "filename": "Armartina.gif",
+    "name": "Armartina",
+    "image": "/images/fakemons/Armartina.gif",
+    "allImages": [
+      "/images/fakemons/Armartina.gif"
+    ]
+  },
+  {
+    "filename": "Blazetoise.png",
+    "name": "Blazetoise",
+    "image": "/images/fakemons/Blazetoise.png",
+    "allImages": [
+      "/images/fakemons/Blazetoise.png"
+    ]
+  },
+  {
+    "filename": "Charredbone.png",
+    "name": "Charredbone",
+    "image": "/images/fakemons/Charredbone.png",
+    "allImages": [
+      "/images/fakemons/Charredbone.png"
+    ]
+  },
+  {
+    "filename": "Charsey.png",
+    "name": "Charsey",
+    "image": "/images/fakemons/Charsey.png",
+    "allImages": [
+      "/images/fakemons/Charsey.png"
+    ]
+  },
+  {
+    "filename": "Darkzor.gif",
+    "name": "Darkzor",
+    "image": "/images/fakemons/Darkzor.gif",
+    "allImages": [
+      "/images/fakemons/Darkzor.gif"
+    ]
+  },
+  {
+    "filename": "Espevoir.gif",
+    "name": "Espevoir",
+    "image": "/images/fakemons/Espevoir.gif",
+    "allImages": [
+      "/images/fakemons/Espevoir.gif"
+    ]
+  },
+  {
+    "filename": "Eternevoir.gif",
+    "name": "Eternevoir",
+    "image": "/images/fakemons/Eternevoir.gif",
+    "allImages": [
+      "/images/fakemons/Eternevoir.gif"
+    ]
+  },
+  {
+    "filename": "Flarevoir.gif",
+    "name": "Flarevoir",
+    "image": "/images/fakemons/Flarevoir.gif",
+    "allImages": [
+      "/images/fakemons/Flarevoir.gif"
+    ]
+  },
+  {
+    "filename": "Gardevoir Queen.gif",
+    "name": "Gardevoir Queen",
+    "image": "/images/fakemons/Gardevoir Queen.gif",
+    "allImages": [
+      "/images/fakemons/Gardevoir Queen.gif"
+    ]
+  },
+  {
+    "filename": "Giraruledge.gif",
+    "name": "Giraruledge",
+    "image": "/images/fakemons/Giraruledge.gif",
+    "allImages": [
+      "/images/fakemons/Giraruledge.gif"
+    ]
+  },
+  {
+    "filename": "Glacevoir.gif",
+    "name": "Glacevoir",
+    "image": "/images/fakemons/Glacevoir.gif",
+    "allImages": [
+      "/images/fakemons/Glacevoir.gif"
+    ]
+  },
+  {
+    "filename": "Joltevoir.gif",
+    "name": "Joltevoir",
+    "image": "/images/fakemons/Joltevoir.gif",
+    "allImages": [
+      "/images/fakemons/Joltevoir.gif"
+    ]
+  },
+  {
+    "filename": "Leafevoir.gif",
+    "name": "Leafevoir",
+    "image": "/images/fakemons/Leafevoir.gif",
+    "allImages": [
+      "/images/fakemons/Leafevoir.gif"
+    ]
+  },
+  {
+    "filename": "Miraiceus.gif",
+    "name": "Miraiceus",
+    "image": "/images/fakemons/Miraiceus.gif",
+    "allImages": [
+      "/images/fakemons/Miraiceus.gif"
+    ]
+  },
+  {
+    "filename": "Necgross.gif",
+    "name": "Necgross",
+    "image": "/images/fakemons/Necgross.gif",
+    "allImages": [
+      "/images/fakemons/Necgross.gif"
+    ]
+  },
+  {
+    "filename": "Primapras.webp",
+    "name": "Primapras",
+    "image": "/images/fakemons/Primapras.webp",
+    "allImages": [
+      "/images/fakemons/Primapras.webp"
+    ]
+  },
+  {
+    "filename": "Pyrochu.png",
+    "name": "Pyrochu",
+    "image": "/images/fakemons/Pyrochu.png",
+    "allImages": [
+      "/images/fakemons/Pyrochu.png"
+    ]
+  },
+  {
+    "filename": "Reshievoir.gif",
+    "name": "Reshievoir",
+    "image": "/images/fakemons/Reshievoir.gif",
+    "allImages": [
+      "/images/fakemons/Reshievoir.gif"
+    ]
+  },
+  {
+    "filename": "Shiny Bulbakoal.png",
+    "name": "Shiny Bulbakoal",
+    "image": "/images/fakemons/Shiny Bulbakoal.png",
+    "allImages": [
+      "/images/fakemons/Shiny Bulbakoal.png"
+    ]
+  },
+  {
+    "filename": "Shiny Dragovoir.png",
+    "name": "Shiny Dragovoir",
+    "image": "/images/fakemons/Shiny Dragovoir.png",
+    "allImages": [
+      "/images/fakemons/Shiny Dragovoir.png"
+    ]
+  },
+  {
+    "filename": "Shiny Eterneon.png",
+    "name": "Shiny Eterneon",
+    "image": "/images/fakemons/Shiny Eterneon.png",
+    "allImages": [
+      "/images/fakemons/Shiny Eterneon.png"
+    ]
+  },
+  {
+    "filename": "Shiny Luxpa.png",
+    "name": "Shiny Luxpa",
+    "image": "/images/fakemons/Shiny Luxpa.png",
+    "allImages": [
+      "/images/fakemons/Shiny Luxpa.png"
+    ]
+  },
+  {
+    "filename": "Shiny Mimikvee.png",
+    "name": "Shiny Mimikvee",
+    "image": "/images/fakemons/Shiny Mimikvee.png",
+    "allImages": [
+      "/images/fakemons/Shiny Mimikvee.png"
+    ]
+  },
+  {
+    "filename": "Shiny Togechu.png",
+    "name": "Shiny Togechu",
+    "image": "/images/fakemons/Shiny Togechu.png",
+    "allImages": [
+      "/images/fakemons/Shiny Togechu.png"
+    ]
+  },
+  {
+    "filename": "Shiny Umbrizard.png",
+    "name": "Shiny Umbrizard",
+    "image": "/images/fakemons/Shiny Umbrizard.png",
+    "allImages": [
+      "/images/fakemons/Shiny Umbrizard.png"
+    ]
+  },
+  {
+    "filename": "Shiny Venustoise.png",
+    "name": "Shiny Venustoise",
+    "image": "/images/fakemons/Shiny Venustoise.png",
+    "allImages": [
+      "/images/fakemons/Shiny Venustoise.png"
+    ]
+  },
+  {
+    "filename": "Sylvevoir.gif",
+    "name": "Sylvevoir",
+    "image": "/images/fakemons/Sylvevoir.gif",
+    "allImages": [
+      "/images/fakemons/Sylvevoir.gif"
+    ]
+  },
+  {
+    "filename": "Umbrevoir.gif",
+    "name": "Umbrevoir",
+    "image": "/images/fakemons/Umbrevoir.gif",
+    "allImages": [
+      "/images/fakemons/Umbrevoir.gif"
+    ]
+  },
+  {
+    "filename": "Vaporevoir.gif",
+    "name": "Vaporevoir",
+    "image": "/images/fakemons/Vaporevoir.gif",
+    "allImages": [
+      "/images/fakemons/Vaporevoir.gif"
+    ]
+  },
+  {
+    "filename": "6834996e0d39e79c466392351803c05679553249_350.png",
+    "name": "6834996e0d39e79c466392351803c05679553249 350",
+    "image": "/images/fakemons/6834996e0d39e79c466392351803c05679553249_350.png"
+  },
+  {
+    "filename": "Cafe Arctozolt.webp",
+    "name": "Cafe Arctozolt",
+    "image": "/images/fakemons/Cafe Arctozolt.webp",
+    "allImages": [
+      "/images/fakemons/Cafe Arctozolt.webp"
+    ]
+  },
+  {
+    "filename": "Cafe form Tinkaton.png",
+    "name": "Cafe form Tinkaton",
+    "image": "/images/fakemons/Cafe form Tinkaton.png",
+    "allImages": [
+      "/images/fakemons/Cafe form Tinkaton.png"
+    ]
+  },
+  {
+    "filename": "Cafe Latias.png",
+    "name": "Cafe Latias",
+    "image": "/images/fakemons/Cafe Latias.png",
+    "allImages": [
+      "/images/fakemons/Cafe Latias.png"
+    ]
+  },
+  {
+    "filename": "Cafe Latios.png",
+    "name": "Cafe Latios",
+    "image": "/images/fakemons/Cafe Latios.png",
+    "allImages": [
+      "/images/fakemons/Cafe Latios.png"
+    ]
+  },
+  {
+    "filename": "Cafe Mew.png",
+    "name": "Cafe Mew",
+    "image": "/images/fakemons/Cafe Mew.png",
+    "allImages": [
+      "/images/fakemons/Cafe Mew.png"
+    ]
+  },
+  {
+    "filename": "Cafe Raichu.png",
+    "name": "Cafe Raichu!",
+    "image": "/images/fakemons/Cafe Raichu.png"
+  },
+  {
+    "filename": "Animon.png",
+    "name": "Animon",
+    "image": "/images/fakemons/Animon.png",
+    "allImages": [
+      "/images/fakemons/Animon.png"
+    ]
+  },
+  {
+    "filename": "Ascenshark.png",
+    "name": "Ascenshark",
+    "image": "/images/fakemons/Ascenshark.png",
+    "allImages": [
+      "/images/fakemons/Ascenshark.png"
+    ]
+  },
+  {
+    "filename": "Babymons.png",
+    "name": "Babymons!",
+    "image": "/images/fakemons/Babymons.png",
+    "allImages": [
+      "/images/fakemons/Babymons!.png"
+    ]
+  },
+  {
+    "filename": "Calfaraf Beta Girafarig Para Carapthor Kanbok Kokana.png",
+    "name": "Calfaraf, Beta Girafarig, Para, Carapthor, Kanbok, Kokana",
+    "image": "/images/fakemons/Calfaraf Beta Girafarig Para Carapthor Kanbok Kokana.png",
+    "allImages": [
+      "/images/fakemons/Calfaraf, Beta Girafarig, Para, Carapthor, Kanbok, Kokana.png"
+    ]
+  },
+  {
+    "filename": "Evolotto.png",
+    "name": "Evolotto",
+    "image": "/images/fakemons/Evolotto.png",
+    "allImages": [
+      "/images/fakemons/Evolotto.png"
+    ]
+  },
+  {
+    "filename": "Gorochu.png",
+    "name": "Gorochu",
+    "image": "/images/fakemons/Gorochu.png",
+    "allImages": [
+      "/images/fakemons/Gorochu.png"
+    ]
+  },
+  {
+    "filename": "Groupshot.png",
+    "name": "Groupshot",
+    "image": "/images/fakemons/Groupshot.png",
+    "allImages": [
+      "/images/fakemons/Groupshot.png"
+    ]
+  },
+  {
+    "filename": "Hakogame.png",
+    "name": "Hakogame",
+    "image": "/images/fakemons/Hakogame.png",
+    "allImages": [
+      "/images/fakemons/Hakogame.png"
+    ]
+  },
+  {
+    "filename": "Kaburion.png",
+    "name": "Kaburion",
+    "image": "/images/fakemons/Kaburion.png",
+    "allImages": [
+      "/images/fakemons/Kaburion.png"
+    ]
+  },
+  {
+    "filename": "Koma-Inu.png",
+    "name": "Koma Inu",
+    "image": "/images/fakemons/Koma-Inu.png"
+  },
+  {
+    "filename": "Komari and Kindachi.png",
+    "name": "Komari and Kindachi",
+    "image": "/images/fakemons/Komari and Kindachi.png",
+    "allImages": [
+      "/images/fakemons/Komari and Kindachi.png"
+    ]
+  },
+  {
+    "filename": "Kotora and Raitora.png",
+    "name": "Kotora and Raitora",
+    "image": "/images/fakemons/Kotora and Raitora.png",
+    "allImages": [
+      "/images/fakemons/Kotora and Raitora.png"
+    ]
+  },
+  {
+    "filename": "Madamuu.png",
+    "name": "Madamuu",
+    "image": "/images/fakemons/Madamuu.png",
+    "allImages": [
+      "/images/fakemons/Madamuu.png"
+    ]
+  },
+  {
+    "filename": "Nature is Healing....png",
+    "name": "Nature is Healing...",
+    "image": "/images/fakemons/Nature is Healing....png",
+    "allImages": [
+      "/images/fakemons/Nature is Healing....png"
+    ]
+  },
+  {
+    "filename": "Norowara and Kyonpan.png",
+    "name": "Norowara and Kyonpan",
+    "image": "/images/fakemons/Norowara and Kyonpan.png",
+    "allImages": [
+      "/images/fakemons/Norowara and Kyonpan.png"
+    ]
+  },
+  {
+    "filename": "Penpin.png",
+    "name": "Penpin",
+    "image": "/images/fakemons/Penpin.png",
+    "allImages": [
+      "/images/fakemons/Penpin.png"
+    ]
+  },
+  {
+    "filename": "Plux.png",
+    "name": "Plux",
+    "image": "/images/fakemons/Plux.png",
+    "allImages": [
+      "/images/fakemons/Plux.png"
+    ]
+  },
+  {
+    "filename": "Ponku and Tanpu.png",
+    "name": "Ponku and Tanpu",
+    "image": "/images/fakemons/Ponku and Tanpu.png",
+    "allImages": [
+      "/images/fakemons/Ponku and Tanpu.png"
+    ]
+  },
+  {
+    "filename": "Psykou and Psyking.png",
+    "name": "Psykou and Psyking",
+    "image": "/images/fakemons/Psykou and Psyking.png",
+    "allImages": [
+      "/images/fakemons/Psykou and Psyking.png"
+    ]
+  },
+  {
+    "filename": "Shibirefugu.png",
+    "name": "Shibirefugu",
+    "image": "/images/fakemons/Shibirefugu.png",
+    "allImages": [
+      "/images/fakemons/Shibirefugu.png"
+    ]
+  },
+  {
+    "filename": "SW97 Starters.png",
+    "name": "SW97 Starters!",
+    "image": "/images/fakemons/SW97 Starters.png",
+    "allImages": [
+      "/images/fakemons/SW97 Starters!.png"
+    ]
+  },
+  {
+    "filename": "Tsubomitto.png",
+    "name": "Tsubomitto",
+    "image": "/images/fakemons/Tsubomitto.png",
+    "allImages": [
+      "/images/fakemons/Tsubomitto.png"
+    ]
+  },
+  {
+    "filename": "Turbann.png",
+    "name": "Turbann",
+    "image": "/images/fakemons/Turbann.png",
+    "allImages": [
+      "/images/fakemons/Turbann.png"
+    ]
+  },
+  {
+    "filename": "Warabbit.png",
+    "name": "Warabbit",
+    "image": "/images/fakemons/Warabbit.png",
+    "allImages": [
+      "/images/fakemons/Warabbit.png"
+    ]
+  },
+  {
+    "filename": "Centisculk_render_shiny.png",
+    "name": "Centisculk render shiny",
+    "image": "/images/fakemons/Centisculk_render_shiny.png"
+  },
+  {
+    "filename": "Centisculk_render.png",
+    "name": "Centisculk render",
+    "image": "/images/fakemons/Centisculk_render.png"
+  },
+  {
+    "filename": "Clawviathan_render_shiny.png",
+    "name": "Clawviathan render shiny",
+    "image": "/images/fakemons/Clawviathan_render_shiny.png"
+  },
+  {
+    "filename": "Clawviathan_render.png",
+    "name": "Clawviathan render",
+    "image": "/images/fakemons/Clawviathan_render.png"
+  },
+  {
+    "filename": "Djinnferno_shiny.png",
+    "name": "Djinnferno shiny",
+    "image": "/images/fakemons/Djinnferno_shiny.png"
+  },
+  {
+    "filename": "Djinnferno.png",
+    "name": "Djinnferno",
+    "image": "/images/fakemons/Djinnferno.png",
+    "allImages": [
+      "/images/fakemons/Djinnferno.png",
+      "/images/fakemons/djinnferno_Djinnferno.png",
+      "/images/fakemons/djinnferno_Djinnferno_shiny.png",
+      "/images/fakemons/Djinnferno_shiny.png"
+    ]
+  },
+  {
+    "filename": "dreaneuma_shiny.png",
+    "name": "dreaneuma shiny",
+    "image": "/images/fakemons/dreaneuma_shiny.png"
+  },
+  {
+    "filename": "dreaneuma.png",
+    "name": "dreaneuma",
+    "image": "/images/fakemons/dreaneuma.png",
+    "allImages": [
+      "/images/fakemons/dreaneuma.png",
+      "/images/fakemons/dreaneuma_dreaneuma.png",
+      "/images/fakemons/dreaneuma_dreaneuma_shiny.png",
+      "/images/fakemons/dreaneuma_shiny.png"
+    ]
+  },
+  {
+    "filename": "dunecargo_shiny.png",
+    "name": "dunecargo shiny",
+    "image": "/images/fakemons/dunecargo_shiny.png"
+  },
+  {
+    "filename": "dunecargo.png",
+    "name": "dunecargo",
+    "image": "/images/fakemons/dunecargo.png",
+    "allImages": [
+      "/images/fakemons/dunecargo.png",
+      "/images/fakemons/dunecargo_dunecargo.png",
+      "/images/fakemons/dunecargo_dunecargo_shiny.png",
+      "/images/fakemons/dunecargo_shiny.png"
+    ]
+  },
+  {
+    "filename": "Gholdendough_shiny.png",
+    "name": "Gholdendough shiny",
+    "image": "/images/fakemons/Gholdendough_shiny.png"
+  },
+  {
+    "filename": "Gholdendough.png",
+    "name": "Gholdendough",
+    "image": "/images/fakemons/Gholdendough.png",
+    "allImages": [
+      "/images/fakemons/Gholdendough.png",
+      "/images/fakemons/gholdendough_Gholdendough.png",
+      "/images/fakemons/gholdendough_Gholdendough_shiny.png",
+      "/images/fakemons/Gholdendough_shiny.png"
+    ]
+  },
+  {
+    "filename": "gildenose_shiny.png",
+    "name": "gildenose shiny",
+    "image": "/images/fakemons/gildenose_shiny.png"
+  },
+  {
+    "filename": "gildenose.png",
+    "name": "gildenose",
+    "image": "/images/fakemons/gildenose.png",
+    "allImages": [
+      "/images/fakemons/gildenose.png",
+      "/images/fakemons/gildenose_gildenose.png",
+      "/images/fakemons/gildenose_gildenose_shiny.png",
+      "/images/fakemons/gildenose_shiny.png"
+    ]
+  },
+  {
+    "filename": "Gimmibread_Chest.png",
+    "name": "Gimmibread Chest",
+    "image": "/images/fakemons/Gimmibread_Chest.png"
+  },
+  {
+    "filename": "Gimmibread_Chest_shiny.png",
+    "name": "Gimmibread Chest shiny",
+    "image": "/images/fakemons/Gimmibread_Chest_shiny.png"
+  },
+  {
+    "filename": "Gimmibread_shiny.png",
+    "name": "Gimmibread shiny",
+    "image": "/images/fakemons/Gimmibread_shiny.png"
+  },
+  {
+    "filename": "Gimmibread.png",
+    "name": "Gimmibread",
+    "image": "/images/fakemons/Gimmibread.png",
+    "allImages": [
+      "/images/fakemons/Gimmibread.png",
+      "/images/fakemons/Gimmibread_Chest.png",
+      "/images/fakemons/Gimmibread_Chest_shiny.png",
+      "/images/fakemons/gimmibread_Gimmibread.png",
+      "/images/fakemons/gimmibread_Gimmibread_Chest.png",
+      "/images/fakemons/gimmibread_Gimmibread_Chest_shiny.png",
+      "/images/fakemons/gimmibread_Gimmibread_shiny.png",
+      "/images/fakemons/Gimmibread_shiny.png"
+    ]
+  },
+  {
+    "filename": "gourgrenade_shiny.png",
+    "name": "gourgrenade shiny",
+    "image": "/images/fakemons/gourgrenade_shiny.png"
+  },
+  {
+    "filename": "gourgrenade.png",
+    "name": "gourgrenade",
+    "image": "/images/fakemons/gourgrenade.png",
+    "allImages": [
+      "/images/fakemons/gourgrenade.png",
+      "/images/fakemons/gourgrenade_gourgrenade.png",
+      "/images/fakemons/gourgrenade_gourgrenade_shiny.png",
+      "/images/fakemons/gourgrenade_shiny.png"
+    ]
+  },
+  {
+    "filename": "norstar_shiny.png",
+    "name": "norstar shiny",
+    "image": "/images/fakemons/norstar_shiny.png"
+  },
+  {
+    "filename": "norstar.png",
+    "name": "norstar",
+    "image": "/images/fakemons/norstar.png",
+    "allImages": [
+      "/images/fakemons/norstar.png",
+      "/images/fakemons/norstar_norstar.png",
+      "/images/fakemons/norstar_norstar_shiny.png",
+      "/images/fakemons/norstar_shiny.png"
+    ]
+  },
+  {
+    "filename": "noseferatu_shiny.png",
+    "name": "noseferatu shiny",
+    "image": "/images/fakemons/noseferatu_shiny.png"
+  },
+  {
+    "filename": "noseferatu.png",
+    "name": "noseferatu",
+    "image": "/images/fakemons/noseferatu.png",
+    "allImages": [
+      "/images/fakemons/noseferatu.png",
+      "/images/fakemons/noseferatu_noseferatu.png",
+      "/images/fakemons/noseferatu_noseferatu_shiny.png",
+      "/images/fakemons/noseferatu_shiny.png"
+    ]
+  },
+  {
+    "filename": "Palossnow_render_shiny.png",
+    "name": "Palossnow render shiny",
+    "image": "/images/fakemons/Palossnow_render_shiny.png"
+  },
+  {
+    "filename": "Palossnow_render.png",
+    "name": "Palossnow render",
+    "image": "/images/fakemons/Palossnow_render.png"
+  },
+  {
+    "filename": "Papersol_shiny.gif",
+    "name": "Papersol shiny",
+    "image": "/images/fakemons/Papersol_shiny.gif"
+  },
+  {
+    "filename": "Papersol.gif",
+    "name": "Papersol",
+    "image": "/images/fakemons/Papersol.gif",
+    "allImages": [
+      "/images/fakemons/Papersol.gif",
+      "/images/fakemons/Papersol_shiny.gif"
+    ]
+  },
+  {
+    "filename": "pillowisp_bad_dreams_shiny.png",
+    "name": "pillowisp bad dreams shiny",
+    "image": "/images/fakemons/pillowisp_bad_dreams_shiny.png"
+  },
+  {
+    "filename": "pillowisp_sweet_dreams.png",
+    "name": "pillowisp sweet dreams",
+    "image": "/images/fakemons/pillowisp_sweet_dreams.png"
+  },
+  {
+    "filename": "pillowisp_sweet_dreams_shiny.png",
+    "name": "pillowisp sweet dreams shiny",
+    "image": "/images/fakemons/pillowisp_sweet_dreams_shiny.png"
+  },
+  {
+    "filename": "pillowisp_bad_dreams.png",
+    "name": "pillowisp bad dreams",
+    "image": "/images/fakemons/pillowisp_bad_dreams.png"
+  },
+  {
+    "filename": "Pitchertun_Render_shiny.png",
+    "name": "Pitchertun Render shiny",
+    "image": "/images/fakemons/Pitchertun_Render_shiny.png"
+  },
+  {
+    "filename": "Pitchertun_Render.png",
+    "name": "Pitchertun Render",
+    "image": "/images/fakemons/Pitchertun_Render.png"
+  },
+  {
+    "filename": "Podlin_render_shiny.png",
+    "name": "Podlin render shiny",
+    "image": "/images/fakemons/Podlin_render_shiny.png"
+  },
+  {
+    "filename": "Podlin_render.png",
+    "name": "Podlin render",
+    "image": "/images/fakemons/Podlin_render.png"
+  },
+  {
+    "filename": "Porytron-Z.gif",
+    "name": "Porytron-Z",
+    "image": "/images/fakemons/Porytron-Z.gif",
+    "allImages": [
+      "/images/fakemons/Porytron-Z.gif"
+    ]
+  },
+  {
+    "filename": "Porytron2.gif",
+    "name": "Porytron2",
+    "image": "/images/fakemons/Porytron2.gif",
+    "allImages": [
+      "/images/fakemons/Porytron2.gif"
+    ]
+  },
+  {
+    "filename": "Porytron_shiny.gif",
+    "name": "Porytron shiny",
+    "image": "/images/fakemons/Porytron_shiny.gif"
+  },
+  {
+    "filename": "Porytron.gif",
+    "name": "Porytron",
+    "image": "/images/fakemons/Porytron.gif",
+    "allImages": [
+      "/images/fakemons/Porytron-Z.gif",
+      "/images/fakemons/Porytron.gif",
+      "/images/fakemons/Porytron2.gif",
+      "/images/fakemons/Porytron_shiny.gif"
+    ]
+  },
+  {
+    "filename": "pumpkaboom_shiny.png",
+    "name": "pumpkaboom shiny",
+    "image": "/images/fakemons/pumpkaboom_shiny.png"
+  },
+  {
+    "filename": "pumpkaboom.png",
+    "name": "pumpkaboom",
+    "image": "/images/fakemons/pumpkaboom.png",
+    "allImages": [
+      "/images/fakemons/pumpkaboom.png",
+      "/images/fakemons/pumpkaboom_pumpkaboom.png",
+      "/images/fakemons/pumpkaboom_pumpkaboom_shiny.png",
+      "/images/fakemons/pumpkaboom_shiny.png"
+    ]
+  },
+  {
+    "filename": "regisculk_render_shiny.png",
+    "name": "regisculk render shiny",
+    "image": "/images/fakemons/regisculk_render_shiny.png"
+  },
+  {
+    "filename": "regisculk_render.png",
+    "name": "regisculk render",
+    "image": "/images/fakemons/regisculk_render.png"
+  },
+  {
+    "filename": "Seedlin_render_shiny.png",
+    "name": "Seedlin render shiny",
+    "image": "/images/fakemons/Seedlin_render_shiny.png"
+  },
+  {
+    "filename": "Seedlin_render.png",
+    "name": "Seedlin render",
+    "image": "/images/fakemons/Seedlin_render.png"
+  },
+  {
+    "filename": "Sephiredge_render_shiny.png",
+    "name": "Sephiredge render shiny",
+    "image": "/images/fakemons/Sephiredge_render_shiny.png"
+  },
+  {
+    "filename": "Sephiredge_render.png",
+    "name": "Sephiredge render",
+    "image": "/images/fakemons/Sephiredge_render.png"
+  },
+  {
+    "filename": "slugrit_shiny.png",
+    "name": "slugrit shiny",
+    "image": "/images/fakemons/slugrit_shiny.png"
+  },
+  {
+    "filename": "slugrit.png",
+    "name": "slugrit",
+    "image": "/images/fakemons/slugrit.png",
+    "allImages": [
+      "/images/fakemons/slugrit.png",
+      "/images/fakemons/slugrit_shiny.png",
+      "/images/fakemons/slugrit_slugrit.png",
+      "/images/fakemons/slugrit_slugrit_shiny.png"
+    ]
+  },
+  {
+    "filename": "Snowygast_Render_shiny.png",
+    "name": "Snowygast Render shiny",
+    "image": "/images/fakemons/Snowygast_Render_shiny.png"
+  },
+  {
+    "filename": "Snowygast_Render.png",
+    "name": "Snowygast Render",
+    "image": "/images/fakemons/Snowygast_Render.png"
+  },
+  {
+    "filename": "starstellation_shiny.png",
+    "name": "starstellation shiny",
+    "image": "/images/fakemons/starstellation_shiny.png"
+  },
+  {
+    "filename": "starstellation.png",
+    "name": "starstellation",
+    "image": "/images/fakemons/starstellation.png",
+    "allImages": [
+      "/images/fakemons/starstellation.png",
+      "/images/fakemons/starstellation_shiny.png",
+      "/images/fakemons/starstellation_starstellation.png",
+      "/images/fakemons/starstellation_starstellation_shiny.png"
+    ]
+  },
+  {
+    "filename": "Stygipede_render_shiny.png",
+    "name": "Stygipede render shiny",
+    "image": "/images/fakemons/Stygipede_render_shiny.png"
+  },
+  {
+    "filename": "Stygipede_render.png",
+    "name": "Stygipede render",
+    "image": "/images/fakemons/Stygipede_render.png"
+  },
+  {
+    "filename": "Torchlin_render_shiny.png",
+    "name": "Torchlin render shiny",
+    "image": "/images/fakemons/Torchlin_render_shiny.png"
+  },
+  {
+    "filename": "Torchlin_render.png",
+    "name": "Torchlin render",
+    "image": "/images/fakemons/Torchlin_render.png"
+  },
+  {
+    "filename": "tuligant_shiny.png",
+    "name": "tuligant shiny",
+    "image": "/images/fakemons/tuligant_shiny.png"
+  },
+  {
+    "filename": "tuligant.png",
+    "name": "tuligant",
+    "image": "/images/fakemons/tuligant.png",
+    "allImages": [
+      "/images/fakemons/tuligant.png",
+      "/images/fakemons/tuligant_shiny.png",
+      "/images/fakemons/tuligant_tuligant.png",
+      "/images/fakemons/tuligant_tuligant_shiny.png"
+    ]
+  },
+  {
+    "filename": "umbrelligant_shiny.gif",
+    "name": "umbrelligant shiny",
+    "image": "/images/fakemons/umbrelligant_shiny.gif"
+  },
+  {
+    "filename": "umbrelligant.gif",
+    "name": "umbrelligant",
+    "image": "/images/fakemons/umbrelligant.gif",
+    "allImages": [
+      "/images/fakemons/umbrelligant.gif",
+      "/images/fakemons/umbrelligant_shiny.gif"
+    ]
+  }
+]

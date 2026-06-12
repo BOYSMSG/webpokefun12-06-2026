@@ -1,0 +1,38 @@
+[
+  {
+    "id": "post-1",
+    "author": "Bloody",
+    "avatar": "https://i.pravatar.cc/150?img=11",
+    "title": "Welcome to the Pokefun Community!",
+    "content": "Share your best catches, rarest Fakemons, builds, and tips here. Let's build an amazing Pokefun wiki together!",
+    "category": "Announcements",
+    "media": "/images/features/image2_showcase.png",
+    "mediaType": "image",
+    "upvotes": 42,
+    "timestamp": "2026-06-11T12:00:00Z"
+  },
+  {
+    "id": "post-2",
+    "author": "PixelTrainer",
+    "avatar": "https://i.pravatar.cc/150?img=33",
+    "title": "Found an amazing spawn location for Alloette Allay",
+    "content": "Guys, if you head over to the Meadow biomes and look around Jukeboxes, you can find them spawning. Good luck!",
+    "category": "Locations",
+    "media": null,
+    "mediaType": "text",
+    "upvotes": 15,
+    "timestamp": "2026-06-12T01:30:00Z"
+  },
+  {
+    "title": "gulugulu",
+    "content": "vvv",
+    "category": "Showcase",
+    "media": null,
+    "mediaType": "text",
+    "author": "gulu gulu",
+    "id": "post-1781214885259",
+    "upvotes": 0,
+    "timestamp": "2026-06-11T21:54:45.259Z",
+    "avatar": "https://i.pravatar.cc/150?u=0.9661520007579933"
+  }
+]
