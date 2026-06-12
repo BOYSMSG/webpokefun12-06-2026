@@ -21,6 +21,9 @@ export async function GET(req: Request) {
     } else if (mode === 'battletower') {
       tableName = 'battletower_player_data';
       orderBy = 'highest_floor';
+    } else if (mode === 'pokedex') {
+      tableName = 'pokedex_player_data';
+      orderBy = 'caught'; // fallback 
     }
 
     const pool = getMySQLConnection();
