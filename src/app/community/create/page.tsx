@@ -35,7 +35,6 @@ export default function CreatePostPage() {
 
       if (media) {
         if (media.includes('youtube.com/') || media.includes('youtu.be/')) {
-          determinedMediaType = 'youtube';
           let videoId = '';
           if (media.includes('youtube.com/watch?v=')) {
             videoId = media.split('watch?v=')[1].split('&')[0];
@@ -45,7 +44,13 @@ export default function CreatePostPage() {
             videoId = media.split('youtube.com/shorts/')[1].split('?')[0];
           }
           if (videoId) {
+             determinedMediaType = 'youtube';
              finalMedia = `https://www.youtube.com/embed/${videoId}`;
+          } else if (media.includes('youtube.com/post/')) {
+             determinedMediaType = 'youtube-post';
+             finalMedia = media;
+          } else {
+             determinedMediaType = 'link';
           }
         } else if (media.includes('instagram.com/reel/') || media.includes('instagram.com/p/')) {
           determinedMediaType = 'instagram';

@@ -168,6 +168,12 @@ export default function PostPage() {
               <iframe width="100%" height="500" src={post.media.replace("watch?v=", "embed/").replace("youtu.be/", "youtube.com/embed/")} title="YouTube video player" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen></iframe>
             ) : post.mediaType === 'instagram' ? (
               <iframe width="100%" height="500" src={post.media} frameBorder="0" scrolling="no" allowTransparency></iframe>
+            ) : post.mediaType === 'youtube-post' ? (
+              <a href={post.media} target="_blank" rel="noopener noreferrer" style={{ width: '100%', height: '500px', background: 'linear-gradient(135deg, #cc0000, #ff4444)', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', color: 'white', padding: '20px', textAlign: 'center', textDecoration: 'none' }}>
+                <i className="fa-brands fa-youtube" style={{ fontSize: '6rem', marginBottom: '20px' }}></i>
+                <h4 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 'bold' }}>YouTube Community Post</h4>
+                <p style={{ margin: '10px 0 0 0', color: 'rgba(255,255,255,0.8)', fontSize: '1rem' }}>Click here to view this post directly on YouTube</p>
+              </a>
             ) : post.mediaType === 'video' ? (
               <video src={post.media} controls style={{ width: '100%', maxHeight: '500px', objectFit: 'contain' }} />
             ) : null}

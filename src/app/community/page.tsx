@@ -247,6 +247,12 @@ export default function CommunityPage() {
                       <iframe width="100%" height="250" src={post.media.replace("watch?v=", "embed/")} title="YouTube video" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen onClick={e => e.stopPropagation()}></iframe>
                     ) : post.mediaType === 'instagram' ? (
                       <iframe width="100%" height="300" src={post.media} frameBorder="0" scrolling="no" allowTransparency onClick={e => e.stopPropagation()}></iframe>
+                    ) : post.mediaType === 'youtube-post' ? (
+                      <div style={{ width: '100%', height: '250px', background: 'linear-gradient(135deg, #cc0000, #ff4444)', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', color: 'white', padding: '20px', textAlign: 'center' }} onClick={(e) => { e.stopPropagation(); window.open(post.media, '_blank'); }}>
+                        <i className="fa-brands fa-youtube" style={{ fontSize: '4rem', marginBottom: '15px' }}></i>
+                        <h4 style={{ margin: 0, fontSize: '1.2rem', fontWeight: 'bold' }}>YouTube Community Post</h4>
+                        <p style={{ margin: '10px 0 0 0', color: 'rgba(255,255,255,0.8)', fontSize: '0.9rem' }}>Click to view post on YouTube</p>
+                      </div>
                     ) : post.mediaType === 'video' ? (
                       <video src={post.media} controls style={{ width: '100%', height: '250px' }} onClick={e => e.stopPropagation()}></video>
                     ) : null}
