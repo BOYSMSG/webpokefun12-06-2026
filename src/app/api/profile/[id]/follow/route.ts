@@ -15,29 +15,30 @@ export async function POST(req: Request, props: { params: Promise<{ id: string }
     const currentUserEmail = session.user.email;
     const targetUserId = id; // Could be _id or email depending on how frontend sends it. Let's assume it's email.
 
-    if (currentUserEmail === targetUserId) {
-      return NextResponse.json({ error: "You cannot follow yourself" }, { status: 400 });
-    }
-
     await connectDB();
-    
     const currentUser = await User.findOne({ email: currentUserEmail });
-    const targetUser = await User.findOne({ email: targetUserId });
+    const targetUser = await User.findOne({ 
+      $or: [{ username: targetUserId }, { email: targetUserId }] 
+    });
 
     if (!currentUser || !targetUser) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    const isFollowing = currentUser.following.includes(targetUserId);
+    if (currentUser.username === targetUser.username) {
+      return NextResponse.json({ error: "You cannot follow yourself" }, { status: 400 });
+    }
+
+    const isFollowing = currentUser.following.includes(targetUser.username);
 
     if (isFollowing) {
       // Unfollow
-      currentUser.following = currentUser.following.filter((id: string) => id !== targetUserId);
-      targetUser.followers = targetUser.followers.filter((id: string) => id !== currentUserEmail);
+      currentUser.following = currentUser.following.filter((username: string) => username !== targetUser.username);
+      targetUser.followers = targetUser.followers.filter((username: string) => username !== currentUser.username);
     } else {
       // Follow
-      currentUser.following.push(targetUserId);
-      targetUser.followers.push(currentUserEmail);
+      if (!currentUser.following.includes(targetUser.username)) currentUser.following.push(targetUser.username);
+      if (!targetUser.followers.includes(currentUser.username)) targetUser.followers.push(currentUser.username);
     }
 
     await currentUser.save();

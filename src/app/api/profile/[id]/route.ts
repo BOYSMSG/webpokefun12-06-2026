@@ -26,6 +26,14 @@ export async function GET(req: Request, props: { params: Promise<{ id: string }>
 
     const posts = await Post.find({ authorId: user.username }).sort({ createdAt: -1 }).lean();
 
+    let isFollowing = false;
+    if (session?.user?.email) {
+      const currentUser = await User.findOne({ email: session.user.email }).lean();
+      if (currentUser) {
+        isFollowing = (currentUser.following || []).includes(user.username);
+      }
+    }
+
     const formattedProfile = {
       name: user.name,
       username: user.username,
@@ -37,7 +45,8 @@ export async function GET(req: Request, props: { params: Promise<{ id: string }>
       followersCount: (user.followers || []).length,
       followingCount: (user.following || []).length,
       joinedAt: user.createdAt,
-      isOwnProfile: session?.user?.email === user.email
+      isOwnProfile: session?.user?.email === user.email,
+      isFollowing: isFollowing
     };
 
     const formattedPosts = posts.map(post => ({

@@ -40,12 +40,15 @@ export default function PublicProfilePage() {
       if (data.success) {
         setProfile({ 
           ...profile, 
-          followersCount: data.followersCount
+          followersCount: data.followersCount,
+          isFollowing: data.isFollowing
         });
         alert(data.isFollowing ? "You are now following this user!" : "You unfollowed this user.");
+      } else {
+        alert(data.error || "Failed to update follow status.");
       }
     } catch (e) {
-      alert("Failed to update follow status.");
+      alert("Something went wrong.");
     }
   };
 
@@ -97,8 +100,27 @@ export default function PublicProfilePage() {
         <div style={{ position: 'absolute', bottom: '-40px', right: '20px', display: 'flex', gap: '15px' }}>
           {!profile.isOwnProfile ? (
             <>
-              <button onClick={handleFollow} style={{ padding: '10px 25px', borderRadius: '30px', border: 'none', background: '#10b981', color: 'white', fontWeight: 'bold', fontSize: '1rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', boxShadow: '0 4px 15px rgba(16, 185, 129, 0.4)' }}>
-                <i className="fa-solid fa-user-plus"></i> Follow
+              <button 
+                onClick={handleFollow} 
+                style={{ 
+                  padding: '10px 25px', 
+                  borderRadius: '30px', 
+                  border: 'none', 
+                  background: profile.isFollowing ? '#374151' : '#10b981', 
+                  color: 'white', 
+                  fontWeight: 'bold', 
+                  fontSize: '1rem', 
+                  cursor: 'pointer', 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  gap: '8px', 
+                  boxShadow: profile.isFollowing ? 'none' : '0 4px 15px rgba(16, 185, 129, 0.4)' 
+                }}>
+                {profile.isFollowing ? (
+                  <><i className="fa-solid fa-user-check"></i> Following</>
+                ) : (
+                  <><i className="fa-solid fa-user-plus"></i> Follow</>
+                )}
               </button>
               <Link href={`/messages?user=${profile.username}`} style={{ padding: '10px 25px', borderRadius: '30px', border: 'none', background: '#3b82f6', color: 'white', fontWeight: 'bold', fontSize: '1rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', textDecoration: 'none', boxShadow: '0 4px 15px rgba(59, 130, 246, 0.4)' }}>
                 <i className="fa-solid fa-message"></i> Message
