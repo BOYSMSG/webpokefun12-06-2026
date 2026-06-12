@@ -292,7 +292,7 @@ export default function PokemonDetailPage() {
             <div>
               <h2 style={{ fontSize: '1.8rem', color: 'white', marginBottom: '15px' }}>Defensive Type Matchups</h2>
               <div style={{ background: '#1f2937', padding: '20px', borderRadius: '20px', border: '1px solid rgba(255,255,255,0.05)', display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(110px, 1fr))', gap: '10px' }}>
-                {ALL_TYPES.map(type => {
+                {[...ALL_TYPES].sort((a, b) => (weaknesses[b] ?? 1) - (weaknesses[a] ?? 1)).map(type => {
                   const mult = weaknesses[type] ?? 1;
                   let badgeColor = '#6b7280'; // 1x gray
                   if (mult === 4) badgeColor = '#dc2626'; // Red
