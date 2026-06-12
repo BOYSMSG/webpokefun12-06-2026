@@ -111,6 +111,13 @@ export default function MessagesPage() {
     (m.receiverId === session?.user?.email && m.senderId === activeContact)
   );
 
+  const unreadCounts: Record<string, number> = {};
+  messages.forEach(m => {
+    if (m.receiverId === session?.user?.email && !m.read) {
+      unreadCounts[m.senderId] = (unreadCounts[m.senderId] || 0) + 1;
+    }
+  });
+
   const getContactInfo = (email: string) => {
     if (email === 'pokefun_actions') return { name: 'Pokefun Actions', image: 'https://ui-avatars.com/api/?name=PA&background=eab308&color=000' };
     if (contacts[email]) return contacts[email];
@@ -205,6 +212,7 @@ export default function MessagesPage() {
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ senderId: email })
                       });
+                      setMessages(prev => prev.map(m => (m.senderId === email && m.receiverId === session?.user?.email) ? { ...m, read: true } : m));
                     }}
                     style={{ 
                       display: 'flex', alignItems: 'center', gap: '15px', padding: '15px 20px', cursor: 'pointer',
@@ -222,9 +230,16 @@ export default function MessagesPage() {
                         {isOwner && <span style={{ fontSize: '0.7rem', background: 'rgba(239, 68, 68, 0.2)', padding: '2px 6px', borderRadius: '8px' }}>👑 OWNER</span>}
                         {email === 'pokefun_actions' && <span style={{ fontSize: '0.7rem', background: 'rgba(250, 204, 21, 0.2)', color: '#facc15', padding: '2px 6px', borderRadius: '8px', border: '1px solid rgba(250,204,21,0.5)' }}>🛡️ SYSTEM</span>}
                       </h4>
-                      <p style={{ margin: 0, color: 'gray', fontSize: '0.8rem', textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }}>
-                        {email}
-                      </p>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <p style={{ margin: 0, color: 'gray', fontSize: '0.8rem', textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }}>
+                          {email}
+                        </p>
+                        {unreadCounts[email] > 0 && (
+                          <span style={{ background: '#ef4444', color: 'white', padding: '2px 8px', borderRadius: '10px', fontSize: '0.7rem', fontWeight: 'bold' }}>
+                            {unreadCounts[email]}
+                          </span>
+                        )}
+                      </div>
                     </div>
                   </div>
                 )
