@@ -38,7 +38,7 @@ export async function POST(req: NextRequest) {
 
     // Use Gemini 1.5 Flash for fast chat responses
     const model = genAI.getGenerativeModel({ 
-      model: "gemini-1.5-flash",
+      model: "gemini-pro",
       systemInstruction: SYSTEM_PROMPT
     });
 
