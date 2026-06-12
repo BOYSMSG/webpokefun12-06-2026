@@ -300,9 +300,9 @@ export default function ReelsPage() {
             <div key={reel.id} className="reel-item">
               
               {/* Media Renderer */}
-              {reel.mediaType === 'youtube' ? (
+              {reel.mediaType === 'youtube' || (reel.media && reel.media.includes('youtube.com')) || (reel.media && reel.media.includes('youtu.be')) ? (
                 activeIndex === index ? <iframe src={reel.media} className="reel-media" style={{ border: 'none', background: 'black' }} allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe> : <div className="reel-media" style={{background: '#111', display: 'flex', justifyContent: 'center', alignItems: 'center'}}><i className="fa-solid fa-spinner fa-spin" style={{ color: 'white', fontSize: '2rem' }}></i></div>
-              ) : reel.mediaType === 'instagram' ? (
+              ) : reel.mediaType === 'instagram' || (reel.media && reel.media.includes('instagram.com')) ? (
                 activeIndex === index ? <iframe src={getInstagramEmbedUrl(reel.media)} className="reel-media" style={{ border: 'none', background: 'black' }} scrolling="no" allowTransparency></iframe> : <div className="reel-media" style={{background: '#111', display: 'flex', justifyContent: 'center', alignItems: 'center'}}><i className="fa-solid fa-spinner fa-spin" style={{ color: 'white', fontSize: '2rem' }}></i></div>
               ) : (
                 <video src={reel.media} className="reel-media" autoPlay={activeIndex === index} loop muted playsInline controls={false} ref={el => {
