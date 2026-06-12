@@ -7,6 +7,7 @@ import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 
 export async function GET(req: Request, props: { params: Promise<{ id: string }> }) {
   try {
+    const { id } = await props.params;
     const session = await getServerSession(authOptions);
     const myEmail = session?.user?.email;
 
