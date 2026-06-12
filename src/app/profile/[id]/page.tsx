@@ -16,6 +16,10 @@ export default function PublicProfilePage() {
   const [showConnectionsModal, setShowConnectionsModal] = useState(false);
   const [platformInput, setPlatformInput] = useState({ platform: 'minecraft', value: '' });
 
+  const [activeNetworkModal, setActiveNetworkModal] = useState<'followers' | 'following' | null>(null);
+  const [networkUsers, setNetworkUsers] = useState<any[]>([]);
+  const [isNetworkLoading, setIsNetworkLoading] = useState(false);
+
   useEffect(() => {
     fetch(`/api/profile/${id}`)
       .then(res => res.json())
@@ -70,6 +74,25 @@ export default function PublicProfilePage() {
       }
     } catch (err) {
       alert("Failed to update connection.");
+    }
+  };
+
+  const openNetworkModal = async (type: 'followers' | 'following') => {
+    if (!profile) return;
+    setActiveNetworkModal(type);
+    setIsNetworkLoading(true);
+    try {
+      const res = await fetch(`/api/profile/${profile.username}/network?type=${type}`);
+      const data = await res.json();
+      if (data.users) {
+        setNetworkUsers(data.users);
+      } else {
+        setNetworkUsers([]);
+      }
+    } catch (e) {
+      setNetworkUsers([]);
+    } finally {
+      setIsNetworkLoading(false);
     }
   };
 
@@ -188,15 +211,15 @@ export default function PublicProfilePage() {
         </div>
 
         <div style={{ display: 'flex', gap: '30px', borderTop: '1px solid rgba(255,255,255,0.1)', borderBottom: '1px solid rgba(255,255,255,0.1)', padding: '20px 0' }}>
-          <div>
+          <div onClick={() => openNetworkModal('followers')} style={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }} onMouseOver={e => e.currentTarget.style.opacity = '0.8'} onMouseOut={e => e.currentTarget.style.opacity = '1'}>
             <span style={{ fontSize: '1.5rem', fontWeight: 'bold', color: 'white' }}>{profile.followersCount}</span>
             <span style={{ color: 'gray', marginLeft: '8px' }}>Followers</span>
           </div>
-          <div>
+          <div onClick={() => openNetworkModal('following')} style={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }} onMouseOver={e => e.currentTarget.style.opacity = '0.8'} onMouseOut={e => e.currentTarget.style.opacity = '1'}>
             <span style={{ fontSize: '1.5rem', fontWeight: 'bold', color: 'white' }}>{profile.followingCount}</span>
             <span style={{ color: 'gray', marginLeft: '8px' }}>Following</span>
           </div>
-          <div>
+          <div style={{ display: 'flex', alignItems: 'center' }}>
             <span style={{ fontSize: '1.5rem', fontWeight: 'bold', color: 'white' }}>{posts.length}</span>
             <span style={{ color: 'gray', marginLeft: '8px' }}>Posts</span>
           </div>
@@ -292,6 +315,47 @@ export default function PublicProfilePage() {
           </div>
         </div>
       )}
+      {/* Network Modal (Followers/Following) */}
+      {activeNetworkModal && (
+        <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', background: 'rgba(0,0,0,0.5)', zIndex: 100002, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end' }} onClick={() => setActiveNetworkModal(null)}>
+          <div style={{ background: '#111827', width: '100%', height: '60%', borderTopLeftRadius: '20px', borderTopRightRadius: '20px', padding: '20px', display: 'flex', flexDirection: 'column', animation: 'slideUp 0.3s ease-out' }} onClick={e => e.stopPropagation()}>
+            {/* Header */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '10px' }}>
+              <h3 style={{ margin: 0, color: 'white', textTransform: 'capitalize' }}>{activeNetworkModal}</h3>
+              <button onClick={() => setActiveNetworkModal(null)} style={{ background: 'transparent', border: 'none', color: 'gray', fontSize: '1.2rem', cursor: 'pointer' }}><i className="fa-solid fa-times"></i></button>
+            </div>
+            
+            {/* List */}
+            <div style={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '15px', paddingTop: '10px' }}>
+              {isNetworkLoading ? (
+                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%', flexDirection: 'column', gap: '10px' }}>
+                  <i className="fa-solid fa-circle-notch fa-spin" style={{ color: '#8b5cf6', fontSize: '2rem' }}></i>
+                  <span style={{ color: 'gray', fontSize: '0.9rem' }}>Loading {activeNetworkModal}...</span>
+                </div>
+              ) : networkUsers.length === 0 ? (
+                <p style={{ color: 'gray', textAlign: 'center', marginTop: '20px' }}>No {activeNetworkModal} found.</p>
+              ) : (
+                networkUsers.map((u: any, idx: number) => (
+                  <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', padding: '10px', borderRadius: '12px', transition: 'background 0.2s' }} onClick={() => { setActiveNetworkModal(null); router.push(`/profile/${u.username}`); }} onMouseOver={e => e.currentTarget.style.background = 'rgba(255,255,255,0.05)'} onMouseOut={e => e.currentTarget.style.background = 'transparent'}>
+                    <img src={u.image || `https://ui-avatars.com/api/?name=${u.username}&background=random`} alt={u.name || 'User'} style={{ width: '45px', height: '45px', borderRadius: '50%', objectFit: 'cover' }} />
+                    <div style={{ display: 'flex', flexDirection: 'column' }}>
+                      <span style={{ color: 'white', fontWeight: 'bold', fontSize: '1rem' }}>{u.username}</span>
+                      <span style={{ color: 'gray', fontSize: '0.85rem' }}>{u.name}</span>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      <style>{`
+        @keyframes slideUp {
+          from { transform: translateY(100%); }
+          to { transform: translateY(0); }
+        }
+      `}</style>
     </div>
   );
 }

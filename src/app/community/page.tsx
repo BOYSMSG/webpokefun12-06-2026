@@ -110,6 +110,28 @@ export default function CommunityPage() {
     }
   };
 
+  const handleFollow = async (e: React.MouseEvent, authorUsername: string) => {
+    e.stopPropagation();
+    try {
+      const res = await fetch(`/api/profile/${authorUsername}/follow`, { method: 'POST' });
+      if (res.ok) {
+        const data = await res.json();
+        if (data.success) {
+          setPosts((prev: any) => prev.map((p: any) => {
+            if (p.authorUsername === authorUsername) {
+              return { ...p, isFollowing: data.isFollowing };
+            }
+            return p;
+          }));
+        } else {
+          alert(data.error || "Please login to follow.");
+        }
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   const categories = ["All", "Favorites", "Announcements", "Guides", "Showcase", "Builds", "Safe Warp", "Home Locations", "/phome", "Homes", "FAQs", "Memes"];
 
   let filteredPosts = filter === "All" 
@@ -272,9 +294,14 @@ export default function CommunityPage() {
                   
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: '15px' }}>
                     <div onClick={(e) => { e.stopPropagation(); router.push(`/profile/${post.authorUsername}`); }} style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer' }} onMouseOver={e => e.currentTarget.style.opacity = '0.8'} onMouseOut={e => e.currentTarget.style.opacity = '1'}>
-                      <img src={post.avatar} alt={post.author} style={{ width: '30px', height: '30px', borderRadius: '50%' }} />
+                      <img src={post.avatar} alt={post.author} style={{ width: '30px', height: '30px', borderRadius: '50%', objectFit: 'cover' }} />
                       <div style={{ display: 'flex', flexDirection: 'column' }}>
-                        <span style={{ fontSize: '0.9rem', fontWeight: 600, color: '#f3f4f6' }}>{post.author}</span>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <span style={{ fontSize: '0.9rem', fontWeight: 600, color: '#f3f4f6' }}>{post.author}</span>
+                          <button onClick={(e) => handleFollow(e, post.authorUsername)} style={{ background: post.isFollowing ? 'transparent' : '#8b5cf6', color: post.isFollowing ? '#9ca3af' : 'white', border: post.isFollowing ? '1px solid rgba(255,255,255,0.1)' : 'none', padding: '3px 10px', borderRadius: '12px', fontSize: '0.7rem', fontWeight: 'bold', cursor: 'pointer', transition: '0.2s' }} onMouseOver={e => { if(!post.isFollowing) e.currentTarget.style.transform = 'scale(1.05)' }} onMouseOut={e => { if(!post.isFollowing) e.currentTarget.style.transform = 'scale(1)' }}>
+                            {post.isFollowing ? 'Following' : 'Follow'}
+                          </button>
+                        </div>
                         <span style={{ fontSize: '0.75rem', color: '#9ca3af' }}>@{post.authorUsername}</span>
                       </div>
                     </div>

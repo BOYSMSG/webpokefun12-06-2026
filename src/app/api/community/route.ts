@@ -16,11 +16,13 @@ export async function GET(req: Request) {
     const myEmail = session?.user?.email;
     let myUsername = null;
     let mySavedPosts: string[] = [];
+    let myFollowing: string[] = [];
     if (myEmail) {
       const me = await User.findOne({ email: myEmail }).lean();
       if (me) {
         myUsername = me.username;
         mySavedPosts = me.savedPosts || [];
+        myFollowing = me.following || [];
       }
     }
     
@@ -68,6 +70,7 @@ export async function GET(req: Request) {
         isLiked: myEmail ? (post.likes || []).includes(myEmail) : false,
         isDisliked: myEmail ? (post.dislikes || []).includes(myEmail) : false,
         isSaved: mySavedPosts.includes(post._id.toString()),
+        isFollowing: myFollowing.includes(authorUsername),
         timestamp: post.createdAt
       };
     });
