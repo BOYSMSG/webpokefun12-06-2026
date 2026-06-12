@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import MainNavbar from "@/components/MainNavbar";
 import { useEffect, useState } from "react";
 
 export default function WikiHome() {
@@ -10,7 +9,6 @@ export default function WikiHome() {
 
   return (
     <main style={{ minHeight: "100vh", background: "#f3f4f6" }}>
-      <MainNavbar />
       <div style={{ paddingTop: "100px", paddingBottom: "80px" }}>
         <div className="inner" style={{ maxWidth: "1200px", margin: "0 auto", padding: "0 20px" }}>
           
