@@ -76,9 +76,16 @@ export default async function RootLayout({
           .gh-head-menu .nav a { font-size: 2.5rem !important; }
           .desktop-sidebar-container a, .desktop-sidebar-container span { font-size: 2.5rem !important; }
           .desktop-sidebar-container h2 { font-size: 1.8rem !important; }
+          #gh-head { display: none !important; }
+
+          .custom-global-nav {
+             padding: 0 200px 0 20px;
+          }
 
           @media (max-width: 900px) {
-             #nav { display: none !important; }
+             .custom-global-nav { 
+               padding: 0 20px !important; 
+             }
           }
         `}</style>
       </head>
@@ -86,7 +93,7 @@ export default async function RootLayout({
         <Providers>
           <div className="viewport">
             <div id="gh-header">
-            <div id="nav" style={{ padding: '0 20px', paddingRight: '200px' }}>
+            <div id="nav" className="custom-global-nav">
                 <div className="container" style={{ position: "relative", display: "flex", flexWrap: "wrap", justifyContent: "center", gap: "10px 20px", maxWidth: "1200px", margin: "0 auto" }}>
                     <a href="/">Home</a>
                     <a href="/community">Community</a>
