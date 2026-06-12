@@ -16,14 +16,14 @@ export async function GET(req: Request) {
       tableName = 'dungeons_player_data';
       orderBy = 'dungeons_completed'; // based on actual columns
     } else if (mode === 'raid') {
-      tableName = 'novaraids_player_data';
+      tableName = 'raid_player_data';
       orderBy = 'points'; 
     } else if (mode === 'battletower') {
       tableName = 'battletower_player_data';
       orderBy = 'highest_floor';
     } else if (mode === 'pokedex') {
-      tableName = 'pokedex_player_data';
-      orderBy = 'caught'; // fallback 
+      tableName = 'dexrewards_player_data';
+      orderBy = 'captures'; // or dex_progress
     }
 
     const pool = getMySQLConnection();
