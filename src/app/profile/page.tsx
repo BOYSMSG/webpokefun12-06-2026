@@ -173,10 +173,10 @@ export default function ProfilePage() {
                   <iframe 
                     width="100%" 
                     height="150" 
-                    src={post.media.replace("watch?v=", "embed/").replace("youtu.be/", "youtube.com/embed/")} 
+                    src={post.media.replace("watch?v=", "embed/").replace("youtu.be/", "youtube.com/embed/").replace("autoplay=1", "autoplay=0")} 
                     title="YouTube video player" 
                     frameBorder="0" 
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                    allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
                     allowFullScreen
                   ></iframe>
                 )}

@@ -244,7 +244,7 @@ export default function CommunityPage() {
                     {post.mediaType === 'image' ? (
                       <img src={post.media} alt={post.title} style={{ width: '100%', height: 'auto', objectFit: 'cover' }} />
                     ) : post.mediaType === 'youtube' ? (
-                      <iframe width="100%" height="250" src={post.media.replace("watch?v=", "embed/")} title="YouTube video" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen onClick={e => e.stopPropagation()}></iframe>
+                      <iframe width="100%" height="250" src={post.media.replace("watch?v=", "embed/").replace("autoplay=1", "autoplay=0")} title="YouTube video" frameBorder="0" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen onClick={e => e.stopPropagation()}></iframe>
                     ) : post.mediaType === 'instagram' ? (
                       <iframe width="100%" height="300" src={post.media} frameBorder="0" scrolling="no" allowTransparency onClick={e => e.stopPropagation()}></iframe>
                     ) : post.mediaType === 'youtube-post' ? (
