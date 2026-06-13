@@ -85,20 +85,14 @@ export default function AIChatWidget() {
                      
                      // Play Sound if not muted
                      if (localStorage.getItem('muteMsgSound') !== 'true') {
-                        try {
-                          const ctx = new (window.AudioContext || window.webkitAudioContext)();
-                          const osc = ctx.createOscillator();
-                          const gain = ctx.createGain();
-                          osc.connect(gain);
-                          gain.connect(ctx.destination);
-                          osc.type = "sine";
-                          osc.frequency.setValueAtTime(880, ctx.currentTime);
-                          osc.frequency.exponentialRampToValueAtTime(1760, ctx.currentTime + 0.1);
-                          gain.gain.setValueAtTime(0.1, ctx.currentTime);
-                          gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.1);
-                          osc.start(ctx.currentTime);
-                          osc.stop(ctx.currentTime + 0.1);
-                        } catch(e) {}
+                        // If it's a message and user is already on messages screen, skip sound
+                        const isMsg = n.title?.toLowerCase().includes('message');
+                        if (!(isMsg && activeWindow === 'messages')) {
+                           try {
+                             const audio = new Audio('/audio/notification.wav');
+                             audio.play().catch(() => {});
+                           } catch(e) {}
+                        }
                      }
                    }
                  });
@@ -122,6 +116,11 @@ export default function AIChatWidget() {
 
     return () => clearInterval(intervalId);
   }, [session, activeWindow]);
+
+  // Expose activeWindow globally for PushManager to check
+  useEffect(() => {
+    (window as any).__activeWidgetWindow = activeWindow;
+  }, [activeWindow]);
 
   // Settings Effects (Music, Theme, Translate)
   useEffect(() => {

@@ -33,6 +33,18 @@ export default function PushManager() {
       if (event.data && event.data.type === 'PUSH_NOTIFICATION') {
         const payload = event.data.payload;
         toastObj.info(`${payload.title}: ${payload.message}`);
+        
+        // Play custom sound if not muted and not on messages screen
+        if (localStorage.getItem('muteMsgSound') !== 'true') {
+           const activeWindow = (window as any).__activeWidgetWindow;
+           const isMsg = payload.title?.toLowerCase().includes('message') || payload.title?.toLowerCase().includes('reply');
+           if (!(isMsg && activeWindow === 'messages')) {
+              try {
+                const audio = new Audio('/audio/notification.wav');
+                audio.play().catch(() => {});
+              } catch(e) {}
+           }
+        }
       }
     };
 
@@ -122,20 +134,12 @@ export default function PushManager() {
               }
 
               // Play Sound
-              try {
-                const ctx = new (window.AudioContext || window.webkitAudioContext)();
-                const osc = ctx.createOscillator();
-                const gain = ctx.createGain();
-                osc.connect(gain);
-                gain.connect(ctx.destination);
-                osc.type = "sine";
-                osc.frequency.setValueAtTime(880, ctx.currentTime); // A5
-                osc.frequency.exponentialRampToValueAtTime(1760, ctx.currentTime + 0.1); // A6
-                gain.gain.setValueAtTime(0.1, ctx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.1);
-                osc.start(ctx.currentTime);
-                osc.stop(ctx.currentTime + 0.1);
-              } catch(e) {}
+              if ((window as any).__activeWidgetWindow !== 'messages') {
+                try {
+                  const audio = new Audio('/audio/notification.wav');
+                  audio.play().catch(() => {});
+                } catch(e) {}
+              }
            }
            window.sessionStorage.setItem('lastUnreadCount', data.count.toString());
         }
