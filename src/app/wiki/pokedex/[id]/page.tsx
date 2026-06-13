@@ -339,10 +339,10 @@ export default function PokemonDetailPage() {
 
                   return (
                     <>
-                      {renderGroup('Damaged normally by:', normal)}
                       {renderGroup('Weak to:', weak)}
-                      {renderGroup('Immune to:', immune)}
+                      {renderGroup('Damaged normally by:', normal)}
                       {renderGroup('Resistant to:', resistant)}
+                      {renderGroup('Immune to:', immune)}
                     </>
                   );
                 })()}
