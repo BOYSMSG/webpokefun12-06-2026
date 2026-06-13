@@ -60,7 +60,25 @@ export default function MessagesPage() {
       .then(res => res.json())
       .then(data => {
         if (!data.error) {
-          setMessages(data.messages || []);
+          let newMessages = data.messages || [];
+          
+          // Auto-read messages from active contact
+          const currentActiveContact = (window as any).__activeChatContact || activeContact;
+          if (currentActiveContact && data.myUsername) {
+            const hasUnread = newMessages.some((m: any) => m.senderId === currentActiveContact && m.receiverId === data.myUsername && !m.read);
+            if (hasUnread) {
+              fetch('/api/messages/read', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ senderId: currentActiveContact })
+              }).catch(() => {});
+              newMessages = newMessages.map((m: any) => 
+                (m.senderId === currentActiveContact && m.receiverId === data.myUsername) ? { ...m, read: true } : m
+              );
+            }
+          }
+          
+          setMessages(newMessages);
           setContacts(data.contacts || {});
           if (data.myUsername) setMyUsername(data.myUsername);
         }

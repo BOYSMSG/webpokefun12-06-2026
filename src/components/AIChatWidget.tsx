@@ -94,10 +94,19 @@ export default function AIChatWidget() {
                      
                      if (!shouldSuppress) {
                        toastObj.info(`${n.title}`, n.url);
+                     } else {
+                       // Automatically mark this notification as read on the server so red dot disappears!
+                       fetch('/api/notifications/read', {
+                         method: 'POST',
+                         headers: { 'Content-Type': 'application/json' },
+                         body: JSON.stringify({ notificationIds: [n._id] })
+                       }).catch(() => {});
                      }
                      
                      toasted.push(n._id);
-                     newToasts = true;
+                     if (!shouldSuppress) {
+                       newToasts = true;
+                     }
                      
                      // Play Sound if not muted
                      if (localStorage.getItem('muteMsgSound') !== 'true' && !shouldSuppress) {
