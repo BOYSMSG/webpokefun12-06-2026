@@ -112,3 +112,47 @@ export async function DELETE(req: Request, props: { params: Promise<{ id: string
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }
+
+export async function PUT(req: Request, props: { params: Promise<{ id: string }> }) {
+  try {
+    const { id } = await props.params;
+    const session = await getServerSession(authOptions);
+    
+    if (!session?.user?.email) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    await connectDB();
+    const post = await Post.findById(id);
+
+    if (!post) {
+      return NextResponse.json({ error: "Post not found" }, { status: 404 });
+    }
+
+    const userRole = (session.user as any)?.role;
+    const permissions = (session.user as any)?.permissions || [];
+    const isAdmin = userRole === 'OWNER' || userRole === 'ADMIN' || permissions.includes('EDIT_POSTS') || session.user.email === 'boysmsg832@gmail.com' || (session.user as any)?.discordId === 'boysmsg01';
+    
+    const isAuthor = post.authorId === session.user.email || post.authorId === (session.user as any).username;
+
+    if (!isAdmin && !isAuthor) {
+      return NextResponse.json({ error: "Forbidden: You don't have permission to edit this post" }, { status: 403 });
+    }
+
+    const body = await req.json();
+    const { title, content, category, mediaType, media } = body;
+
+    if (title) post.title = title;
+    if (content) post.content = content;
+    if (category) post.category = category;
+    if (mediaType !== undefined) post.mediaType = mediaType;
+    if (media !== undefined) post.media = media;
+
+    await post.save();
+
+    return NextResponse.json({ success: true, message: "Post updated successfully", post });
+  } catch (error: any) {
+    console.error("PUT Post Error:", error);
+    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+  }
+}

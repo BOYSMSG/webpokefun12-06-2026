@@ -16,6 +16,8 @@ export default function PostPage() {
   const [comments, setComments] = useState<any[]>([]);
   const [newComment, setNewComment] = useState("");
   const [loading, setLoading] = useState(true);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editForm, setEditForm] = useState({ title: '', content: '' });
 
   const userRole = (session?.user as any)?.role;
   const isPrivileged = userRole === 'OWNER' || userRole === 'ADMIN' || userRole === 'STAFF' || userRole === 'SUB_ADMIN' ||
@@ -30,7 +32,11 @@ export default function PostPage() {
   const fetchPost = async () => {
     try {
       const res = await fetch(`/api/community/${id}`);
-      if (res.ok) setPost(await res.json());
+      if (res.ok) {
+        const data = await res.json();
+        setPost(data);
+        setEditForm({ title: data.title || '', content: data.content || '' });
+      }
     } catch (e) {
       console.error(e);
     }
@@ -147,6 +153,27 @@ export default function PostPage() {
     }
   };
 
+  const handleUpdatePost = async () => {
+    try {
+      const res = await fetch(`/api/community/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(editForm)
+      });
+      if (res.ok) {
+        toast.success("Post updated successfully!");
+        setPost({ ...post, title: editForm.title, content: editForm.content });
+        setIsEditing(false);
+      } else {
+        const data = await res.json();
+        toast.error(data.error || "Failed to update post");
+      }
+    } catch (e) {
+      console.error(e);
+      toast.error("Error updating post.");
+    }
+  };
+
   if (loading) return <div style={{ textAlign: 'center', marginTop: '100px', color: 'gray' }}>Loading post...</div>;
   if (!post) return <div style={{ textAlign: 'center', marginTop: '100px', color: '#ef4444' }}>Error: Post not found!</div>;
 
@@ -186,10 +213,32 @@ export default function PostPage() {
             <span style={{ fontSize: '0.9rem', color: '#9ca3af' }}>{new Date(post.timestamp).toLocaleDateString()}</span>
           </div>
 
-          <h1 style={{ fontSize: '2rem', fontWeight: 800, marginBottom: '20px', color: '#f3f4f6' }}>{post.title}</h1>
-          <p style={{ color: '#d1d5db', fontSize: '1.1rem', lineHeight: '1.6', marginBottom: '30px', whiteSpace: 'pre-wrap' }}>
-            {post.content}
-          </p>
+          {isEditing ? (
+            <div style={{ marginBottom: '30px' }}>
+              <input 
+                type="text" 
+                value={editForm.title} 
+                onChange={(e) => setEditForm({...editForm, title: e.target.value})} 
+                style={{ width: '100%', fontSize: '2rem', fontWeight: 800, marginBottom: '20px', color: '#f3f4f6', background: '#374151', border: '1px solid #4b5563', padding: '10px', borderRadius: '8px' }} 
+              />
+              <textarea 
+                value={editForm.content} 
+                onChange={(e) => setEditForm({...editForm, content: e.target.value})} 
+                style={{ width: '100%', minHeight: '150px', color: '#d1d5db', fontSize: '1.1rem', lineHeight: '1.6', whiteSpace: 'pre-wrap', background: '#374151', border: '1px solid #4b5563', padding: '10px', borderRadius: '8px', fontFamily: 'inherit' }} 
+              />
+              <div style={{ display: 'flex', gap: '10px', marginTop: '15px' }}>
+                <button onClick={handleUpdatePost} style={{ background: '#10b981', color: 'white', border: 'none', padding: '8px 15px', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' }}>Save Changes</button>
+                <button onClick={() => setIsEditing(false)} style={{ background: '#ef4444', color: 'white', border: 'none', padding: '8px 15px', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' }}>Cancel</button>
+              </div>
+            </div>
+          ) : (
+            <>
+              <h1 style={{ fontSize: '2rem', fontWeight: 800, marginBottom: '20px', color: '#f3f4f6' }}>{post.title}</h1>
+              <p style={{ color: '#d1d5db', fontSize: '1.1rem', lineHeight: '1.6', marginBottom: '30px', whiteSpace: 'pre-wrap' }}>
+                {post.content}
+              </p>
+            </>
+          )}
 
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: '20px', flexWrap: 'wrap', gap: '15px' }}>
             
@@ -211,6 +260,11 @@ export default function PostPage() {
 
             {/* Interaction Buttons */}
             <div style={{ display: 'flex', alignItems: 'center', gap: '25px', color: '#9ca3af', fontSize: '1.4rem', flexWrap: 'wrap' }}>
+              {(isPrivileged || (session?.user?.email && (post.authorId === session.user.email || post.authorId === (session.user as any).username))) && (
+                <button onClick={() => setIsEditing(!isEditing)} style={{ background: 'transparent', border: 'none', color: '#3b82f6', cursor: 'pointer', display: 'flex', gap: '8px', alignItems: 'center', fontWeight: 'bold' }}>
+                  <i className="fa-solid fa-pen"></i> Edit Post
+                </button>
+              )}
               {isPrivileged && (
                 <button onClick={handleDeletePost} style={{ background: 'transparent', border: 'none', color: '#ef4444', cursor: 'pointer', display: 'flex', gap: '8px', alignItems: 'center', fontWeight: 'bold' }} onMouseOver={e => e.currentTarget.style.color = '#dc2626'} onMouseOut={e => e.currentTarget.style.color = '#ef4444'}>
                   <i className="fa-solid fa-trash"></i> Delete Post
