@@ -32,7 +32,7 @@ export default function PushManager() {
     const handleServiceWorkerMessage = (event: MessageEvent) => {
       if (event.data && event.data.type === 'PUSH_NOTIFICATION') {
         const payload = event.data.payload;
-        toastObj.info(`${payload.title}: ${payload.message}`);
+        toastObj.info(`${payload.title}: ${payload.message}`, payload.url);
         
         // Play custom sound if not muted and not on messages screen
         if (localStorage.getItem('muteMsgSound') !== 'true') {
@@ -130,7 +130,7 @@ export default function PushManager() {
            if (data.count > prevCount && localStorage.getItem('muteMsgSound') !== 'true') {
               // Show Toast popup!
               if (data.latestMessage) {
-                 toastObj.info(`New Message from @${data.latestMessage.senderId}: ${data.latestMessage.content}`);
+                 toastObj.info(`New Message from @${data.latestMessage.senderId}: ${data.latestMessage.content}`, `/messages?user=${data.latestMessage.senderId}`);
               }
 
               // Play Sound

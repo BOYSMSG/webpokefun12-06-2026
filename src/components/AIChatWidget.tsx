@@ -79,7 +79,7 @@ export default function AIChatWidget() {
                  data.notifications.forEach((n: any) => {
                    const isUnread = !(n.readBy || []).includes(session?.user?.email);
                    if (isUnread && !toasted.includes(n._id)) {
-                     toastObj.info(`${n.title}`); // Using just title for toast, or title + msg if we want
+                     toastObj.info(`${n.title}`, n.url); // Using just title for toast, or title + msg if we want
                      toasted.push(n._id);
                      newToasts = true;
                      
@@ -320,6 +320,10 @@ export default function AIChatWidget() {
                   <div 
                     key={idx} 
                     onClick={() => {
+                      // Instantly remove from dropdown
+                      setNotifications(prev => prev.filter(n => n._id !== notif._id));
+                      setUnreadCount(prev => Math.max(0, prev - 1));
+                      
                       if (notif.url) {
                         window.location.href = notif.url;
                       }

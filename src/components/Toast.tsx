@@ -8,13 +8,14 @@ interface ToastMessage {
   id: string;
   message: string;
   type: ToastType;
+  url?: string;
 }
 
 interface ToastContextProps {
   toast: {
-    success: (msg: string) => void;
-    error: (msg: string) => void;
-    info: (msg: string) => void;
+    success: (msg: string, url?: string) => void;
+    error: (msg: string, url?: string) => void;
+    info: (msg: string, url?: string) => void;
   };
 }
 
@@ -23,20 +24,20 @@ const ToastContext = createContext<ToastContextProps | undefined>(undefined);
 export function ToastProvider({ children }: { children: React.ReactNode }) {
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
 
-  const addToast = useCallback((message: string, type: ToastType) => {
+  const addToast = useCallback((message: string, type: ToastType, url?: string) => {
     const id = Math.random().toString(36).substr(2, 9);
-    setToasts((prev) => [...prev, { id, message, type }]);
+    setToasts((prev) => [...prev, { id, message, type, url }]);
 
-    // Auto remove after 3 seconds
+    // Auto remove after 5 seconds
     setTimeout(() => {
       setToasts((prev) => prev.filter((t) => t.id !== id));
-    }, 3000);
+    }, 5000);
   }, []);
 
   const toast = {
-    success: (msg: string) => addToast(msg, 'success'),
-    error: (msg: string) => addToast(msg, 'error'),
-    info: (msg: string) => addToast(msg, 'info'),
+    success: (msg: string, url?: string) => addToast(msg, 'success', url),
+    error: (msg: string, url?: string) => addToast(msg, 'error', url),
+    info: (msg: string, url?: string) => addToast(msg, 'info', url),
   };
 
   return (
@@ -46,6 +47,11 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
         {toasts.map((t) => (
           <div
             key={t.id}
+            onClick={() => {
+              if (t.url) {
+                window.location.href = t.url;
+              }
+            }}
             style={{
               background: t.type === 'success' ? '#10b981' : t.type === 'error' ? '#ef4444' : '#3b82f6',
               color: 'white',
@@ -56,6 +62,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
               display: 'flex',
               alignItems: 'center',
               gap: '10px',
+              cursor: t.url ? 'pointer' : 'default',
               animation: 'slideInRight 0.3s ease-out forwards',
             }}
           >
