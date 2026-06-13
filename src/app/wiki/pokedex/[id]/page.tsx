@@ -322,11 +322,11 @@ export default function PokemonDetailPage() {
                             if (mult === 0) multStr = '0×';
                             
                             return (
-                              <div key={type} style={{ background: TYPE_COLORS[type], borderRadius: '10px', overflow: 'hidden', display: 'flex', flexDirection: 'column', border: '1px solid rgba(0,0,0,0.2)', width: '110px', boxShadow: '0 2px 4px rgba(0,0,0,0.2)' }}>
-                                <span style={{ color: 'white', padding: '6px', textAlign: 'center', fontSize: '0.85rem', fontWeight: 'bold', textTransform: 'uppercase', textShadow: '0 1px 2px rgba(0,0,0,0.5)' }}>
+                              <div key={type} style={{ background: TYPE_COLORS[type], borderRadius: '12px', overflow: 'hidden', display: 'flex', flexDirection: 'column', border: '1px solid rgba(0,0,0,0.2)', width: '140px', boxShadow: '0 4px 6px rgba(0,0,0,0.3)' }}>
+                                <span style={{ color: 'white', padding: '10px 5px', textAlign: 'center', fontSize: '1.2rem', fontWeight: 900, textTransform: 'uppercase', textShadow: '0 2px 4px rgba(0,0,0,0.6)', letterSpacing: '1px' }}>
                                   {type}
                                 </span>
-                                <div style={{ background: badgeColor, color: 'white', textAlign: 'center', padding: '4px', fontSize: '0.9rem', fontWeight: 900 }}>
+                                <div style={{ background: badgeColor, color: 'white', textAlign: 'center', padding: '8px', fontSize: '1.3rem', fontWeight: 900, textShadow: '0 1px 3px rgba(0,0,0,0.5)' }}>
                                   {multStr}
                                 </div>
                               </div>
