@@ -87,7 +87,7 @@ export default function AIChatWidget() {
                      if (localStorage.getItem('muteMsgSound') !== 'true') {
                         // If it's a message and user is already on messages screen, skip sound
                         const isMsg = n.title?.toLowerCase().includes('message');
-                        if (!(isMsg && activeWindow === 'messages')) {
+                        if (!(isMsg && (activeWindow === 'messages' || window.location.pathname.includes('/messages')))) {
                            try {
                              const audio = new Audio('/audio/notification.wav');
                              audio.play().catch(() => {});

@@ -38,7 +38,7 @@ export default function PushManager() {
         if (localStorage.getItem('muteMsgSound') !== 'true') {
            const activeWindow = (window as any).__activeWidgetWindow;
            const isMsg = payload.title?.toLowerCase().includes('message') || payload.title?.toLowerCase().includes('reply');
-           if (!(isMsg && activeWindow === 'messages')) {
+           if (!(isMsg && (activeWindow === 'messages' || window.location.pathname.includes('/messages')))) {
               try {
                 const audio = new Audio('/audio/notification.wav');
                 audio.play().catch(() => {});
@@ -134,7 +134,7 @@ export default function PushManager() {
               }
 
               // Play Sound
-              if ((window as any).__activeWidgetWindow !== 'messages') {
+              if ((window as any).__activeWidgetWindow !== 'messages' && !window.location.pathname.includes('/messages')) {
                 try {
                   const audio = new Audio('/audio/notification.wav');
                   audio.play().catch(() => {});
