@@ -210,7 +210,7 @@ export default function PostPage() {
             </div>
 
             {/* Interaction Buttons */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '20px', color: '#9ca3af', fontSize: '1.2rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '25px', color: '#9ca3af', fontSize: '1.4rem' }}>
               {isPrivileged && (
                 <button onClick={handleDeletePost} style={{ background: 'transparent', border: 'none', color: '#ef4444', cursor: 'pointer', display: 'flex', gap: '8px', alignItems: 'center', fontWeight: 'bold' }} onMouseOver={e => e.currentTarget.style.color = '#dc2626'} onMouseOut={e => e.currentTarget.style.color = '#ef4444'}>
                   <i className="fa-solid fa-trash"></i> Delete Post

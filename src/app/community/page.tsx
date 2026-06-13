@@ -305,7 +305,7 @@ export default function CommunityPage() {
                         <span style={{ fontSize: '0.75rem', color: '#9ca3af' }}>@{post.authorUsername}</span>
                       </div>
                     </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '15px', color: '#9ca3af', fontSize: '1rem' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '25px', color: '#9ca3af', fontSize: '1.4rem' }}>
                       <button onClick={(e) => handleInteract(e, post.id, 'like')} style={{ background: 'transparent', border: 'none', color: post.isLiked ? '#ef4444' : '#9ca3af', cursor: 'pointer', display: 'flex', gap: '5px', alignItems: 'center' }} onMouseOver={e => !post.isLiked && (e.currentTarget.style.color = '#ef4444')} onMouseOut={e => !post.isLiked && (e.currentTarget.style.color = '#9ca3af')}>
                         <i className="fa-solid fa-thumbs-up"></i> {post.upvotes}
                       </button>
