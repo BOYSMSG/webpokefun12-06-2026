@@ -14,25 +14,6 @@ import { ToastProvider } from "@/components/Toast";
 export const metadata: Metadata = {
   title: "Pokefun - Cobblemon SMP",
   description: "Pokefun is a premier Cobblemon SMP server. Join our community for a unique Pokemon adventure in Minecraft!",
-  openGraph: {
-    title: "Pokefun - Cobblemon SMP",
-    description: "Pokefun is a premier Cobblemon SMP server. Join our community for a unique Pokemon adventure in Minecraft!",
-    images: [
-      {
-        url: "https://pokefun.in/images/logo.png",
-        width: 800,
-        height: 600,
-        alt: "Pokefun Logo",
-      },
-    ],
-    siteName: "Pokefun SMP",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Pokefun - Cobblemon SMP",
-    description: "Pokefun is a premier Cobblemon SMP server. Join our community for a unique Pokemon adventure in Minecraft!",
-    images: ["https://pokefun.in/images/logo.png"],
-  },
 };
 
 export default async function RootLayout({
