@@ -2,9 +2,11 @@
 
 import React, { useState, useRef, useEffect } from "react";
 import { useSession } from "next-auth/react";
+import { useToast } from "@/components/Toast";
 
 export default function AIChatWidget() {
   const { data: session } = useSession();
+  const { addToast } = useToast();
   
   // Menu State
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -67,6 +69,44 @@ export default function AIChatWidget() {
         .then(data => {
             if (activeWindow !== 'notifications' && data.unreadCount !== undefined) {
                setUnreadCount(data.unreadCount);
+            }
+            if (data.notifications && data.notifications.length > 0) {
+               try {
+                 const toastedStr = window.sessionStorage.getItem('toastedNotifs') || '[]';
+                 const toasted = JSON.parse(toastedStr);
+                 let newToasts = false;
+                 
+                 data.notifications.forEach((n: any) => {
+                   const isUnread = !(n.readBy || []).includes(session?.user?.email);
+                   if (isUnread && !toasted.includes(n._id)) {
+                     addToast(`${n.title}`, 'info'); // Using just title for toast, or title + msg if we want
+                     toasted.push(n._id);
+                     newToasts = true;
+                     
+                     // Play Sound if not muted
+                     if (localStorage.getItem('muteMsgSound') !== 'true') {
+                        try {
+                          const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                          const osc = ctx.createOscillator();
+                          const gain = ctx.createGain();
+                          osc.connect(gain);
+                          gain.connect(ctx.destination);
+                          osc.type = "sine";
+                          osc.frequency.setValueAtTime(880, ctx.currentTime);
+                          osc.frequency.exponentialRampToValueAtTime(1760, ctx.currentTime + 0.1);
+                          gain.gain.setValueAtTime(0.1, ctx.currentTime);
+                          gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.1);
+                          osc.start(ctx.currentTime);
+                          osc.stop(ctx.currentTime + 0.1);
+                        } catch(e) {}
+                     }
+                   }
+                 });
+                 
+                 if (newToasts) {
+                   window.sessionStorage.setItem('toastedNotifs', JSON.stringify(toasted));
+                 }
+               } catch(e) {}
             }
         }).catch(() => {});
     };
@@ -276,14 +316,22 @@ export default function AIChatWidget() {
                       borderRadius: '10px', 
                       borderLeft: '4px solid #3b82f6',
                       cursor: notif.url ? 'pointer' : 'default',
-                      transition: 'background 0.2s'
+                      transition: 'background 0.2s',
+                      display: 'flex',
+                      gap: '15px',
+                      alignItems: 'center'
                     }}
                     onMouseOver={e => { if (notif.url) e.currentTarget.style.background = 'rgba(255,255,255,0.1)' }}
                     onMouseOut={e => { if (notif.url) e.currentTarget.style.background = 'rgba(255,255,255,0.05)' }}
                   >
-                    <h4 style={{ margin: '0 0 5px 0', color: 'white' }}>{notif.title}</h4>
-                    <p style={{ margin: 0, color: 'gray', fontSize: '0.9rem' }}>{notif.message}</p>
-                    <span style={{ display: 'block', marginTop: '8px', fontSize: '0.7rem', color: '#666' }}>{new Date(notif.createdAt).toLocaleString()}</span>
+                    {notif.icon && (
+                      <img src={notif.icon} style={{ width: '45px', height: '45px', borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }} />
+                    )}
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <h4 style={{ margin: '0 0 5px 0', color: 'white' }}>{notif.title}</h4>
+                      <p style={{ margin: 0, color: '#a3a3a3', fontSize: '0.9rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{notif.message}</p>
+                      <span style={{ display: 'block', marginTop: '8px', fontSize: '0.7rem', color: '#666' }}>{new Date(notif.createdAt).toLocaleString()}</span>
+                    </div>
                   </div>
                 ))
               ) : (

@@ -240,7 +240,7 @@ export default function HomePage() {
               <div className="inner" style={{ marginTop: '20px', marginBottom: '60px', background: 'linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(180, 83, 9, 0.2))', padding: '50px', borderRadius: '20px', border: '1px solid rgba(245, 158, 11, 0.3)', textAlign: 'center', boxShadow: '0 10px 30px rgba(0,0,0,0.5)' }}>
                 <i className="fa-solid fa-crown" style={{ fontSize: '4rem', color: '#fbbf24', marginBottom: '20px', textShadow: '0 0 20px rgba(245, 158, 11, 0.5)' }}></i>
                 <h2 style={{ fontSize: '3.5rem', fontWeight: 900, color: 'white', marginBottom: '15px', textShadow: '0 4px 10px rgba(0,0,0,0.5)' }}>Global Leaderboards</h2>
-                <p style={{ color: '#d1d5db', fontSize: '1.4rem', marginBottom: '30px', maxWidth: '700px', margin: '0 auto 40px auto', lineHeight: '1.6' }}>
+                <p style={{ color: '#444', fontWeight: '500', fontSize: '1.4rem', marginBottom: '30px', maxWidth: '700px', margin: '0 auto 40px auto', lineHeight: '1.6' }}>
                   Check out the top players across Ranked PvP, AlphaZone, and Dungeons. Do you have what it takes to be #1?
                 </p>
                 <Link href="/leaderboard" style={{ background: '#f59e0b', color: 'black', padding: '18px 40px', borderRadius: '40px', fontWeight: 'bold', fontSize: '1.3rem', textDecoration: 'none', display: 'inline-block', boxShadow: '0 4px 15px rgba(245,158,11,0.5)', transition: 'transform 0.2s' }}>

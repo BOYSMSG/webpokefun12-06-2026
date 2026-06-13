@@ -3,6 +3,7 @@ import mongoose, { Schema, Document, Model } from 'mongoose';
 export interface INotification extends Document {
   title: string;
   message: string;
+  icon?: string;
   url?: string;
   isGlobal: boolean;
   userId?: string;
@@ -13,6 +14,7 @@ export interface INotification extends Document {
 const NotificationSchema: Schema = new Schema({
   title: { type: String, required: true },
   message: { type: String, required: true },
+  icon: { type: String },
   url: { type: String },
   isGlobal: { type: Boolean, default: true },
   userId: { type: String },

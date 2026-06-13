@@ -5,6 +5,7 @@ import User from '@/models/User';
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { sendPushNotification } from "@/lib/webpush";
+import Notification from '@/models/Notification';
 
 export async function GET(req: Request, props: { params: Promise<{ id: string }> }) {
   try {
@@ -84,6 +85,17 @@ export async function POST(req: Request, props: { params: Promise<{ id: string }
         // Also fetch the current user to get their username for the notification
         const me = await User.findOne({ email: session.user.email }).lean();
         const myUsername = me?.username || session.user.email.split('@')[0];
+        
+        // Create an in-app notification dropdown item
+        await Notification.create({
+          title: `Reply from @${myUsername}`,
+          message: `"${content.length > 50 ? content.substring(0, 50) + '...' : content}"`,
+          icon: me?.image || '/images/default-avatar.png',
+          url: `/community/post/${id}`,
+          isGlobal: false,
+          userId: parentComment.authorId, // Email
+          createdAt: new Date()
+        });
 
         if (parentUser && parentUser.pushSubscriptions) {
           const payload = {

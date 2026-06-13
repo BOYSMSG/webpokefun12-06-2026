@@ -117,7 +117,7 @@ export default function PushManager() {
            const prevCount = parseInt(window.sessionStorage.getItem('lastUnreadCount') || '0');
            if (data.count > prevCount && localStorage.getItem('muteMsgSound') !== 'true') {
               // Show Toast popup!
-              if (data.latestMessage && window.location.pathname !== '/messages') {
+              if (data.latestMessage) {
                  addToast(`New Message from @${data.latestMessage.senderId}: ${data.latestMessage.content}`, 'info');
               }
 

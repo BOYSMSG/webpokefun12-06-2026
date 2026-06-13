@@ -87,8 +87,9 @@ export async function POST(req: Request) {
 
     if (receiverUser) {
       await Notification.create({
-        title: 'New Message',
-        message: `You received a new message from @${me.username}`,
+        title: `Message from @${me.username}`,
+        message: `"${content.length > 50 ? content.substring(0, 50) + '...' : content}"`,
+        icon: me.image || '/images/default-avatar.png',
         url: `/messages?user=${encodeURIComponent(me.username)}`,
         isGlobal: false,
         userId: receiverUser.email, // Notification still uses email as userId for now
