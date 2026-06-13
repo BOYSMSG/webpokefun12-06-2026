@@ -123,6 +123,21 @@ export default function AIChatWidget() {
   }, [activeWindow]);
 
   // Settings Effects (Music, Theme, Translate)
+  const originalTitle = useRef<string>("");
+
+  useEffect(() => {
+    if (typeof document !== 'undefined') {
+       if (!originalTitle.current && document.title) {
+          originalTitle.current = document.title.replace(/^\(\d+\)\s*/, '');
+       }
+       if (unreadCount > 0) {
+         document.title = `(${unreadCount}) ${originalTitle.current || 'PokeFun'}`;
+       } else if (originalTitle.current) {
+         document.title = originalTitle.current;
+       }
+    }
+  }, [unreadCount]);
+
   useEffect(() => {
     // Theme setup
     const savedTheme = localStorage.getItem("theme");
