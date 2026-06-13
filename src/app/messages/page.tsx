@@ -36,7 +36,15 @@ export default function MessagesPage() {
       const userToSelect = searchParams.get('user');
       if (userToSelect) {
         setActiveContact(userToSelect);
+        (window as any).__activeChatContact = userToSelect;
       }
+      
+      // Polling for live messages
+      const interval = setInterval(() => {
+        fetchMessages();
+      }, 5000);
+      
+      return () => clearInterval(interval);
     }
   }, [session, status]);
 
@@ -224,6 +232,8 @@ export default function MessagesPage() {
                     key={username} 
                     onClick={() => {
                       setActiveContact(username);
+                      (window as any).__activeChatContact = username;
+                      window.history.replaceState({}, document.title, `/messages?user=${username}`);
                       fetch('/api/messages/read', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },

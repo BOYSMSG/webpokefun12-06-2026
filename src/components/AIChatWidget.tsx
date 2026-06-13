@@ -84,7 +84,7 @@ export default function AIChatWidget() {
                      const isMsg = n.title?.toLowerCase().includes('message') || n.title?.toLowerCase().includes('reply');
                      if (isMsg) {
                        const urlParams = new URLSearchParams(window.location.search);
-                       const activeContact = urlParams.get('user');
+                       const activeContact = (window as any).__activeChatContact || urlParams.get('user');
                        if (window.location.pathname.includes('/messages') && activeContact && n.title.includes(`@${activeContact}`)) {
                          shouldSuppress = true;
                        } else if ((window as any).__activeWidgetWindow === 'messages') {
@@ -102,7 +102,8 @@ export default function AIChatWidget() {
                      // Play Sound if not muted
                      if (localStorage.getItem('muteMsgSound') !== 'true' && !shouldSuppress) {
                         try {
-                          const audio = new Audio('/audio/notification.wav');
+                          const audioUrl = isMsg ? '/audio/message.mp3' : '/audio/notification.wav';
+                          const audio = new Audio(audioUrl);
                           audio.play().catch(() => {});
                         } catch(e) {}
                      }

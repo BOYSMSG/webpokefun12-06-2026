@@ -39,7 +39,7 @@ export default function PushManager() {
         let shouldSuppress = false;
         if (isMsg) {
           const urlParams = new URLSearchParams(window.location.search);
-          const activeContact = urlParams.get('user');
+          const activeContact = (window as any).__activeChatContact || urlParams.get('user');
           if (window.location.pathname.includes('/messages') && activeContact && payload.title.includes(`@${activeContact}`)) {
             shouldSuppress = true;
           } else if (activeWindow === 'messages') {
@@ -53,7 +53,8 @@ export default function PushManager() {
           // Play Sound if not muted
           if (localStorage.getItem('muteMsgSound') !== 'true') {
              try {
-               const audio = new Audio('/audio/notification.wav');
+               const audioUrl = isMsg ? '/audio/message.mp3' : '/audio/notification.wav';
+               const audio = new Audio(audioUrl);
                audio.play().catch(() => {});
              } catch (err) {}
           }
