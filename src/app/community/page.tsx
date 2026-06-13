@@ -292,7 +292,7 @@ export default function CommunityPage() {
                     {post.content}
                   </p>
                   
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: '15px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: '15px', flexWrap: 'wrap', gap: '15px' }}>
                     <div onClick={(e) => { e.stopPropagation(); router.push(`/profile/${post.authorUsername}`); }} style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer' }} onMouseOver={e => e.currentTarget.style.opacity = '0.8'} onMouseOut={e => e.currentTarget.style.opacity = '1'}>
                       <img src={post.avatar} alt={post.author} style={{ width: '30px', height: '30px', borderRadius: '50%', objectFit: 'cover' }} />
                       <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -305,7 +305,7 @@ export default function CommunityPage() {
                         <span style={{ fontSize: '0.75rem', color: '#9ca3af' }}>@{post.authorUsername}</span>
                       </div>
                     </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '25px', color: '#9ca3af', fontSize: '1.4rem' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '25px', color: '#9ca3af', fontSize: '1.4rem', flexWrap: 'wrap' }}>
                       <button onClick={(e) => handleInteract(e, post.id, 'like')} style={{ background: 'transparent', border: 'none', color: post.isLiked ? '#ef4444' : '#9ca3af', cursor: 'pointer', display: 'flex', gap: '5px', alignItems: 'center' }} onMouseOver={e => !post.isLiked && (e.currentTarget.style.color = '#ef4444')} onMouseOut={e => !post.isLiked && (e.currentTarget.style.color = '#9ca3af')}>
                         <i className="fa-solid fa-thumbs-up"></i> {post.upvotes}
                       </button>
