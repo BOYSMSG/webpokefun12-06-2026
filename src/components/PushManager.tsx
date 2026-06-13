@@ -22,7 +22,7 @@ function urlBase64ToUint8Array(base64String: string) {
 
 export default function PushManager() {
   const { data: session } = useSession();
-  const { addToast } = useToast();
+  const toastObj = useToast();
   const [isSubscribed, setIsSubscribed] = useState(false);
 
   useEffect(() => {
@@ -32,7 +32,7 @@ export default function PushManager() {
     const handleServiceWorkerMessage = (event: MessageEvent) => {
       if (event.data && event.data.type === 'PUSH_NOTIFICATION') {
         const payload = event.data.payload;
-        addToast(`${payload.title}: ${payload.message}`, 'info');
+        toastObj.info(`${payload.title}: ${payload.message}`);
       }
     };
 
@@ -41,7 +41,7 @@ export default function PushManager() {
     return () => {
       navigator.serviceWorker.removeEventListener('message', handleServiceWorkerMessage);
     };
-  }, [session, addToast]);
+  }, [session]);
 
   useEffect(() => {
     if (!session?.user) return;
@@ -118,7 +118,7 @@ export default function PushManager() {
            if (data.count > prevCount && localStorage.getItem('muteMsgSound') !== 'true') {
               // Show Toast popup!
               if (data.latestMessage) {
-                 addToast(`New Message from @${data.latestMessage.senderId}: ${data.latestMessage.content}`, 'info');
+                 toastObj.info(`New Message from @${data.latestMessage.senderId}: ${data.latestMessage.content}`);
               }
 
               // Play Sound
@@ -162,7 +162,7 @@ export default function PushManager() {
     }, 10000);
 
     return () => clearInterval(interval);
-  }, [session, addToast]);
+  }, [session]);
 
   return null; // This is a headless component that just manages push logic
 }

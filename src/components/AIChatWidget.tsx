@@ -6,7 +6,7 @@ import { useToast } from "@/components/Toast";
 
 export default function AIChatWidget() {
   const { data: session } = useSession();
-  const { addToast } = useToast();
+  const toastObj = useToast();
   
   // Menu State
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -79,7 +79,7 @@ export default function AIChatWidget() {
                  data.notifications.forEach((n: any) => {
                    const isUnread = !(n.readBy || []).includes(session?.user?.email);
                    if (isUnread && !toasted.includes(n._id)) {
-                     addToast(`${n.title}`, 'info'); // Using just title for toast, or title + msg if we want
+                     toastObj.info(`${n.title}`); // Using just title for toast, or title + msg if we want
                      toasted.push(n._id);
                      newToasts = true;
                      
