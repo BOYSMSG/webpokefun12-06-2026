@@ -1,12 +1,12 @@
 import { Metadata } from "next";
 
 type Props = {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 };
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
+export async function generateMetadata(props: Props): Promise<Metadata> {
   try {
-    const id = params.id;
+    const { id } = await props.params;
     const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${id}`);
     
     if (!res.ok) {

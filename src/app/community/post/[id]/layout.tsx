@@ -3,12 +3,12 @@ import connectDB from '@/lib/mongoose';
 import Post from '@/models/Post';
 
 type Props = {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 };
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
+export async function generateMetadata(props: Props): Promise<Metadata> {
   try {
-    const { id } = params;
+    const { id } = await props.params;
     await connectDB();
     const post = await Post.findById(id).lean();
 
