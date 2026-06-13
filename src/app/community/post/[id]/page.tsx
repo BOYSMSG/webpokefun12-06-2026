@@ -15,6 +15,8 @@ export default function PostPage() {
   const [post, setPost] = useState<any>(null);
   const [comments, setComments] = useState<any[]>([]);
   const [newComment, setNewComment] = useState("");
+  const [replyingTo, setReplyingTo] = useState<string | null>(null);
+  const [replyContent, setReplyContent] = useState("");
   const [loading, setLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
   const [editForm, setEditForm] = useState({ title: '', content: '' });
@@ -90,19 +92,41 @@ export default function PostPage() {
     }
   };
 
-  const handleComment = async (e: React.FormEvent) => {
+  const handleCommentSubmit = async (e: React.FormEvent, parentId?: string) => {
     e.preventDefault();
     if (!session) return toast.error("Please login to comment!");
-    if (!newComment.trim()) return;
+    const contentToSubmit = parentId ? replyContent : newComment;
+    if (!contentToSubmit.trim()) return;
 
     try {
       const res = await fetch(`/api/community/${id}/comments`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ content: newComment })
+        body: JSON.stringify({ content: contentToSubmit, parentId: parentId || null })
       });
       if (res.ok) {
-        setNewComment("");
+        if (parentId) {
+          setReplyContent("");
+          setReplyingTo(null);
+        } else {
+          setNewComment("");
+        }
+        fetchComments();
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const handleCommentInteract = async (commentId: string, action: 'like' | 'pin') => {
+    if (!session) return toast.error("Please login first!");
+    try {
+      const res = await fetch(`/api/community/${id}/comments/${commentId}/interact`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action })
+      });
+      if (res.ok) {
         fetchComments();
       }
     } catch (e) {
@@ -295,7 +319,7 @@ export default function PostPage() {
         <h3 style={{ fontSize: '1.5rem', color: '#f3f4f6', marginBottom: '20px' }}>Comments ({comments.length})</h3>
         
         {/* Write a comment */}
-        <form onSubmit={handleComment} style={{ display: 'flex', gap: '15px', marginBottom: '30px' }}>
+        <form onSubmit={(e) => handleCommentSubmit(e)} style={{ display: 'flex', gap: '15px', marginBottom: '30px' }}>
           <input 
             type="text" 
             placeholder="Add a comment..." 
@@ -310,21 +334,103 @@ export default function PostPage() {
 
         {/* Comment List */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-          {comments.map((comment: any) => (
-            <div key={comment.id} style={{ display: 'flex', gap: '15px' }}>
-              <img src={comment.avatar} alt={comment.author} style={{ width: '40px', height: '40px', borderRadius: '50%' }} />
-              <div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '5px' }}>
-                  <span style={{ fontWeight: 'bold', color: '#f3f4f6' }}>{comment.author}</span>
-                  <span style={{ fontSize: '0.8rem', color: '#6b7280' }}>{new Date(comment.timestamp).toLocaleDateString()}</span>
-                </div>
-                <p style={{ color: '#d1d5db', margin: 0, lineHeight: '1.4' }}>{comment.content}</p>
-              </div>
-            </div>
+          {comments.filter((c: any) => !c.parentId).map((comment: any) => (
+            <CommentNode 
+              key={comment.id}
+              comment={comment}
+              allComments={comments}
+              level={0}
+              onInteract={handleCommentInteract}
+              session={session}
+              isPrivileged={isPrivileged}
+              postAuthorId={post.authorId}
+              replyingTo={replyingTo}
+              setReplyingTo={setReplyingTo}
+              replyContent={replyContent}
+              setReplyContent={setReplyContent}
+              onSubmitReply={handleCommentSubmit}
+            />
           ))}
         </div>
       </div>
 
+    </div>
+  );
+}
+
+function CommentNode({ comment, allComments, level, onInteract, session, isPrivileged, postAuthorId, replyingTo, setReplyingTo, replyContent, setReplyContent, onSubmitReply }: any) {
+  const childComments = allComments.filter((c: any) => c.parentId === comment.id);
+  const isPostAuthor = session?.user?.email === postAuthorId || (session?.user as any)?.username === postAuthorId;
+  const canPin = isPrivileged || isPostAuthor;
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '15px', marginLeft: level > 0 ? '40px' : '0', marginTop: level > 0 ? '15px' : '0', position: 'relative' }}>
+      {level > 0 && <div style={{ position: 'absolute', left: '-25px', top: '20px', width: '20px', height: '2px', background: '#374151' }}></div>}
+      {level > 0 && <div style={{ position: 'absolute', left: '-25px', top: '-15px', width: '2px', height: '35px', background: '#374151' }}></div>}
+      
+      <div style={{ display: 'flex', gap: '15px', background: comment.isPinned ? 'rgba(234, 179, 8, 0.1)' : 'transparent', padding: comment.isPinned ? '10px' : '0', borderRadius: '8px', border: comment.isPinned ? '1px solid rgba(234, 179, 8, 0.3)' : 'none' }}>
+        <img src={comment.avatar} alt={comment.author} style={{ width: '40px', height: '40px', borderRadius: '50%' }} />
+        <div style={{ flex: 1 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '5px', flexWrap: 'wrap' }}>
+            <span style={{ fontWeight: 'bold', color: '#f3f4f6' }}>{comment.authorUsername || comment.author}</span>
+            <span style={{ fontSize: '0.8rem', color: '#6b7280' }}>{new Date(comment.timestamp).toLocaleDateString()}</span>
+            {comment.isPinned && <span style={{ fontSize: '0.7rem', background: '#eab308', color: 'black', padding: '2px 6px', borderRadius: '4px', fontWeight: 'bold' }}><i className="fa-solid fa-thumbtack"></i> Pinned</span>}
+          </div>
+          <p style={{ color: '#d1d5db', margin: 0, lineHeight: '1.4' }}>{comment.content}</p>
+          
+          <div style={{ display: 'flex', alignItems: 'center', gap: '15px', marginTop: '10px', fontSize: '0.9rem' }}>
+            <button onClick={() => onInteract(comment.id, 'like')} style={{ background: 'transparent', border: 'none', color: comment.isLiked ? '#ef4444' : '#9ca3af', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '5px' }}>
+              <i className="fa-solid fa-heart"></i> {comment.likes || 0}
+            </button>
+            <button onClick={() => setReplyingTo(replyingTo === comment.id ? null : comment.id)} style={{ background: 'transparent', border: 'none', color: '#9ca3af', cursor: 'pointer', fontWeight: 'bold' }}>
+              Reply
+            </button>
+            {canPin && (
+              <button onClick={() => onInteract(comment.id, 'pin')} style={{ background: 'transparent', border: 'none', color: comment.isPinned ? '#eab308' : '#9ca3af', cursor: 'pointer' }}>
+                <i className="fa-solid fa-thumbtack"></i> {comment.isPinned ? 'Unpin' : 'Pin'}
+              </button>
+            )}
+          </div>
+
+          {replyingTo === comment.id && (
+            <form onSubmit={(e) => onSubmitReply(e, comment.id)} style={{ display: 'flex', gap: '10px', marginTop: '15px' }}>
+              <input 
+                type="text" 
+                placeholder={`Reply to @${comment.authorUsername || comment.author}...`}
+                value={replyContent}
+                onChange={(e) => setReplyContent(e.target.value)}
+                style={{ flex: 1, padding: '10px', borderRadius: '8px', border: '1px solid #374151', background: '#1f2937', color: 'white', outline: 'none' }}
+                autoFocus
+              />
+              <button type="submit" style={{ padding: '0 15px', borderRadius: '8px', border: 'none', background: '#8b5cf6', color: 'white', fontWeight: 'bold', cursor: 'pointer' }}>
+                Post
+              </button>
+            </form>
+          )}
+        </div>
+      </div>
+      
+      {childComments.length > 0 && (
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
+          {childComments.map((child: any) => (
+            <CommentNode 
+              key={child.id} 
+              comment={child} 
+              allComments={allComments} 
+              level={level + 1} 
+              onInteract={onInteract}
+              session={session}
+              isPrivileged={isPrivileged}
+              postAuthorId={postAuthorId}
+              replyingTo={replyingTo}
+              setReplyingTo={setReplyingTo}
+              replyContent={replyContent}
+              setReplyContent={setReplyContent}
+              onSubmitReply={onSubmitReply}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 }
