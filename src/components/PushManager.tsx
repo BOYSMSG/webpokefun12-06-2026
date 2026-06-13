@@ -104,5 +104,65 @@ export default function PushManager() {
     registerAndSubscribe();
   }, [session]);
 
+  useEffect(() => {
+    if (!session?.user) return;
+    
+    // Fallback polling for unread messages and Toasts
+    const interval = setInterval(async () => {
+      try {
+        const res = await fetch('/api/messages/unread');
+        const data = await res.json();
+        
+        if (data.count !== undefined) {
+           const prevCount = parseInt(window.sessionStorage.getItem('lastUnreadCount') || '0');
+           if (data.count > prevCount && localStorage.getItem('muteMsgSound') !== 'true') {
+              // Show Toast popup!
+              if (data.latestMessage && window.location.pathname !== '/messages') {
+                 addToast(`New Message from @${data.latestMessage.senderId}: ${data.latestMessage.content}`, 'info');
+              }
+
+              // Play Sound
+              try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.type = "sine";
+                osc.frequency.setValueAtTime(880, ctx.currentTime); // A5
+                osc.frequency.exponentialRampToValueAtTime(1760, ctx.currentTime + 0.1); // A6
+                gain.gain.setValueAtTime(0.1, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.1);
+                osc.start(ctx.currentTime);
+                osc.stop(ctx.currentTime + 0.1);
+              } catch(e) {}
+           }
+           window.sessionStorage.setItem('lastUnreadCount', data.count.toString());
+        }
+
+        // Update badges
+        ['desktop-nav-messages', 'mobile-nav-messages'].forEach(id => {
+          const el = document.getElementById(id);
+          if (el) {
+            let badge = el.querySelector('.unread-badge');
+            if (data.count > 0 && window.location.pathname !== '/messages') {
+              if (!badge) {
+                badge = document.createElement('span');
+                badge.className = 'unread-badge';
+                badge.style.cssText = 'position: absolute; top: -5px; right: -24px; background: red; color: white; border-radius: 12px; padding: 3px 7px; font-size: 0.75rem; font-weight: bold; line-height: 1; text-align: center; min-width: 18px; box-sizing: border-box;';
+                el.appendChild(badge);
+              }
+              badge.textContent = data.count > 9 ? '9+' : data.count.toString();
+            } else if (badge) {
+              badge.remove();
+            }
+          }
+        });
+      } catch (e) {}
+    }, 10000);
+
+    return () => clearInterval(interval);
+  }, [session, addToast]);
+
   return null; // This is a headless component that just manages push logic
 }

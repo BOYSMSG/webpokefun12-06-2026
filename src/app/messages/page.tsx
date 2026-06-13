@@ -105,6 +105,15 @@ export default function MessagesPage() {
 
   const contactUsernames = Object.keys(contacts);
   
+  const getLatestMessageTime = (username: string) => {
+    const userMsgs = messages.filter(m => m.senderId === username || m.receiverId === username);
+    if (userMsgs.length === 0) return 0;
+    const latest = userMsgs[userMsgs.length - 1];
+    return new Date(latest.createdAt).getTime();
+  };
+
+  const recentContactsSorted = [...contactUsernames].sort((a, b) => getLatestMessageTime(b) - getLatestMessageTime(a));
+  
   // Sort all users so online users are at the top, then idle, then offline
   const sortedAllUsers = [...allUsers].sort((a, b) => {
     const valA = a.status === 'Online' ? 2 : (a.status === 'Idle' ? 1 : 0);
@@ -112,7 +121,7 @@ export default function MessagesPage() {
     return valB - valA;
   });
   
-  const displayList = activeTab === 'RECENT' ? contactUsernames : sortedAllUsers.map(u => u.username || u.email);
+  const displayList = activeTab === 'RECENT' ? recentContactsSorted : sortedAllUsers.map(u => u.username || u.email);
 
   const activeChat = messages.filter(m => 
     (m.senderId === myUsername && m.receiverId === activeContact) ||
