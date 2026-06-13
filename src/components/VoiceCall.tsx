@@ -41,7 +41,7 @@ export default function VoiceCall({ roomID, username, onClose }: { roomID: strin
           turnOnCameraWhenJoining: false,
           showMyCameraToggleButton: false,
           showAudioVideoSettingsButton: true,
-          showScreenSharingButton: false,
+          showScreenSharingButton: true,
           onLeaveRoom: () => {
             onClose();
           }
