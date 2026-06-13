@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
+import VoiceCall from '@/components/VoiceCall';
 
 export default function MessagesPage() {
   const { data: session, status } = useSession();
@@ -19,6 +20,9 @@ export default function MessagesPage() {
   const [loading, setLoading] = useState(true);
   const [menuOpen, setMenuOpen] = useState(false);
   const chatContainerRef = useRef<HTMLDivElement>(null);
+  
+  const [isCalling, setIsCalling] = useState(false);
+  const [callRoomID, setCallRoomID] = useState("");
 
   const OWNER_USERNAME = "boysmsg01"; // Or whatever the admin username is
 
@@ -34,8 +38,15 @@ export default function MessagesPage() {
       
       const searchParams = new URLSearchParams(window.location.search);
       const userToSelect = searchParams.get('user');
+      const joinCall = searchParams.get('joinCall');
       if (userToSelect) {
         setActiveContact(userToSelect);
+      }
+      if (joinCall) {
+        setCallRoomID(joinCall);
+        setIsCalling(true);
+        // Clean URL to avoid re-joining on refresh
+        window.history.replaceState({}, document.title, `/messages?user=${userToSelect}`);
       }
     }
   }, [session, status]);
@@ -297,6 +308,25 @@ export default function MessagesPage() {
 
                 {/* Actions: Menu & Close */}
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px', position: 'relative' }}>
+                  {activeContact !== 'pokefun_actions' && (
+                    <button 
+                      onClick={() => {
+                        const roomID = [myUsername, activeContact].sort().join('-');
+                        setCallRoomID(roomID);
+                        setIsCalling(true);
+                        
+                        fetch('/api/call/invite', {
+                          method: 'POST',
+                          headers: { 'Content-Type': 'application/json' },
+                          body: JSON.stringify({ targetUsername: activeContact, roomID })
+                        }).catch(console.error);
+                      }} 
+                      style={{ background: '#10b981', border: 'none', color: 'white', fontSize: '1rem', cursor: 'pointer', padding: '8px 12px', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '8px', boxShadow: '0 4px 10px rgba(16, 185, 129, 0.3)' }}
+                      title="Voice Call"
+                    >
+                      <i className="fa-solid fa-phone"></i> Call
+                    </button>
+                  )}
                   <button onClick={() => setMenuOpen(!menuOpen)} style={{ background: 'transparent', border: 'none', color: 'white', fontSize: '1.2rem', cursor: 'pointer', padding: '10px' }}>
                     <i className="fa-solid fa-ellipsis-vertical"></i>
                   </button>
@@ -381,8 +411,16 @@ export default function MessagesPage() {
             </div>
           )}
         </div>
-
       </div>
+
+      {/* Voice Call Overlay */}
+      {isCalling && (
+        <VoiceCall 
+          roomID={callRoomID} 
+          username={myUsername} 
+          onClose={() => setIsCalling(false)} 
+        />
+      )}
     </div>
   );
 }
