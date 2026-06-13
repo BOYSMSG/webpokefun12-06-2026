@@ -4,11 +4,15 @@ const vapidPublicKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY || '';
 const vapidPrivateKey = process.env.VAPID_PRIVATE_KEY || '';
 
 if (vapidPublicKey && vapidPrivateKey) {
-  webpush.setVapidDetails(
-    'mailto:support@pokefun.in',
-    vapidPublicKey,
-    vapidPrivateKey
-  );
+  try {
+    webpush.setVapidDetails(
+      'mailto:support@pokefun.in',
+      vapidPublicKey,
+      vapidPrivateKey
+    );
+  } catch (error) {
+    console.warn("Invalid VAPID keys provided. Push notifications will not work. Error:", error);
+  }
 } else {
   console.warn("VAPID keys are missing. Web Push notifications will not work.");
 }
