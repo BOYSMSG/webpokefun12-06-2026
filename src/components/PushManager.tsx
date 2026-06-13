@@ -36,31 +36,42 @@ export default function PushManager() {
         const activeWindow = (window as any).__activeWidgetWindow;
         const isMsg = payload.title?.toLowerCase().includes('message') || payload.title?.toLowerCase().includes('reply');
         
-        let shouldSuppress = false;
+        let shouldSuppressToast = false;
+        let shouldSuppressSound = false;
+        
         if (isMsg) {
           // Trigger instant refresh in messages page
           window.dispatchEvent(new Event('newMessageReceived'));
           
           const urlParams = new URLSearchParams(window.location.search);
           const activeContact = (window as any).__activeChatContact || urlParams.get('user');
-          if (window.location.pathname.includes('/messages') && activeContact && payload.title.includes(`@${activeContact}`)) {
-            shouldSuppress = true;
-          } else if (activeWindow === 'messages') {
-            shouldSuppress = true;
+          const isMessagesPage = window.location.pathname.includes('/messages');
+          const isWidgetMessages = activeWindow === 'messages';
+          
+          if (isMessagesPage || isWidgetMessages) {
+            shouldSuppressToast = true; // Never show toast on messages page
+            
+            // Only suppress sound if it's from the person we're actively chatting with
+            if (activeContact && payload.title.includes(`@${activeContact}`)) {
+              shouldSuppressSound = true;
+            } else if (!activeContact) {
+              // If no active contact (just on the list), maybe play sound? Yes.
+              shouldSuppressSound = false;
+            }
           }
         }
 
-        if (!shouldSuppress) {
+        if (!shouldSuppressToast) {
           toastObj.info(`${payload.title}: ${payload.message}`, payload.url);
-          
-          // Play Sound if not muted
-          if (localStorage.getItem('muteMsgSound') !== 'true') {
-             try {
-               const audioUrl = isMsg ? '/audio/message.mp3' : '/audio/notification.wav';
-               const audio = new Audio(audioUrl);
-               audio.play().catch(() => {});
-             } catch (err) {}
-          }
+        }
+        
+        // Play Sound if not muted
+        if (localStorage.getItem('muteMsgSound') !== 'true' && !shouldSuppressSound) {
+           try {
+             const audioUrl = isMsg ? '/audio/message.mp3' : '/audio/notification.wav';
+             const audio = new Audio(audioUrl);
+             audio.play().catch(() => {});
+           } catch (err) {}
         }
       }
     };

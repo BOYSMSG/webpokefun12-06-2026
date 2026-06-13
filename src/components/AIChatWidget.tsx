@@ -80,21 +80,32 @@ export default function AIChatWidget() {
                    const isUnread = !(n.readBy || []).includes(session?.user?.email);
                    if (isUnread && !toasted.includes(n._id)) {
                      
-                     let shouldSuppress = false;
+                     let shouldSuppressToast = false;
+                     let shouldSuppressSound = false;
+                     let shouldMarkAsRead = false;
+                     
                      const isMsg = n.title?.toLowerCase().includes('message') || n.title?.toLowerCase().includes('reply');
                      if (isMsg) {
                        const urlParams = new URLSearchParams(window.location.search);
                        const activeContact = (window as any).__activeChatContact || urlParams.get('user');
-                       if (window.location.pathname.includes('/messages') && activeContact && n.title.includes(`@${activeContact}`)) {
-                         shouldSuppress = true;
-                       } else if ((window as any).__activeWidgetWindow === 'messages') {
-                         shouldSuppress = true;
+                       const isMessagesPage = window.location.pathname.includes('/messages');
+                       const isWidgetMessages = (window as any).__activeWidgetWindow === 'messages';
+                       
+                       if (isMessagesPage || isWidgetMessages) {
+                         shouldSuppressToast = true;
+                         
+                         if (activeContact && n.title.includes(`@${activeContact}`)) {
+                           shouldSuppressSound = true;
+                           shouldMarkAsRead = true;
+                         }
                        }
                      }
                      
-                     if (!shouldSuppress) {
+                     if (!shouldSuppressToast) {
                        toastObj.info(`${n.title}`, n.url);
-                     } else {
+                     }
+                     
+                     if (shouldMarkAsRead) {
                        // Automatically mark this notification as read on the server so red dot disappears!
                        fetch('/api/notifications/read', {
                          method: 'POST',
@@ -104,12 +115,12 @@ export default function AIChatWidget() {
                      }
                      
                      toasted.push(n._id);
-                     if (!shouldSuppress) {
+                     if (!shouldMarkAsRead) {
                        newToasts = true;
                      }
                      
                      // Play Sound if not muted
-                     if (localStorage.getItem('muteMsgSound') !== 'true' && !shouldSuppress) {
+                     if (localStorage.getItem('muteMsgSound') !== 'true' && !shouldSuppressSound) {
                         try {
                           const audioUrl = isMsg ? '/audio/message.mp3' : '/audio/notification.wav';
                           const audio = new Audio(audioUrl);
