@@ -93,9 +93,9 @@ export default function AnnouncementsPage() {
           ) : (
             posts.map((post: any) => (
               <div key={post.id} onClick={() => router.push(`/community/post/${post.id}`)} style={{ 
-                background: 'rgba(245, 158, 11, 0.05)', 
+                background: '#1f2937', 
                 color: 'white',
-                border: '1px solid rgba(245, 158, 11, 0.3)', 
+                border: '1px solid rgba(245, 158, 11, 0.5)', 
                 borderRadius: '16px', 
                 overflow: 'hidden',
                 transition: 'transform 0.2s, box-shadow 0.2s',
