@@ -4,6 +4,7 @@ import Post from '@/models/Post';
 import User from '@/models/User';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { sendPushNotification } from '@/lib/webpush';
 
 export async function GET(req: Request) {
   try {
@@ -120,6 +121,26 @@ export async function POST(req: Request) {
       views: 0,
       impressions: 0
     });
+
+    // Send Push Notification if it's an Announcement
+    if (type === 'ANNOUNCEMENT') {
+      const usersWithPush = await User.find({ pushSubscriptions: { $exists: true, $ne: [] } }).lean();
+      
+      const payload = {
+        title: "New Announcement",
+        message: title,
+        url: `/community/post/${newPost._id}`,
+        icon: "/images/logo.png"
+      };
+
+      for (const user of usersWithPush) {
+        if (user.pushSubscriptions) {
+          for (const sub of user.pushSubscriptions) {
+            await sendPushNotification(sub, payload);
+          }
+        }
+      }
+    }
 
     return NextResponse.json({ success: true, post: newPost });
   } catch (error: any) {

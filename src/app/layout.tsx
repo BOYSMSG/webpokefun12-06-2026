@@ -8,8 +8,8 @@ import WelcomeLoginModal from "@/components/WelcomeLoginModal";
 import AIChatWidget from "@/components/AIChatWidget";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
-
 import { ToastProvider } from "@/components/Toast";
+import PushManager from "@/components/PushManager";
 
 export const metadata: Metadata = {
   title: "Pokefun - Cobblemon SMP",
@@ -275,6 +275,7 @@ export default async function RootLayout({
               } catch (e) {}
             }, 10000); // Check every 10 seconds
           `}</Script>
+          <PushManager />
           <WelcomeLoginModal />
           <AuthWidget />
           <AIChatWidget />

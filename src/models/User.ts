@@ -19,6 +19,7 @@ export interface IUser extends Document {
   following: string[];
   permissions: string[]; // e.g. ['DELETE_POSTS', 'ANNOUNCEMENTS', 'MANAGE_ROLES', 'READ_DMS', 'BAN_USERS']
   savedPosts: string[]; // Array of post IDs
+  pushSubscriptions?: any[]; // For Web Push notifications
   lastActive?: Date;
   isBanned?: boolean;
   createdAt: Date;
@@ -43,6 +44,7 @@ const UserSchema: Schema = new Schema({
   following: [{ type: String }],
   permissions: [{ type: String }],
   savedPosts: [{ type: String }],
+  pushSubscriptions: [{ type: Schema.Types.Mixed }], // For Web Push notifications
   lastActive: { type: Date, default: Date.now },
   isBanned: { type: Boolean, default: false },
   createdAt: { type: Date, default: Date.now }

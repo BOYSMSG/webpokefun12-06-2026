@@ -259,7 +259,7 @@ export default function PostPage() {
             </div>
 
             {/* Interaction Buttons */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '25px', color: '#9ca3af', fontSize: '1.4rem', flexWrap: 'wrap' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '25px', color: '#9ca3af', fontSize: '2rem', flexWrap: 'wrap' }}>
               {(isPrivileged || (session?.user?.email && (post.authorId === session.user.email || post.authorId === (session.user as any).username))) && (
                 <button onClick={() => setIsEditing(!isEditing)} style={{ background: 'transparent', border: 'none', color: '#3b82f6', cursor: 'pointer', display: 'flex', gap: '8px', alignItems: 'center', fontWeight: 'bold' }}>
                   <i className="fa-solid fa-pen"></i> Edit Post

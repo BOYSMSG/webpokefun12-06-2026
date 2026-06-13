@@ -5,6 +5,7 @@ import User from '@/models/User';
 import Notification from '@/models/Notification';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { sendPushNotification } from '@/lib/webpush';
 
 export async function GET(req: Request) {
   try {
@@ -93,6 +94,19 @@ export async function POST(req: Request) {
         userId: receiverUser.email, // Notification still uses email as userId for now
         createdAt: new Date()
       });
+
+      // Send Web Push Notification
+      if (receiverUser.pushSubscriptions && receiverUser.pushSubscriptions.length > 0) {
+        const payload = {
+          title: `New Message from @${me.username}`,
+          message: content,
+          url: `/messages?user=${encodeURIComponent(me.username)}`,
+          icon: me.image || '/images/logo.png'
+        };
+        for (const sub of receiverUser.pushSubscriptions) {
+          await sendPushNotification(sub, payload);
+        }
+      }
     }
 
     return NextResponse.json(newMessage);

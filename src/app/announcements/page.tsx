@@ -140,7 +140,7 @@ export default function AnnouncementsPage() {
                       <img src={post.avatar} alt={post.author} style={{ width: '40px', height: '40px', borderRadius: '50%', border: '2px solid #ef4444' }} />
                       <span style={{ fontSize: '1rem', fontWeight: 700, color: '#ef4444' }}>{post.author} (Admin)</span>
                     </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '20px', color: '#9ca3af', fontSize: '1.1rem' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '20px', color: '#9ca3af', fontSize: '1.6rem' }}>
                       <button onClick={(e) => handleInteract(e, post.id, 'like')} style={{ background: 'transparent', border: 'none', color: '#9ca3af', cursor: 'pointer', display: 'flex', gap: '8px', alignItems: 'center' }} onMouseOver={e => e.currentTarget.style.color = '#10b981'}>
                         <i className="fa-solid fa-heart"></i> {post.upvotes}
                       </button>
