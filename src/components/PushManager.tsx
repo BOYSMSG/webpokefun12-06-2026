@@ -32,18 +32,31 @@ export default function PushManager() {
     const handleServiceWorkerMessage = (event: MessageEvent) => {
       if (event.data && event.data.type === 'PUSH_NOTIFICATION') {
         const payload = event.data.payload;
-        toastObj.info(`${payload.title}: ${payload.message}`, payload.url);
         
-        // Play custom sound if not muted and not on messages screen
-        if (localStorage.getItem('muteMsgSound') !== 'true') {
-           const activeWindow = (window as any).__activeWidgetWindow;
-           const isMsg = payload.title?.toLowerCase().includes('message') || payload.title?.toLowerCase().includes('reply');
-           if (!(isMsg && (activeWindow === 'messages' || window.location.pathname.includes('/messages')))) {
-              try {
-                const audio = new Audio('/audio/notification.wav');
-                audio.play().catch(() => {});
-              } catch(e) {}
-           }
+        const activeWindow = (window as any).__activeWidgetWindow;
+        const isMsg = payload.title?.toLowerCase().includes('message') || payload.title?.toLowerCase().includes('reply');
+        
+        let shouldSuppress = false;
+        if (isMsg) {
+          const urlParams = new URLSearchParams(window.location.search);
+          const activeContact = urlParams.get('user');
+          if (window.location.pathname.includes('/messages') && activeContact && payload.title.includes(`@${activeContact}`)) {
+            shouldSuppress = true;
+          } else if (activeWindow === 'messages') {
+            shouldSuppress = true;
+          }
+        }
+
+        if (!shouldSuppress) {
+          toastObj.info(`${payload.title}: ${payload.message}`, payload.url);
+          
+          // Play Sound if not muted
+          if (localStorage.getItem('muteMsgSound') !== 'true') {
+             try {
+               const audio = new Audio('/audio/notification.wav');
+               audio.play().catch(() => {});
+             } catch (err) {}
+          }
         }
       }
     };

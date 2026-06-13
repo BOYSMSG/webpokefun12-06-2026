@@ -86,15 +86,33 @@ export async function POST(req: Request) {
     const receiverUser = await User.findOne({ username: receiverId }).lean();
 
     if (receiverUser) {
-      await Notification.create({
-        title: `Message from @${me.username}`,
-        message: `"${content.length > 50 ? content.substring(0, 50) + '...' : content}"`,
-        icon: me.image || '/images/default-avatar.png',
-        url: `/messages?user=${encodeURIComponent(me.username)}`,
+      const notifTitle = `Message from @${me.username}`;
+      const notifMessage = `"${content.length > 50 ? content.substring(0, 50) + '...' : content}"`;
+      
+      const existingNotif = await Notification.findOne({
+        title: notifTitle,
+        userId: receiverUser.email,
         isGlobal: false,
-        userId: receiverUser.email, // Notification still uses email as userId for now
-        createdAt: new Date()
+        readBy: { $nin: [receiverUser.email] }
       });
+
+      if (existingNotif) {
+        existingNotif.message = notifMessage;
+        existingNotif.count = (existingNotif.count || 1) + 1;
+        existingNotif.createdAt = new Date();
+        await existingNotif.save();
+      } else {
+        await Notification.create({
+          title: notifTitle,
+          message: notifMessage,
+          icon: me.image || '/images/default-avatar.png',
+          url: `/messages?user=${encodeURIComponent(me.username)}`,
+          isGlobal: false,
+          userId: receiverUser.email,
+          readBy: [],
+          count: 1
+        });
+      }
 
       // Send Web Push Notification
       if (receiverUser.pushSubscriptions && receiverUser.pushSubscriptions.length > 0) {

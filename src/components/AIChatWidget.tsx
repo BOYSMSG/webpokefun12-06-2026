@@ -79,20 +79,32 @@ export default function AIChatWidget() {
                  data.notifications.forEach((n: any) => {
                    const isUnread = !(n.readBy || []).includes(session?.user?.email);
                    if (isUnread && !toasted.includes(n._id)) {
-                     toastObj.info(`${n.title}`, n.url); // Using just title for toast, or title + msg if we want
+                     
+                     let shouldSuppress = false;
+                     const isMsg = n.title?.toLowerCase().includes('message') || n.title?.toLowerCase().includes('reply');
+                     if (isMsg) {
+                       const urlParams = new URLSearchParams(window.location.search);
+                       const activeContact = urlParams.get('user');
+                       if (window.location.pathname.includes('/messages') && activeContact && n.title.includes(`@${activeContact}`)) {
+                         shouldSuppress = true;
+                       } else if ((window as any).__activeWidgetWindow === 'messages') {
+                         shouldSuppress = true;
+                       }
+                     }
+                     
+                     if (!shouldSuppress) {
+                       toastObj.info(`${n.title}`, n.url);
+                     }
+                     
                      toasted.push(n._id);
                      newToasts = true;
                      
                      // Play Sound if not muted
-                     if (localStorage.getItem('muteMsgSound') !== 'true') {
-                        // If it's a message and user is already on messages screen, skip sound
-                        const isMsg = n.title?.toLowerCase().includes('message');
-                        if (!(isMsg && (activeWindow === 'messages' || window.location.pathname.includes('/messages')))) {
-                           try {
-                             const audio = new Audio('/audio/notification.wav');
-                             audio.play().catch(() => {});
-                           } catch(e) {}
-                        }
+                     if (localStorage.getItem('muteMsgSound') !== 'true' && !shouldSuppress) {
+                        try {
+                          const audio = new Audio('/audio/notification.wav');
+                          audio.play().catch(() => {});
+                        } catch(e) {}
                      }
                    }
                  });
@@ -346,7 +358,9 @@ export default function AIChatWidget() {
                       <img src={notif.icon} style={{ width: '45px', height: '45px', borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }} />
                     )}
                     <div style={{ flex: 1, minWidth: 0 }}>
-                      <h4 style={{ margin: '0 0 5px 0', color: 'white' }}>{notif.title}</h4>
+                      <h4 style={{ margin: '0 0 5px 0', color: 'white' }}>
+                        {notif.title} {notif.count && notif.count > 1 && <span style={{ background: '#3b82f6', color: 'white', padding: '2px 6px', borderRadius: '10px', fontSize: '0.7rem', marginLeft: '5px' }}>{notif.count}</span>}
+                      </h4>
                       <p style={{ margin: 0, color: '#a3a3a3', fontSize: '0.9rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{notif.message}</p>
                       <span style={{ display: 'block', marginTop: '8px', fontSize: '0.7rem', color: '#666' }}>{new Date(notif.createdAt).toLocaleString()}</span>
                     </div>
