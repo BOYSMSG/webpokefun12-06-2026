@@ -39,12 +39,19 @@ export default function MessagesPage() {
         (window as any).__activeChatContact = userToSelect;
       }
       
-      // Polling for live messages
+      // Instant fetch when a push notification arrives
+      const handleNewMessage = () => fetchMessages();
+      window.addEventListener('newMessageReceived', handleNewMessage);
+      
+      // Fallback polling (slower to save server resources)
       const interval = setInterval(() => {
         fetchMessages();
-      }, 5000);
+      }, 10000);
       
-      return () => clearInterval(interval);
+      return () => {
+        clearInterval(interval);
+        window.removeEventListener('newMessageReceived', handleNewMessage);
+      };
     }
   }, [session, status]);
 

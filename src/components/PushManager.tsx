@@ -38,6 +38,9 @@ export default function PushManager() {
         
         let shouldSuppress = false;
         if (isMsg) {
+          // Trigger instant refresh in messages page
+          window.dispatchEvent(new Event('newMessageReceived'));
+          
           const urlParams = new URLSearchParams(window.location.search);
           const activeContact = (window as any).__activeChatContact || urlParams.get('user');
           if (window.location.pathname.includes('/messages') && activeContact && payload.title.includes(`@${activeContact}`)) {
