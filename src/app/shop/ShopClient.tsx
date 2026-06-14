@@ -104,19 +104,41 @@ export default function ShopClient({ initialCategories }: { initialCategories: a
     }
   };
 
+  const handleCheckGiftcard = () => {
+    alert("Giftcards can be applied on the final checkout page!");
+  };
+
   const activeCategory = categories.find(c => c.id === activeCategoryId) || categories[0];
 
   return (
-    <div className="clean-shop-wrapper">
+    <div className="cobblemon-shop-wrapper">
       
+      {/* Global Style Override for Shop Page */}
+      <style dangerouslySetInnerHTML={{__html: `
+        body {
+          background-color: #111 !important;
+          background-image: linear-gradient(rgba(15,15,15,0.8), rgba(15,15,15,0.9)), url('https://mc-heads.net/body/steve/100') !important; 
+          background-size: cover;
+          background-attachment: fixed;
+          background-position: center;
+        }
+        #gh-header { display: none !important; } /* Hide the default blue header */
+        footer { display: none !important; } /* Hide footer for clean shop experience */
+        .desktop-sidebar-container { display: none !important; } /* Ensure sidebar container is gone */
+        main { margin-top: 50px !important; }
+      `}} />
+
       {/* TOP NAV & STATUS */}
       <div className="shop-top-bar">
         <div className="shop-logo">
-           <i className="fa-solid fa-store" style={{color: '#3b82f6', marginRight: '10px'}}></i>
-           Pokefun Store
+           <img src="/images/logo.png" alt="Logo" style={{height: '60px'}} onError={(e) => e.currentTarget.style.display='none'} />
         </div>
         
         <div className="top-right-actions">
+          
+          <button className="giftcard-btn" onClick={handleCheckGiftcard}>
+            <i className="fa-solid fa-gift"></i> check giftcard
+          </button>
           
           <div className="currency-selector-wrapper">
             {isFetchingCurrency ? <i className="fa-solid fa-spinner fa-spin currency-spinner"></i> : <i className="fa-solid fa-earth-americas"></i>}
@@ -161,9 +183,14 @@ export default function ShopClient({ initialCategories }: { initialCategories: a
         {/* Sidebar */}
         <div className="shop-sidebar">
           <div className="sidebar-box menu-box">
-            <h3 className="sidebar-title">CATEGORIES</h3>
+            <h3 className="sidebar-title">START SHOPPING</h3>
             <ul className="category-list">
-              {initialCategories.map(category => (
+              <li>
+                <a href="/" className="cat-btn back-home-btn">
+                  <i className="fa-solid fa-earth-americas"></i> Back to Home
+                </a>
+              </li>
+              {categories.map(category => (
                 <li key={category.id}>
                   <button 
                     onClick={() => setActiveCategoryId(category.id)}
@@ -302,31 +329,22 @@ export default function ShopClient({ initialCategories }: { initialCategories: a
 
       {/* Clean Styles */}
       <style dangerouslySetInnerHTML={{__html: `
-        .clean-shop-wrapper {
+        .cobblemon-shop-wrapper {
           position: relative;
           width: 100%;
-          max-width: 1200px;
+          max-width: 1300px;
           margin: 0 auto;
           padding: 20px 0;
-          font-family: inherit;
+          font-family: 'Righteous', 'Karla', sans-serif;
         }
         
         .shop-top-bar {
           display: flex;
           justify-content: space-between;
           align-items: center;
-          background: white;
-          padding: 15px 25px;
-          border-radius: 12px;
-          box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-          margin-bottom: 25px;
-          border: 1px solid #eaeaea;
-        }
-        
-        .shop-logo {
-          font-size: 1.5rem;
-          font-weight: 800;
-          color: #1f2937;
+          background: transparent;
+          padding: 10px 0;
+          margin-bottom: 40px;
         }
         
         .top-right-actions {
@@ -334,109 +352,123 @@ export default function ShopClient({ initialCategories }: { initialCategories: a
           align-items: center;
           gap: 15px;
         }
+
+        .giftcard-btn {
+          background: #111;
+          color: white;
+          border: 2px solid #333;
+          padding: 10px 20px;
+          border-radius: 8px;
+          font-weight: bold;
+          cursor: pointer;
+          font-size: 1.1rem;
+          display: flex;
+          align-items: center;
+          gap: 8px;
+        }
+        .giftcard-btn:hover { border-color: #fbbf24; color: #fbbf24; }
         
         .currency-selector-wrapper {
           display: flex;
           align-items: center;
           gap: 8px;
-          background: #f8fafc;
-          border: 1px solid #e2e8f0;
-          padding: 6px 12px;
+          background: #111;
+          border: 2px solid #333;
+          padding: 10px 15px;
           border-radius: 8px;
-          color: #4b5563;
+          color: white;
         }
         
         .currency-select {
           background: transparent;
           border: none;
           font-weight: bold;
-          color: #1f2937;
-          font-size: 0.95rem;
+          color: white;
+          font-size: 1.1rem;
           outline: none;
           cursor: pointer;
         }
-        
-        .currency-spinner {
-          color: #3b82f6;
-        }
+        .currency-select option { background: #111; color: white; }
         
         .user-status-box {
-          background: #f8fafc;
-          border: 1px solid #e2e8f0;
+          background: #111;
+          border: 2px solid #333;
           border-radius: 8px;
-          padding: 6px 12px;
+          padding: 8px 15px;
           cursor: pointer;
           transition: all 0.2s;
         }
         .user-status-box:hover {
-          border-color: #cbd5e1;
-          background: #f1f5f9;
+          border-color: #fbbf24;
         }
         
-        .user-logged-in { display: flex; align-items: center; gap: 12px; }
+        .user-logged-in { display: flex; align-items: center; gap: 15px; }
         .user-text-info { text-align: right; }
-        .user-label { font-size: 0.75rem; color: #64748b; font-weight: 600; text-transform: uppercase; }
-        .user-name { font-weight: bold; color: #0f172a; font-size: 0.95rem; }
-        .highlight-text { color: #3b82f6; }
+        .user-label { font-size: 0.8rem; color: #aaa; font-weight: 600; text-transform: uppercase; }
+        .user-name { font-weight: bold; color: white; font-size: 1.1rem; }
+        .highlight-text { color: #fbbf24; }
         
-        .mc-avatar-container { width: 35px; height: 35px; border-radius: 6px; overflow: hidden; }
+        .mc-avatar-container { width: 45px; height: 45px; border-radius: 6px; overflow: hidden; }
         .mc-face { width: 100%; height: 100%; object-fit: cover; }
 
         .shop-layout { display: flex; gap: 30px; align-items: flex-start; }
         
-        .shop-sidebar { width: 250px; flex-shrink: 0; }
+        .shop-sidebar { width: 280px; flex-shrink: 0; }
         
         .sidebar-box {
-          background: white;
+          background: #111;
           border-radius: 12px;
-          padding: 20px;
-          box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-          border: 1px solid #eaeaea;
+          padding: 25px;
+          border: 2px solid #222;
         }
         
-        .sidebar-title { font-size: 1rem; color: #9ca3af; margin-bottom: 15px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; }
+        .sidebar-title { font-size: 1.2rem; color: #fbbf24; margin-bottom: 20px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; text-align: center; }
         
-        .category-list { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 5px; margin: 0;}
+        .category-list { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 10px; margin: 0;}
         
         .cat-btn {
           width: 100%; text-align: left; background: transparent; border: none;
-          padding: 15px 15px; color: #4b5563; font-size: 1.1rem; font-weight: 600;
+          padding: 15px 20px; color: #ccc; font-size: 1.3rem; font-weight: 600;
           cursor: pointer; transition: all 0.2s ease; border-radius: 8px;
+          font-family: inherit;
+          display: flex; align-items: center; gap: 10px; text-decoration: none;
         }
-        .cat-btn:hover { background: #f3f4f6; color: #1f2937; }
-        .cat-btn.active { background: #eff6ff; color: #2563eb; font-weight: bold; }
+        .cat-btn:hover { background: #222; color: white; }
+        .cat-btn.active { background: #222; color: white; border-left: 4px solid #fbbf24; }
+
+        .back-home-btn { color: #10b981; }
+        .back-home-btn:hover { background: rgba(16,185,129,0.1); color: #34d399; }
 
         .shop-main { flex-grow: 1; min-width: 0; }
         
         .category-container {
-          background: white;
+          background: #111;
           border-radius: 12px;
-          box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-          border: 1px solid #eaeaea;
+          border: 2px solid #222;
           overflow: hidden;
         }
         
         .category-header {
-          padding: 30px;
-          border-bottom: 1px solid #f3f4f6;
-          text-align: center;
-          background: #f8fafc;
+          padding: 40px;
+          border-bottom: 2px solid #222;
+          text-align: left;
+          background: #151515;
         }
-        .category-header h2 { color: #0f172a; font-size: 2.2rem; margin: 0 0 10px 0; font-weight: 800; }
-        .cat-desc { color: #64748b; font-size: 1.15rem; line-height: 1.6; max-width: 800px; margin: 0 auto;}
+        .category-header h2 { color: white; font-size: 3rem; margin: 0 0 10px 0; font-weight: 800; }
+        .cat-desc { color: #aaa; font-size: 1.3rem; line-height: 1.6; max-width: 1000px; margin: 0;}
         .cat-desc img { max-width: 100%; border-radius: 8px; margin-top: 15px; }
         
         /* Grid Layout for Packages */
         .package-grid {
           display: grid;
-          grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-          gap: 20px;
-          padding: 30px;
+          grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+          gap: 30px;
+          padding: 40px;
         }
         
         .package-card {
-          background: white;
-          border: 1px solid #e5e7eb;
+          background: #151515;
+          border: 2px solid #222;
           border-radius: 12px;
           overflow: hidden;
           transition: all 0.3s;
@@ -444,50 +476,50 @@ export default function ShopClient({ initialCategories }: { initialCategories: a
           flex-direction: column;
         }
         .package-card:hover {
-          transform: translateY(-5px);
-          box-shadow: 0 15px 30px rgba(0,0,0,0.1);
-          border-color: #cbd5e1;
+          transform: translateY(-8px);
+          box-shadow: 0 15px 30px rgba(0,0,0,0.5);
+          border-color: #fbbf24;
         }
         
         .pkg-image-wrapper {
-          height: 160px;
-          background: #f8fafc;
+          height: 280px;
+          background: #1a1a1a;
           display: flex;
           align-items: center;
           justify-content: center;
-          padding: 20px;
+          padding: 30px;
           cursor: pointer;
-          border-bottom: 1px solid #f1f5f9;
+          border-bottom: 2px solid #222;
         }
-        .pkg-image { max-width: 100%; max-height: 100%; object-fit: contain; transition: transform 0.3s; }
-        .package-card:hover .pkg-image { transform: scale(1.05); }
-        .placeholder-icon { font-size: 4rem; color: #cbd5e1; }
+        .pkg-image { max-width: 100%; max-height: 100%; object-fit: contain; transition: transform 0.3s; transform: scale(1.5); }
+        .package-card:hover .pkg-image { transform: scale(1.6); }
+        .placeholder-icon { font-size: 6rem; color: #333; }
         
-        .pkg-details { padding: 20px; text-align: center; flex-grow: 1; cursor: pointer; }
-        .pkg-name { color: #1e293b; font-size: 1.25rem; margin: 0 0 10px 0; font-weight: bold; }
-        .pkg-price { color: #10b981; font-size: 1.4rem; font-weight: 800; }
+        .pkg-details { padding: 25px; text-align: center; flex-grow: 1; cursor: pointer; }
+        .pkg-name { color: white; font-size: 1.8rem; margin: 0 0 10px 0; font-weight: bold; }
+        .pkg-price { color: #10b981; font-size: 1.8rem; font-weight: 800; }
         
         .pkg-actions {
-          padding: 15px 20px;
+          padding: 20px 25px;
           display: flex;
-          gap: 10px;
-          background: #f8fafc;
-          border-top: 1px solid #f1f5f9;
+          gap: 15px;
+          background: #1a1a1a;
+          border-top: 2px solid #222;
         }
         
         .btn-buy {
           flex-grow: 1;
           background: #10b981; color: white; border: none; border-radius: 6px;
-          padding: 12px; font-weight: bold; font-size: 1.1rem; cursor: pointer; transition: all 0.2s;
+          padding: 15px; font-weight: bold; font-size: 1.4rem; cursor: pointer; transition: all 0.2s;
         }
         .btn-buy:hover:not(:disabled) { background: #059669; }
         .btn-buy:disabled { opacity: 0.6; cursor: not-allowed; }
         
         .btn-info {
-          width: 42px; background: white; color: #64748b; border: 1px solid #cbd5e1;
-          border-radius: 6px; cursor: pointer; transition: all 0.2s;
+          width: 55px; background: #222; color: #aaa; border: 2px solid #333;
+          border-radius: 6px; cursor: pointer; transition: all 0.2s; font-size: 1.3rem;
         }
-        .btn-info:hover { color: #3b82f6; border-color: #3b82f6; background: #eff6ff; }
+        .btn-info:hover { color: #fbbf24; border-color: #fbbf24; background: #333; }
         
         .empty-category { text-align: center; padding: 60px 20px; color: #9ca3af; }
         .empty-icon { font-size: 3rem; margin-bottom: 15px; color: #cbd5e1;}
@@ -495,59 +527,59 @@ export default function ShopClient({ initialCategories }: { initialCategories: a
         /* Modals */
         .modal-overlay {
           position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-          background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px);
-          z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 20px;
+          background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(8px);
+          z-index: 9999; display: flex; align-items: center; justify-content: center; padding: 20px;
         }
         
         .clean-modal {
-          background: white; width: 100%; max-width: 450px; border-radius: 16px;
-          box-shadow: 0 20px 50px rgba(0,0,0,0.2); overflow: hidden;
+          background: #111; width: 100%; max-width: 500px; border-radius: 16px;
+          box-shadow: 0 20px 50px rgba(0,0,0,0.5); overflow: hidden; border: 2px solid #222;
           animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
-        .clean-modal.pkg-detail { max-width: 600px; }
+        .clean-modal.pkg-detail { max-width: 700px; }
         
         @keyframes popIn { 0% { transform: scale(0.95) translateY(10px); opacity: 0; } 100% { transform: scale(1) translateY(0); opacity: 1; } }
         
         .modal-header {
-          padding: 20px 25px; border-bottom: 1px solid #f1f5f9;
+          padding: 25px 30px; border-bottom: 2px solid #222;
           display: flex; justify-content: space-between; align-items: center;
-          background: #f8fafc;
+          background: #1a1a1a;
         }
-        .modal-header h2 { margin: 0; font-size: 1.4rem; color: #0f172a; font-weight: bold; }
+        .modal-header h2 { margin: 0; font-size: 1.8rem; color: white; font-weight: bold; }
         
         .btn-close {
-          background: transparent; border: none; color: #94a3b8; font-size: 1.8rem;
+          background: transparent; border: none; color: #aaa; font-size: 2rem;
           cursor: pointer; transition: color 0.2s; padding: 0;
         }
         .btn-close:hover { color: #ef4444; }
         
-        .modal-body { padding: 30px; text-align: center; }
+        .modal-body { padding: 40px; text-align: center; }
         
-        .mc-steve-icon { width: 80px; height: 80px; margin: 0 auto 20px; border-radius: 12px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .mc-steve-icon { width: 100px; height: 100px; margin: 0 auto 20px; border-radius: 12px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
         .mc-steve-icon img { width: 100%; height: 100%; object-fit: cover; }
-        .modal-body p { color: #64748b; margin-bottom: 25px; font-size: 1.1rem; line-height: 1.5;}
+        .modal-body p { color: #ccc; margin-bottom: 25px; font-size: 1.3rem; line-height: 1.5;}
         
         .clean-input {
-          width: 100%; padding: 15px; border: 2px solid #e2e8f0; border-radius: 8px;
-          font-size: 1.2rem; color: #0f172a; margin-bottom: 20px; font-weight: bold;
+          width: 100%; padding: 18px; border: 2px solid #333; border-radius: 8px; background: #222;
+          font-size: 1.4rem; color: white; margin-bottom: 20px; font-weight: bold;
           text-align: center; transition: border-color 0.2s;
         }
-        .clean-input:focus { outline: none; border-color: #3b82f6; }
+        .clean-input:focus { outline: none; border-color: #fbbf24; }
         
         .btn-submit {
-          width: 100%; background: #3b82f6; color: white; border: none;
-          padding: 15px; border-radius: 8px; font-weight: bold; font-size: 1.1rem;
+          width: 100%; background: #fbbf24; color: black; border: none;
+          padding: 18px; border-radius: 8px; font-weight: 900; font-size: 1.4rem;
           cursor: pointer; transition: background 0.2s;
         }
-        .btn-submit:hover:not(:disabled) { background: #2563eb; }
+        .btn-submit:hover:not(:disabled) { background: #f59e0b; }
         .btn-submit:disabled { opacity: 0.6; cursor: not-allowed;}
         
-        .modal-image-center { height: 150px; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; background: #f8fafc; border-radius: 12px;}
-        .modal-image-center img { max-height: 90%; max-width: 90%; object-fit: contain; }
+        .modal-image-center { height: 250px; display: flex; align-items: center; justify-content: center; margin-bottom: 30px; background: #1a1a1a; border-radius: 12px; border: 2px solid #222;}
+        .modal-image-center img { max-height: 90%; max-width: 90%; object-fit: contain; transform: scale(1.3); }
         
-        .modal-price-large { font-size: 2rem; font-weight: 900; color: #10b981; text-align: center; margin-bottom: 20px; }
+        .modal-price-large { font-size: 2.5rem; font-weight: 900; color: #10b981; text-align: center; margin-bottom: 20px; }
         
-        .html-desc { color: #475569; font-size: 1.1rem; line-height: 1.6; max-height: 350px; overflow-y: auto; padding-right: 10px; text-align: left;}
+        .html-desc { color: #ccc; font-size: 1.3rem; line-height: 1.6; max-height: 400px; overflow-y: auto; padding-right: 15px; text-align: left;}
         .html-desc p { margin-bottom: 15px; }
         .html-desc ul { margin-left: 20px; margin-bottom: 15px; }
 

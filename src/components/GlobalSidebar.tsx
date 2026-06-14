@@ -8,6 +8,11 @@ export default function GlobalSidebar() {
   const pathname = usePathname();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
+  // Hide the global sidebar on the shop page, it has its own layout
+  if (pathname && pathname.startsWith('/shop')) {
+    return null;
+  }
+
   const mainLinks = [
     { title: "Home", path: "/" },
     { title: "Profile", path: "/profile" },
