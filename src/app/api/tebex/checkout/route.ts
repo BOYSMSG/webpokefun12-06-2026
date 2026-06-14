@@ -7,17 +7,13 @@ const PRIVATE_KEY = process.env.TEBEX_PRIVATE_KEY;
 
 export async function POST(req: Request) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session?.user) {
-      return NextResponse.json({ error: "You must be logged in to buy packages." }, { status: 401 });
-    }
-
-    const { packageId } = await req.json();
+    const { packageId, mcUsername } = await req.json();
     if (!packageId) {
       return NextResponse.json({ error: "Missing packageId" }, { status: 400 });
     }
-
-    const username = session.user.name || session.user.email?.split('@')[0] || "Player";
+    if (!mcUsername) {
+      return NextResponse.json({ error: "Minecraft username is required" }, { status: 400 });
+    }
 
     const authHeader = `Basic ${Buffer.from(`${PUBLIC_TOKEN}:${PRIVATE_KEY}`).toString('base64')}`;
 
@@ -29,12 +25,9 @@ export async function POST(req: Request) {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        complete_url: `${process.env.NEXTAUTH_URL}/shop?success=true`,
-        cancel_url: `${process.env.NEXTAUTH_URL}/shop?cancel=true`,
-        username: username,
-        custom: {
-          email: session.user.email
-        }
+        complete_url: `${process.env.NEXTAUTH_URL || 'https://pokefun.in'}/shop?success=true`,
+        cancel_url: `${process.env.NEXTAUTH_URL || 'https://pokefun.in'}/shop?cancel=true`,
+        username: mcUsername
       })
     });
     

@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 
 export default function ShopClient({ initialCategories }: { initialCategories: any[] }) {
@@ -9,10 +8,23 @@ export default function ShopClient({ initialCategories }: { initialCategories: a
   const [selectedPkg, setSelectedPkg] = useState<any | null>(null);
   const [loadingPkg, setLoadingPkg] = useState<number | null>(null);
   
-  const { data: session, status } = useSession();
+  // Minecraft Username State
+  const [mcUsername, setMcUsername] = useState<string>('');
+  const [showLoginModal, setShowLoginModal] = useState<boolean>(false);
+  const [tempUsername, setTempUsername] = useState<string>('');
+  
   const router = useRouter();
 
   useEffect(() => {
+    // Load saved username
+    const saved = localStorage.getItem('mcUsername');
+    if (saved) {
+      setMcUsername(saved);
+    } else {
+      // Auto-show login modal if no username is set
+      setShowLoginModal(true);
+    }
+
     const params = new URLSearchParams(window.location.search);
     if (params.get('success')) {
       alert("Payment initiated or completed! Thank you for your support.");
@@ -23,9 +35,18 @@ export default function ShopClient({ initialCategories }: { initialCategories: a
     }
   }, []);
 
+  const handleSaveUsername = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (tempUsername.trim().length > 2) {
+      setMcUsername(tempUsername.trim());
+      localStorage.setItem('mcUsername', tempUsername.trim());
+      setShowLoginModal(false);
+    }
+  };
+
   const handleBuy = async (pkgId: number) => {
-    if (status === 'unauthenticated') {
-      router.push('/login');
+    if (!mcUsername) {
+      setShowLoginModal(true);
       return;
     }
     
@@ -34,7 +55,7 @@ export default function ShopClient({ initialCategories }: { initialCategories: a
       const res = await fetch('/api/tebex/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ packageId: pkgId })
+        body: JSON.stringify({ packageId: pkgId, mcUsername: mcUsername })
       });
       const data = await res.json();
       if (data.checkoutUrl) {
@@ -71,19 +92,23 @@ export default function ShopClient({ initialCategories }: { initialCategories: a
         </div>
         
         {/* User Login/Cart Status */}
-        <div className="user-status-box">
-           {status === 'authenticated' ? (
+        <div className="user-status-box" onClick={() => setShowLoginModal(true)} style={{ cursor: 'pointer' }}>
+           {mcUsername ? (
              <div className="user-logged-in">
-               <img src={session?.user?.image || "https://mc-heads.net/avatar/steve"} alt="Avatar" />
+               <img src={`https://mc-heads.net/avatar/${mcUsername}`} alt={mcUsername} />
                <div>
-                 <div style={{ fontSize: '0.8rem', color: '#aaa' }}>Logged in as</div>
-                 <div style={{ fontWeight: 'bold', color: 'white' }}>{session?.user?.name || "Player"}</div>
+                 <div style={{ fontSize: '0.8rem', color: '#aaa' }}>Guest's Bag</div>
+                 <div style={{ fontWeight: 'bold', color: 'white' }}>{mcUsername}</div>
                </div>
              </div>
            ) : (
-             <button className="login-btn-top" onClick={() => router.push('/login')}>
-               <i className="fa-solid fa-user"></i> Click to login
-             </button>
+             <div className="user-logged-in">
+               <img src="https://mc-heads.net/avatar/steve" alt="Guest" />
+               <div>
+                 <div style={{ fontSize: '0.8rem', color: '#aaa' }}>Guest's Bag</div>
+                 <div style={{ fontWeight: 'bold', color: '#fbbf24' }}>click-to-login</div>
+               </div>
+             </div>
            )}
         </div>
       </div>
@@ -171,6 +196,31 @@ export default function ShopClient({ initialCategories }: { initialCategories: a
 
       </div>
 
+      {/* MC Username Login Modal */}
+      {showLoginModal && (
+        <div className="pkg-modal-overlay" onClick={() => setShowLoginModal(false)}>
+          <div className="mc-login-modal" onClick={e => e.stopPropagation()}>
+            <div className="pkg-modal-header" style={{ justifyContent: 'center' }}>
+              <h2 style={{ color: '#fbbf24' }}>ENTER MINECRAFT USERNAME</h2>
+            </div>
+            <div className="pkg-modal-body" style={{ textAlign: 'center', padding: '40px 30px' }}>
+              <p style={{ color: '#ccc', marginBottom: '25px', fontSize: '1.1rem' }}>Please enter your Minecraft username to continue shopping.</p>
+              <form onSubmit={handleSaveUsername}>
+                <input 
+                  type="text" 
+                  value={tempUsername}
+                  onChange={e => setTempUsername(e.target.value)}
+                  placeholder="e.g. Notch"
+                  className="mc-username-input"
+                  autoFocus
+                />
+                <button type="submit" className="btn-mc-login">CONTINUE</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Package Detail Modal */}
       {selectedPkg && (
         <div className="pkg-modal-overlay" onClick={() => setSelectedPkg(null)}>
@@ -182,7 +232,6 @@ export default function ShopClient({ initialCategories }: { initialCategories: a
             
             <div className="pkg-modal-body">
               <div className="modal-scroll-area">
-                 {/* Optional Image at top of modal */}
                  {selectedPkg.image && (
                    <div style={{ textAlign: 'center', marginBottom: '20px', background: 'rgba(0,0,0,0.2)', padding: '20px', borderRadius: '10px' }}>
                      <img src={selectedPkg.image} alt={selectedPkg.name} style={{ maxHeight: '150px', objectFit: 'contain' }} />
@@ -262,6 +311,11 @@ export default function ShopClient({ initialCategories }: { initialCategories: a
           border: 1px solid rgba(255,255,255,0.1);
           border-radius: 50px;
           padding: 8px 20px;
+          transition: background 0.2s;
+        }
+        
+        .user-status-box:hover {
+          background: rgba(255,255,255,0.1);
         }
         
         .user-logged-in {
@@ -273,19 +327,53 @@ export default function ShopClient({ initialCategories }: { initialCategories: a
         .user-logged-in img {
           width: 35px;
           height: 35px;
-          border-radius: 50%;
+          border-radius: 4px; /* Minecraft heads are usually square */
         }
         
-        .login-btn-top {
-          background: transparent;
-          border: none;
-          color: #fbbf24;
-          font-weight: bold;
-          font-size: 1rem;
-          cursor: pointer;
+        .mc-login-modal {
+          background: #1a1a1a;
+          width: 100%;
+          max-width: 450px;
+          border-radius: 8px;
           display: flex;
-          align-items: center;
-          gap: 8px;
+          flex-direction: column;
+          box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+          animation: slideDown 0.3s ease;
+          border: 1px solid #fbbf24;
+        }
+        
+        .mc-username-input {
+          width: 100%;
+          padding: 15px;
+          background: #000;
+          border: 1px solid #333;
+          color: white;
+          font-size: 1.2rem;
+          border-radius: 8px;
+          margin-bottom: 20px;
+          text-align: center;
+        }
+        
+        .mc-username-input:focus {
+          outline: none;
+          border-color: #fbbf24;
+        }
+        
+        .btn-mc-login {
+          width: 100%;
+          background: #fbbf24;
+          color: black;
+          border: none;
+          padding: 15px;
+          font-size: 1.2rem;
+          font-weight: bold;
+          border-radius: 8px;
+          cursor: pointer;
+          transition: background 0.2s;
+        }
+        
+        .btn-mc-login:hover {
+          background: #f59e0b;
         }
         
         .shop-layout {
@@ -471,7 +559,7 @@ export default function ShopClient({ initialCategories }: { initialCategories: a
         .btn-info {
           width: 40px;
           height: 40px;
-          background: #3b82f6; /* Blue info button */
+          background: #3b82f6;
           color: white;
           border: none;
           border-radius: 8px;
@@ -484,7 +572,7 @@ export default function ShopClient({ initialCategories }: { initialCategories: a
         .btn-info:hover { background: #2563eb; }
         
         .btn-buy {
-          background: #10b981; /* Green buy button */
+          background: #10b981;
           color: white;
           border: none;
           border-radius: 8px;
@@ -596,7 +684,7 @@ export default function ShopClient({ initialCategories }: { initialCategories: a
         }
         
         .btn-add-cart {
-          background: #3b82f6; /* Blue button like screenshot */
+          background: #3b82f6;
           color: white;
           border: none;
           padding: 12px 25px;
