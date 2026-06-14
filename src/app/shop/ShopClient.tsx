@@ -6,7 +6,7 @@ import ReactMarkdown from 'react-markdown';
 
 export default function ShopClient({ initialCategories }: { initialCategories: any[] }) {
   const [categories, setCategories] = useState<any[]>(initialCategories);
-  const [activeCategoryId, setActiveCategoryId] = useState<number | null>(initialCategories.length > 0 ? initialCategories[0].id : null);
+  const [activeCategoryId, setActiveCategoryId] = useState<number | string>('home');
   const [selectedPkg, setSelectedPkg] = useState<any | null>(null);
   const [loadingPkg, setLoadingPkg] = useState<number | null>(null);
   
@@ -14,6 +14,8 @@ export default function ShopClient({ initialCategories }: { initialCategories: a
   const [currency, setCurrency] = useState<string>('USD');
   const [isFetchingCurrency, setIsFetchingCurrency] = useState<boolean>(false);
   const [giftcardNumber, setGiftcardNumber] = useState('');
+  const [recentPayments, setRecentPayments] = useState<any[]>([]);
+  const [topCustomer, setTopCustomer] = useState<any>(null);
   
   // Minecraft Username State
   const [mcUsername, setMcUsername] = useState<string>('');
@@ -27,10 +29,24 @@ export default function ShopClient({ initialCategories }: { initialCategories: a
     const savedName = localStorage.getItem('mcUsername');
     if (savedName) setMcUsername(savedName);
 
-    const savedCurrency = localStorage.getItem('shopCurrency');
-    if (savedCurrency && savedCurrency !== 'USD') {
+    const savedCurrency = localStorage.getItem('pokefun_shop_currency');
+    if (savedCurrency) {
       setCurrency(savedCurrency);
+      fetchCategoriesWithCurrency(savedCurrency);
     }
+    
+    // Fetch real recent payments
+    fetch('/api/tebex/recent-payments')
+      .then(res => res.json())
+      .then(data => {
+        if (data && Array.isArray(data)) {
+          setRecentPayments(data.slice(0, 5));
+          if (data.length > 0) {
+            setTopCustomer(data[0]); // Just pick the most recent for now as top
+          }
+        }
+      })
+      .catch(err => console.error("Failed to load real payments:", err));
 
     const params = new URLSearchParams(window.location.search);
     if (params.get('success')) {
@@ -109,7 +125,7 @@ export default function ShopClient({ initialCategories }: { initialCategories: a
     alert("Giftcards can be applied on the final checkout page!");
   };
 
-  const activeCategory = categories.find(c => c.id === activeCategoryId) || categories[0];
+  const activeCategory = categories.find(c => c.id === activeCategoryId);
 
   return (
     <div className="cobblemon-shop-wrapper">
@@ -185,9 +201,12 @@ export default function ShopClient({ initialCategories }: { initialCategories: a
           <div className="sidebar-box module-box">
             <ul className="category-list">
               <li>
-                <a href="/" className="cat-btn back-home-btn">
+                <button 
+                  onClick={() => setActiveCategoryId('home')}
+                  className={activeCategoryId === 'home' ? 'cat-btn active' : 'cat-btn'}
+                >
                   Home
-                </a>
+                </button>
               </li>
               {categories.map(category => (
                 <li key={category.id}>
@@ -236,92 +255,157 @@ export default function ShopClient({ initialCategories }: { initialCategories: a
           {/* Top Customer Module */}
           <div className="sidebar-box module-box text-center">
             <h3 className="module-title">Top Customer</h3>
-            <p className="module-empty-text">No recent top purchaser to display.</p>
+            {topCustomer ? (
+              <div className="recent-payment-item" style={{justifyContent: 'center', margin: '0'}}>
+                <img src={`https://mc-heads.net/avatar/${topCustomer.player.name}/32`} alt="Avatar" className="rp-avatar" style={{width:'40px', height:'40px'}}/>
+                <div className="rp-info">
+                  <div className="rp-name" style={{fontSize: '1rem'}}>{topCustomer.player.name}</div>
+                </div>
+              </div>
+            ) : (
+              <p className="module-empty-text">No recent top purchaser to display.</p>
+            )}
           </div>
 
           {/* Recent Payments Module */}
           <div className="sidebar-box module-box">
             <h3 className="module-title">Recent Payments</h3>
-            <div className="recent-payment-item">
-              <img src="https://mc-heads.net/avatar/steve/32" alt="Avatar" className="rp-avatar"/>
-              <div className="rp-info">
-                <div className="rp-name">HayashiKoga</div>
-                <div className="rp-desc">VIP Master Rank - $7.00</div>
-                <div className="rp-date">24th Mar 24</div>
-              </div>
-            </div>
-            <div className="recent-payment-item">
-              <img src="https://mc-heads.net/avatar/alex/32" alt="Avatar" className="rp-avatar"/>
-              <div className="rp-info">
-                <div className="rp-name">Savmavar</div>
-                <div className="rp-desc">6$ - $6.00</div>
-                <div className="rp-date">22nd Mar 24</div>
-              </div>
-            </div>
-            <div className="recent-payment-item">
-              <img src="https://mc-heads.net/avatar/Notch/32" alt="Avatar" className="rp-avatar"/>
-              <div className="rp-info">
-                <div className="rp-name">SixTeen_9</div>
-                <div className="rp-desc">Champion Rank - $2.99</div>
-                <div className="rp-date">17th Mar 24</div>
-              </div>
-            </div>
+            {recentPayments.length > 0 ? (
+              recentPayments.map((payment, index) => (
+                <div className="recent-payment-item" key={index}>
+                  <img src={`https://mc-heads.net/avatar/${payment.player.name}/32`} alt="Avatar" className="rp-avatar"/>
+                  <div className="rp-info">
+                    <div className="rp-name">{payment.player.name}</div>
+                    <div className="rp-desc">{payment.packages && payment.packages[0] ? payment.packages[0].name : "Store Package"} - {payment.currency.iso_4217} {payment.amount}</div>
+                    <div className="rp-date">{new Date(payment.date).toLocaleDateString()}</div>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <p className="module-empty-text" style={{textAlign: 'center'}}>No recent payments found.</p>
+            )}
+          </div>
+          
+          {/* Back to Website Home at bottom */}
+          <div className="sidebar-box module-box text-center" style={{ padding: '15px' }}>
+             <a href="/" className="btn-cyan w-full" style={{ display: 'block', textDecoration: 'none' }}>
+                <i className="fa-solid fa-earth-americas"></i> Back to Main Website
+             </a>
           </div>
 
         </div>
 
         {/* Main Content */}
         <div className="shop-main">
-          {activeCategory ? (
-            <div className="category-container">
-              <div className="category-header">
-                <h2>{activeCategory.name}</h2>
-                {activeCategory.description && (
-                  <div className="cat-desc" dangerouslySetInnerHTML={{ __html: activeCategory.description }} />
-                )}
-              </div>
+          {activeCategoryId === 'home' ? (
+            <div className="category-container store-home-container" style={{ padding: '40px', background: '#121212', border: '1px solid #222', borderRadius: '4px', color: '#ccc' }}>
+              <h2 style={{ color: 'white', fontSize: '2.5rem', marginBottom: '20px', textAlign: 'center', fontWeight: '800' }}>WELCOME TO THE OFFICIAL <br/><span style={{color: '#4bc8c8'}}>POKEFUN STORE</span></h2>
               
-              <div className="package-grid">
-                {activeCategory.packages.map((pkg: any) => (
-                  <div key={pkg.id} className="package-card">
-                    <div className="pkg-image-wrapper" onClick={() => setSelectedPkg(pkg)}>
-                      {pkg.image ? (
-                        <img src={pkg.image} alt={pkg.name} className="pkg-image" />
-                      ) : (
-                        <i className="fa-solid fa-box-open placeholder-icon"></i>
-                      )}
-                    </div>
-                    
-                    <div className="pkg-details">
-                      <h3 className="pkg-name" onClick={() => setSelectedPkg(pkg)}>{pkg.name}</h3>
-                      <div className="pkg-price">{pkg.total_price} {pkg.currency}</div>
-                    </div>
-                    
-                    <div className="pkg-actions">
-                      <button 
-                        className="btn-buy"
-                        onClick={() => handleBuy(pkg.id)}
-                        disabled={loadingPkg === pkg.id}
-                      >
-                        {loadingPkg === pkg.id ? <i className="fa-solid fa-spinner fa-spin"></i> : "Buy Now"}
-                      </button>
-                      <button className="btn-info" onClick={() => setSelectedPkg(pkg)}>
-                        <i className="fa-solid fa-circle-info"></i>
-                      </button>
-                    </div>
-                  </div>
-                ))}
+              <p style={{ fontSize: '1.2rem', lineHeight: '1.6', marginBottom: '20px', textAlign: 'center' }}>
+                <strong>POKEFUN JAVA</strong> is a free-to-play 1st Public cracked Minecraft Server of <strong>Cobblemon 1.7.1 and many more</strong>. Purchase items here to enhance your Pokémon journey, unlock special perks, and show off a unique style on the server!
+              </p>
+            
+              <p style={{ fontSize: '1.2rem', lineHeight: '1.6', marginBottom: '20px', textAlign: 'center' }}>
+                To begin, please select a category from the sidebar.
+              </p>
+            
+              <div style={{ background: 'rgba(251, 191, 36, 0.1)', borderLeft: '4px solid #fbbf24', padding: '20px', marginBottom: '30px', color: '#fbbf24', fontSize: '1.1rem', borderRadius: '4px' }}>
+                <strong>NOTE</strong> - Please ensure you enter your correct <strong>Java Edition Gamertag</strong> to receive your items.<br/>
+                Purchases are credited to the player name entered at checkout.
               </div>
-              
-              {activeCategory.packages.length === 0 && (
-                <div className="empty-category">
-                  <i className="fa-solid fa-box-open empty-icon"></i>
-                  <p>No packages available in this category.</p>
-                </div>
-              )}
+            
+              <h3 style={{ color: 'white', fontSize: '1.8rem', marginTop: '40px', marginBottom: '20px', borderBottom: '1px solid #333', paddingBottom: '10px' }}>⭐ EPIC SERVER FEATURES ⭐</h3>
+              <p style={{ fontSize: '1.1rem', marginBottom: '15px' }}>Dive into the most feature-rich Cobblemon experience!</p>
+              <ul style={{ fontSize: '1.1rem', lineHeight: '1.8', marginBottom: '30px', listStyle: 'none', padding: 0 }}>
+                <li>💰 <strong>Global Trade System (GTS) & Shops:</strong> Buy, sell, and trade Pokémon and items with players worldwide to get rich!</li>
+                <li>🎁 <strong>Daily Rewards & Kits:</strong> Claim free Daily Rewards, vote for crate keys, and unlock weekly/monthly Kits.</li>
+                <li>🛡️ <strong>Land Claiming Menu:</strong> Protect your builds and resources with easy-to-use claim tools and menus.</li>
+                <li>🔥 <strong>Exclusive Evolutions & Mechanics:</strong> Mega, D-Max, G-Max, Pasture Breeding, and Ultra Beasts are all active!</li>
+                <li>✨ <strong>Unique Content:</strong> Enjoy Rideable Pokémon, Custom Skins, Abilities, and the challenging Pokémon GYMS.</li>
+                <li>💡 <strong>Plus Many More:</strong> PokeBuilder, Orbs/Plates, Daily Quests, and Fusion Pokémon coming soon!</li>
+              </ul>
+            
+              <h3 style={{ color: 'white', fontSize: '1.8rem', marginTop: '40px', marginBottom: '20px', borderBottom: '1px solid #333', paddingBottom: '10px' }}>SUPPORT</h3>
+              <p style={{ fontSize: '1.1rem', lineHeight: '1.6', marginBottom: '15px' }}>
+                Need questions answered? Waited more than 20 minutes for your package? Ask the community/staff on <strong>Discord</strong>, or submit a support ticket there for payment issues.
+              </p>
+              <p style={{ fontSize: '1.1rem', marginBottom: '20px' }}>Public Contact Email: <a href="mailto:contactmcpefun@gmail.com" style={{color: '#4bc8c8'}}>contactmcpefun@gmail.com</a></p>
+              <a href="https://discord.com/invite/NtE8QBkmwR" target="_blank" rel="noopener noreferrer" className="btn-cyan" style={{ display: 'inline-block', textDecoration: 'none', padding: '12px 25px', borderRadius: '4px', marginBottom: '40px', fontWeight: 'bold' }}>
+                <i className="fa-brands fa-discord"></i> Join Our Discord Server
+              </a>
+            
+              <h3 style={{ color: 'white', fontSize: '1.8rem', marginTop: '40px', marginBottom: '20px', borderBottom: '1px solid #333', paddingBottom: '10px' }}>REFUND POLICY</h3>
+              <p style={{ fontSize: '1.1rem', lineHeight: '1.6', marginBottom: '15px' }}>
+                All payments are final and non-refundable. Attempting a chargeback will result in a permanent banishment from all of our servers and associated stores.
+              </p>
+              <p style={{ fontSize: '1.1rem', lineHeight: '1.6', marginBottom: '15px' }}>
+                Payments are taken and secured by Tebex, a trusted leader in online gaming transactions.
+              </p>
+              <p style={{ fontSize: '1.1rem', lineHeight: '1.6', marginBottom: '15px' }}>
+                It could take between 1-20 minutes for your purchase to be credited in-game. If you are still not credited after this time, please open a support ticket on our Discord with proof of purchase.
+              </p>
+              <p style={{ fontSize: '1.1rem', lineHeight: '1.6', marginBottom: '15px' }}>
+                If you are banned from POKEFUN JAVA for breaking our rules, you will lose access to your purchased goods for the duration of your ban. The strict "no refund policy" will also remain in place.
+              </p>
             </div>
           ) : (
-             <div className="empty-category">No categories found.</div>
+            <div className="category-container">
+              {activeCategory ? (
+                <>
+                  <div className="category-header">
+                    <h2>{activeCategory.name}</h2>
+                    {activeCategory.description && (
+                      <div className="cat-desc" dangerouslySetInnerHTML={{ __html: activeCategory.description }} />
+                    )}
+                  </div>
+                  
+                  <div className="package-grid">
+                    {activeCategory.packages.map((pkg: any) => (
+                      <div key={pkg.id} className="package-card">
+                        <div className="pkg-image-wrapper" onClick={() => setSelectedPkg(pkg)}>
+                          {pkg.image ? (
+                            <img src={pkg.image} alt={pkg.name} className="pkg-image" />
+                          ) : (
+                            <i className="fa-solid fa-box-open placeholder-icon"></i>
+                          )}
+                        </div>
+                        
+                        <div className="pkg-details">
+                          <h3 className="pkg-name" onClick={() => setSelectedPkg(pkg)}>{pkg.name}</h3>
+                          <div className="pkg-price">{pkg.total_price} {pkg.currency}</div>
+                        </div>
+                        
+                        <div className="pkg-actions">
+                          <button 
+                            className="btn-buy"
+                            onClick={() => handleBuy(pkg.id)}
+                            disabled={loadingPkg === pkg.id}
+                          >
+                            {loadingPkg === pkg.id ? <i className="fa-solid fa-spinner fa-spin"></i> : "Buy Now"}
+                          </button>
+                          <button className="btn-info" onClick={() => setSelectedPkg(pkg)}>
+                            <i className="fa-solid fa-circle-info"></i>
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  
+                  {activeCategory.packages.length === 0 && (
+                    <div className="empty-category">
+                      <i className="fa-solid fa-box-open empty-icon"></i>
+                      <p>No packages available in this category.</p>
+                    </div>
+                  )}
+                </>
+              ) : (
+                 <div className="empty-category">
+                   <i className="fa-solid fa-box-open empty-icon"></i>
+                   <h3>No category selected</h3>
+                   <p>Please select a category from the sidebar to view items.</p>
+                 </div>
+              )}
+            </div>
           )}
         </div>
 
