@@ -13,6 +13,7 @@ export default function ShopClient({ initialCategories }: { initialCategories: a
   const [loadingPkg, setLoadingPkg] = useState<number | null>(null);
   const [cart, setCart] = useState<{pkg: any, qty: number}[]>([]);
   const [showCartModal, setShowCartModal] = useState<boolean>(false);
+  const [cartAnim, setCartAnim] = useState<boolean>(false);
   
   // Currency State
   const [currency, setCurrency] = useState<string>('USD');
@@ -140,6 +141,8 @@ export default function ShopClient({ initialCategories }: { initialCategories: a
       }
       return [...prev, { pkg, qty: 1 }];
     });
+    setCartAnim(true);
+    setTimeout(() => setCartAnim(false), 300);
     // Show a small native toast or just let the badge update
     // setShowCartModal(true);
     setSelectedPkg(null);
@@ -190,7 +193,7 @@ export default function ShopClient({ initialCategories }: { initialCategories: a
       `}} />
 
       {/* TOP NAV & STATUS */}
-      <div className="shop-top-bar">
+      <div className="shop-top-bar" style={{ position: 'sticky', top: 0, zIndex: 100, background: 'var(--shop-bg)' }}>
         <div className="shop-logo">
            <img src="/images/logo.png" alt="Logo" style={{height: '60px'}} onError={(e) => e.currentTarget.style.display='none'} />
         </div>
@@ -198,7 +201,7 @@ export default function ShopClient({ initialCategories }: { initialCategories: a
         <div className="top-right-actions">
           
           <div style={{ position: 'relative' }}>
-            <div className="cart-icon-wrapper" onClick={() => setShowCartModal(!showCartModal)} style={{ cursor: 'pointer', marginRight: '15px', display: 'flex', alignItems: 'center', background: 'rgba(255,255,255,0.1)', padding: '10px 15px', borderRadius: '8px' }}>
+            <div className={`cart-icon-wrapper ${cartAnim ? 'cart-bounce' : ''}`} onClick={() => setShowCartModal(!showCartModal)} style={{ cursor: 'pointer', marginRight: '15px', display: 'flex', alignItems: 'center', background: 'rgba(255,255,255,0.1)', padding: '10px 15px', borderRadius: '8px' }}>
               <i className="fa-solid fa-cart-shopping" style={{ fontSize: '1.2rem' }}></i>
               {cart.length > 0 && (
                 <span style={{ position: 'absolute', top: '-5px', right: '10px', background: 'var(--accent-color)', color: '#000', borderRadius: '50%', width: '20px', height: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem', fontWeight: 'bold' }}>
@@ -1038,6 +1041,15 @@ export default function ShopClient({ initialCategories }: { initialCategories: a
         .html-desc h3 { font-size: 1.5rem; }
         .html-desc strong { color: #4bc8c8; font-weight: bold; }
         .html-desc a { color: #10b981; text-decoration: underline; }
+
+        @keyframes cartBounce {
+          0% { transform: scale(1); }
+          50% { transform: scale(1.3); }
+          100% { transform: scale(1); }
+        }
+        .cart-bounce {
+          animation: cartBounce 0.3s ease-in-out;
+        }
 
         @media (max-width: 800px) {
           .shop-layout { flex-direction: column; }
