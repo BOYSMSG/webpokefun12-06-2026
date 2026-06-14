@@ -199,88 +199,71 @@ export default function ShopClient({ initialCategories }: { initialCategories: a
         
         <div className="top-right-actions">
           
-          <div>
-            <div className={`cart-icon-wrapper ${cartAnim ? 'cart-bounce' : ''}`} onClick={() => setShowCartModal(true)} style={{ cursor: 'pointer', marginRight: '15px', display: 'flex', alignItems: 'center', background: 'rgba(255,255,255,0.1)', padding: '10px 15px', borderRadius: '8px' }}>
-              <i className="fa-solid fa-cart-shopping" style={{ fontSize: '1.2rem', color: 'white' }}></i>
+          <div style={{ position: 'relative' }}>
+            <div className={`cart-icon-wrapper ${cartAnim ? 'cart-bounce' : ''}`} onClick={() => setShowCartModal(!showCartModal)} style={{ cursor: 'pointer', marginRight: '15px', display: 'flex', alignItems: 'center', background: 'rgba(255,255,255,0.15)', padding: '10px 20px', borderRadius: '8px', color: '#ffffff' }}>
+              <i className="fa-solid fa-cart-shopping" style={{ fontSize: '1.4rem', color: '#ffffff' }}></i>
               {cart.length > 0 && (
-                <span style={{ position: 'absolute', top: '-5px', right: '10px', background: 'var(--accent-color)', color: '#000', borderRadius: '50%', width: '20px', height: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem', fontWeight: 'bold' }}>
+                <span style={{ position: 'absolute', top: '-5px', right: '5px', background: 'var(--accent-color)', color: '#000', borderRadius: '50%', width: '22px', height: '22px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.85rem', fontWeight: 'bold', boxShadow: '0 2px 5px rgba(0,0,0,0.5)' }}>
                   {cart.reduce((acc, item) => acc + item.qty, 0)}
                 </span>
               )}
-              <span style={{ marginLeft: '10px', fontWeight: 'bold', color: 'white', fontSize: '1.1rem' }}>Basket</span>
+              <span style={{ marginLeft: '12px', fontWeight: '900', color: '#ffffff', fontSize: '1.2rem', textTransform: 'uppercase', letterSpacing: '1px' }}>Basket</span>
             </div>
 
-            {/* Cart Sidebar */}
+            {/* Cart Dropdown */}
             {showCartModal && (
-              <div className="sidebar-overlay" onClick={() => setShowCartModal(false)}>
-                <div className="cart-sidebar" onClick={e => e.stopPropagation()}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '20px', borderBottom: '1px solid #222', background: '#111' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
-                      <i className="fa-solid fa-user" style={{ fontSize: '1.2rem' }}></i>
-                      <span style={{ fontWeight: 'bold', fontSize: '1.2rem' }}>{mcUsername || "Guest"}</span>
-                    </div>
-                    <button onClick={() => setShowCartModal(false)} style={{ background: 'none', border: 'none', color: '#888', cursor: 'pointer', fontSize: '1.2rem' }}><i className="fa-solid fa-xmark"></i></button>
-                  </div>
-                  
-                  <div style={{ display: 'flex', justifyContent: 'space-between', padding: '15px 20px', borderBottom: '1px solid #222', background: '#0a0a0a', fontSize: '0.9rem' }}>
-                    <span>{cart.reduce((a, b) => a + b.qty, 0)} Items</span>
-                    <span style={{ color: 'var(--accent-color)' }}>${cart.reduce((sum, item) => sum + (item.pkg.total_price * item.qty), 0).toFixed(2)}</span>
-                  </div>
-
-                  <div style={{ flex: 1, overflowY: 'auto', padding: '20px' }}>
-                    {cart.length === 0 ? (
-                      <p style={{ textAlign: 'center', color: '#888', marginTop: '40px' }}>Your basket is empty.</p>
-                    ) : (
-                      cart.map((item, idx) => (
-                        <div key={idx} className="cart-item-card">
-                          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
-                            <div style={{ fontWeight: 'bold', fontSize: '1.1rem' }}>{item.pkg.name}</div>
-                          </div>
-                          <div style={{ color: 'var(--accent-color)', marginBottom: '15px' }}>{item.pkg.currency} {item.pkg.total_price}</div>
-                          
-                          <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: '15px' }}>
-                            <div style={{ display: 'flex', alignItems: 'center', border: '1px solid #333', borderRadius: '4px' }}>
-                              <button className="qty-btn" onClick={() => setCart(prev => prev.map(i => i.pkg.id === item.pkg.id ? { ...i, qty: Math.max(1, i.qty - 1) } : i))}>-</button>
-                              <div className="qty-display">{item.qty}</div>
-                              <button className="qty-btn" onClick={() => {
-                                if (item.pkg.disable_quantity) return alert("You can only buy one of this item.");
-                                setCart(prev => prev.map(i => i.pkg.id === item.pkg.id ? { ...i, qty: i.qty + 1 } : i));
-                              }}>+</button>
-                            </div>
-                            <button className="cart-btn-trash" onClick={() => setCart(prev => prev.filter(i => i.pkg.id !== item.pkg.id))}>
-                              <i className="fa-solid fa-trash"></i>
-                            </button>
-                          </div>
-                        </div>
-                      ))
-                    )}
-                  </div>
-
-                  <div style={{ padding: '20px', background: '#050505', borderTop: '1px solid #222' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 'bold', fontSize: '1.1rem', marginBottom: '20px' }}>
-                      <span>TOTAL:</span>
-                      <span style={{ color: 'var(--accent-color)' }}>{cart[0]?.pkg.currency || '$'} {cart.reduce((sum, item) => sum + (item.pkg.total_price * item.qty), 0).toFixed(2)}</span>
-                    </div>
-                    
-                    <div style={{ marginBottom: '15px' }}>
-                      <input 
-                        type="text" 
-                        value={mcUsername}
-                        onChange={e => {
-                          setMcUsername(e.target.value);
-                          localStorage.setItem('mcUsername', e.target.value);
-                        }}
-                        placeholder="Minecraft Username"
-                        className="clean-input"
-                        style={{ padding: '12px', width: '100%', fontSize: '1rem', background: '#111', border: '1px solid #333', color: '#fff', margin: 0 }}
-                      />
-                    </div>
-                    
-                    <button className="btn-cyan w-full" onClick={handleCheckout} disabled={loadingPkg === -1 || !mcUsername || cart.length === 0} style={{ padding: '15px', background: '#4bc8c8', color: '#000', fontWeight: 'bold', border: 'none', borderRadius: '4px', fontSize: '1.1rem', cursor: 'pointer', transition: '0.2s' }}>
-                      {loadingPkg === -1 ? <i className="fa-solid fa-spinner fa-spin"></i> : "Proceed to checkout"}
-                    </button>
-                  </div>
+              <div className="cart-dropdown" style={{
+                position: 'absolute', top: '120%', right: '15px', width: '350px', background: 'var(--shop-box)', 
+                border: '1px solid var(--shop-border)', borderRadius: '12px', padding: '15px', zIndex: 1000,
+                boxShadow: '0 10px 30px rgba(0,0,0,0.5)'
+              }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--shop-border)', paddingBottom: '10px', marginBottom: '10px' }}>
+                  <h3 style={{ margin: 0 }}>Your Basket</h3>
+                  <button onClick={() => setShowCartModal(false)} style={{ background: 'none', border: 'none', color: 'var(--shop-text)', cursor: 'pointer' }}><i className="fa-solid fa-xmark"></i></button>
                 </div>
+                {cart.length === 0 ? (
+                  <p style={{ textAlign: 'center', color: '#888', padding: '20px 0' }}>Your basket is empty.</p>
+                ) : (
+                  <>
+                    <div style={{ maxHeight: '300px', overflowY: 'auto' }}>
+                      {cart.map((item, idx) => (
+                        <div key={idx} style={{ display: 'flex', gap: '10px', marginBottom: '15px', alignItems: 'center' }}>
+                          <img src={item.pkg.image || "https://i.imgur.com/Kz8V5wN.png"} style={{ width: '40px', height: '40px', borderRadius: '6px', objectFit: 'cover' }} />
+                          <div style={{ flex: 1 }}>
+                            <div style={{ fontSize: '0.9rem', fontWeight: 'bold' }}>{item.pkg.name}</div>
+                            <div style={{ fontSize: '0.8rem', color: 'var(--accent-color)' }}>{item.qty}x {item.pkg.currency} {item.pkg.total_price}</div>
+                          </div>
+                          <button style={{ background: 'none', border: 'none', color: '#ff4444', cursor: 'pointer' }} onClick={() => setCart(prev => prev.filter(i => i.pkg.id !== item.pkg.id))}>
+                            <i className="fa-solid fa-trash"></i>
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                    <div style={{ borderTop: '1px solid var(--shop-border)', paddingTop: '10px', marginTop: '10px' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 'bold', marginBottom: '15px' }}>
+                        <span>Total:</span>
+                        <span style={{ color: 'var(--accent-color)' }}>{cart[0]?.pkg.currency} {cart.reduce((sum, item) => sum + (item.pkg.total_price * item.qty), 0).toFixed(2)}</span>
+                      </div>
+                      
+                      <div style={{ marginBottom: '10px' }}>
+                        <input 
+                          type="text" 
+                          value={mcUsername}
+                          onChange={e => {
+                            setMcUsername(e.target.value);
+                            localStorage.setItem('mcUsername', e.target.value);
+                          }}
+                          placeholder="Minecraft Username"
+                          className="clean-input"
+                          style={{ padding: '10px', width: '100%', fontSize: '0.9rem' }}
+                        />
+                      </div>
+                      <button className="btn-cyan w-full" onClick={handleCheckout} disabled={loadingPkg === -1 || !mcUsername} style={{ padding: '10px' }}>
+                        {loadingPkg === -1 ? <i className="fa-solid fa-spinner fa-spin"></i> : "Secure Checkout"}
+                      </button>
+                    </div>
+                  </>
+                )}
               </div>
             )}
           </div>
@@ -821,11 +804,14 @@ export default function ShopClient({ initialCategories }: { initialCategories: a
           font-weight: bold; cursor: pointer; transition: 0.2s; font-size: 1.2rem;
         }
         .btn-cyan:hover { background: #3ab0b0; }
+        .btn-cyan:active { transform: scale(0.95); }
+        
         .btn-grey {
           background: #ccc; color: black; border: none; padding: 15px; border-radius: 8px;
           font-weight: bold; cursor: pointer; transition: 0.2s; font-size: 1.2rem;
         }
         .btn-grey:hover { background: #bbb; }
+        .btn-grey:active { transform: scale(0.95); }
         
         /* Recent Payments */
         .recent-payment-item { display: flex; gap: 15px; align-items: center; margin-bottom: 15px; }
@@ -893,8 +879,8 @@ export default function ShopClient({ initialCategories }: { initialCategories: a
           cursor: pointer;
           border-bottom: 2px solid var(--shop-border);
         }
-        .pkg-image { max-width: 100%; max-height: 100%; object-fit: contain; transition: transform 0.3s; transform: scale(1.5); }
-        .package-card:hover .pkg-image { transform: scale(1.6); }
+        .pkg-image { max-width: 100%; max-height: 100%; object-fit: contain; transition: transform 0.3s; transform: scale(0.75); }
+        .package-card:hover .pkg-image { transform: scale(0.85); }
         .placeholder-icon { font-size: 6rem; color: #333; }
         
         .pkg-details { padding: 25px; text-align: center; flex-grow: 1; cursor: pointer; }
@@ -914,13 +900,15 @@ export default function ShopClient({ initialCategories }: { initialCategories: a
           padding: 15px; font-weight: bold; font-size: 1.3rem; cursor: pointer; transition: all 0.2s;
         }
         .btn-buy:hover:not(:disabled) { background: #3ab0b0; }
+        .btn-buy:active:not(:disabled) { transform: scale(0.92); }
         .btn-buy:disabled { opacity: 0.6; cursor: not-allowed; }
         
         .btn-info {
           width: 55px; background: #222; color: #aaa; border: 2px solid #333;
           border-radius: 8px; cursor: pointer; transition: all 0.2s; font-size: 1.3rem;
         }
-        .btn-info:hover { color: #4bc8c8; border-color: #4bc8c8; background: #333; }
+        .btn-info:hover { background: #333; color: #fff; border-color: #555; }
+        .btn-info:active { transform: scale(0.92); }
         
         .empty-category { text-align: center; padding: 60px 20px; color: #9ca3af; }
         .empty-icon { font-size: 3rem; margin-bottom: 15px; color: #cbd5e1;}
@@ -1066,31 +1054,6 @@ export default function ShopClient({ initialCategories }: { initialCategories: a
         .cart-bounce {
           animation: cartBounce 0.3s ease-in-out;
         }
-
-        .sidebar-overlay {
-          position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1001;
-          opacity: 0; animation: fadeIn 0.3s forwards;
-        }
-        .cart-sidebar {
-          position: fixed; top: 0; right: 0; width: 400px; height: 100%; background: #0a0a0a; z-index: 1002;
-          box-shadow: -5px 0 30px rgba(0,0,0,0.8); display: flex; flex-direction: column;
-          transform: translateX(100%); animation: slideIn 0.3s forwards; color: #fff;
-        }
-        @keyframes slideIn { to { transform: translateX(0); } }
-        @keyframes fadeIn { to { opacity: 1; } }
-        @media (max-width: 500px) { .cart-sidebar { width: 100%; } }
-
-        .cart-item-card {
-          background: #111; border-radius: 8px; padding: 15px; margin-bottom: 15px; border: 1px solid #222;
-        }
-        .qty-btn {
-          background: transparent; border: none; color: #fff; cursor: pointer; padding: 5px 10px; font-weight: bold;
-        }
-        .qty-display { padding: 5px 10px; background: transparent; color: #fff; font-weight: bold; }
-        .cart-btn-trash {
-          background: #ccc; color: #111; border: none; padding: 8px; border-radius: 4px; cursor: pointer; transition: 0.2s;
-        }
-        .cart-btn-trash:hover { background: #e0e0e0; }
 
         @media (max-width: 800px) {
           .shop-layout { flex-direction: column; }

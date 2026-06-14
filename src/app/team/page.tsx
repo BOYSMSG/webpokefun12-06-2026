@@ -16,9 +16,10 @@ export default function TeamPage() {
     {
       category: "Moderation",
       members: [
-        { name: "Smite", role: "Moderator", color: "#2f3542", img: "/images/smite.png" },
+        { name: "Wafa Abbas", role: "Moderator", color: "#2f3542", img: "/images/wafa-abbas.png" },
         { name: "DG", role: "Moderator", color: "#2f3542", img: "/images/dg4.png" },
-        { name: "Aakash", role: "Moderator", color: "#2f3542", img: "/images/akash.png" }
+        { name: "Aakash", role: "Moderator", color: "#2f3542", img: "/images/akash.png" },
+        { name: "Smite", role: "Moderator", color: "#2f3542", img: "/images/smite.png" }
       ]
     }
   ];
