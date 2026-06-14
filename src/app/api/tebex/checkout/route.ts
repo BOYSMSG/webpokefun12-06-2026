@@ -7,9 +7,9 @@ const PRIVATE_KEY = process.env.TEBEX_PRIVATE_KEY;
 
 export async function POST(req: Request) {
   try {
-    const { packageId, mcUsername } = await req.json();
-    if (!packageId) {
-      return NextResponse.json({ error: "Missing packageId" }, { status: 400 });
+    const { packages, mcUsername } = await req.json();
+    if (!packages || !Array.isArray(packages) || packages.length === 0) {
+      return NextResponse.json({ error: "Missing packages array" }, { status: 400 });
     }
     if (!mcUsername) {
       return NextResponse.json({ error: "Minecraft username is required" }, { status: 400 });
@@ -25,8 +25,8 @@ export async function POST(req: Request) {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        complete_url: `${process.env.NEXTAUTH_URL || 'https://pokefun.in'}/shop?success=true`,
-        cancel_url: `${process.env.NEXTAUTH_URL || 'https://pokefun.in'}/shop?cancel=true`,
+        complete_url: `${process.env.NEXTAUTH_URL || 'https://pokefun.in'}/store?success=true`,
+        cancel_url: `${process.env.NEXTAUTH_URL || 'https://pokefun.in'}/store?cancel=true`,
         username: mcUsername
       })
     });
@@ -38,27 +38,32 @@ export async function POST(req: Request) {
     }
     
     const basketIdent = basketData.data.ident;
+    let checkoutUrl = `https://pay.tebex.io/${basketIdent}`;
 
-    // 2. Add Package to Basket
-    const addRes = await fetch(`https://headless.tebex.io/api/baskets/${basketIdent}/packages`, {
-      method: 'POST',
-      headers: {
-        'Authorization': authHeader,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        package_id: packageId,
-        quantity: 1
-      })
-    });
+    // 2. Add Packages to Basket
+    for (const pkg of packages) {
+      const addRes = await fetch(`https://headless.tebex.io/api/baskets/${basketIdent}/packages`, {
+        method: 'POST',
+        headers: {
+          'Authorization': authHeader,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          package_id: pkg.id,
+          quantity: pkg.quantity || 1
+        })
+      });
 
-    const addData = await addRes.json();
-    if (addRes.status >= 400) {
-      console.error("Add package failed:", addData);
-      return NextResponse.json({ error: addData.error_message || "Failed to add package to basket" }, { status: addRes.status });
+      const addData = await addRes.json();
+      if (addRes.status >= 400) {
+        console.error(`Add package ${pkg.id} failed:`, addData);
+        return NextResponse.json({ error: addData.error_message || `Failed to add package to basket` }, { status: addRes.status });
+      }
+      
+      if (addData.data?.links?.checkout) {
+        checkoutUrl = addData.data.links.checkout;
+      }
     }
-
-    const checkoutUrl = addData.data?.links?.checkout || `https://pay.tebex.io/${basketIdent}`;
 
     return NextResponse.json({ checkoutUrl });
 
