@@ -81,9 +81,6 @@ export default function ShopClient({ initialCategories }: { initialCategories: a
         </div>
         
         <div className="top-right-actions">
-          <div className="currency-badge">
-            <i className="fa-solid fa-dollar-sign"></i> USD
-          </div>
           
           <div className="user-status-box" onClick={() => setShowLoginModal(true)}>
              {mcUsername ? (
