@@ -13,6 +13,7 @@ export default function ShopClient({ initialCategories }: { initialCategories: a
   // Currency State
   const [currency, setCurrency] = useState<string>('USD');
   const [isFetchingCurrency, setIsFetchingCurrency] = useState<boolean>(false);
+  const [giftcardNumber, setGiftcardNumber] = useState('');
   
   // Minecraft Username State
   const [mcUsername, setMcUsername] = useState<string>('');
@@ -116,15 +117,11 @@ export default function ShopClient({ initialCategories }: { initialCategories: a
       {/* Global Style Override for Shop Page */}
       <style dangerouslySetInnerHTML={{__html: `
         body {
-          background-color: #111 !important;
-          background-image: linear-gradient(rgba(15,15,15,0.8), rgba(15,15,15,0.9)), url('https://mc-heads.net/body/steve/100') !important; 
-          background-size: cover;
-          background-attachment: fixed;
-          background-position: center;
+          background-color: #0f172a !important; /* Clean dark background */
         }
-        #gh-header { display: none !important; } /* Hide the default blue header */
-        footer { display: none !important; } /* Hide footer for clean shop experience */
-        .desktop-sidebar-container { display: none !important; } /* Ensure sidebar container is gone */
+        #gh-header { display: none !important; }
+        footer { display: none !important; }
+        .desktop-sidebar-container { display: none !important; }
         main { margin-top: 50px !important; }
       `}} />
 
@@ -135,10 +132,6 @@ export default function ShopClient({ initialCategories }: { initialCategories: a
         </div>
         
         <div className="top-right-actions">
-          
-          <button className="giftcard-btn" onClick={handleCheckGiftcard}>
-            <i className="fa-solid fa-gift"></i> check giftcard
-          </button>
           
           <div className="currency-selector-wrapper">
             {isFetchingCurrency ? <i className="fa-solid fa-spinner fa-spin currency-spinner"></i> : <i className="fa-solid fa-earth-americas"></i>}
@@ -188,12 +181,12 @@ export default function ShopClient({ initialCategories }: { initialCategories: a
         
         {/* Sidebar */}
         <div className="shop-sidebar">
-          <div className="sidebar-box menu-box">
-            <h3 className="sidebar-title">START SHOPPING</h3>
+          {/* Categories Module */}
+          <div className="sidebar-box module-box">
             <ul className="category-list">
               <li>
                 <a href="/" className="cat-btn back-home-btn">
-                  <i className="fa-solid fa-earth-americas"></i> Back to Home
+                  Home
                 </a>
               </li>
               {categories.map(category => (
@@ -206,8 +199,75 @@ export default function ShopClient({ initialCategories }: { initialCategories: a
                   </button>
                 </li>
               ))}
+              <li>
+                <a href="/modpacks" className="cat-btn">
+                  Modpack links
+                </a>
+              </li>
             </ul>
           </div>
+
+          {/* Featured Package Module */}
+          <div className="sidebar-box module-box featured-box">
+            <h3 className="module-title">Featured Package</h3>
+            <div className="featured-item">
+              <img src="https://i.imgur.com/Kz8V5wN.png" alt="Pokefun" className="featured-img" />
+              <div className="featured-price">50$</div>
+              <div className="featured-price-sub">$50.00</div>
+              <button className="btn-cyan w-full">Add to Basket</button>
+            </div>
+          </div>
+
+          {/* Giftcard Module */}
+          <div className="sidebar-box module-box text-center">
+            <h3 className="module-title">Giftcard Balance</h3>
+            <div className="giftcard-form">
+              <input 
+                type="text" 
+                placeholder="Enter gift card number" 
+                className="input-dark"
+                value={giftcardNumber}
+                onChange={(e) => setGiftcardNumber(e.target.value)}
+              />
+              <button className="btn-grey w-full" onClick={handleCheckGiftcard}>Check</button>
+            </div>
+          </div>
+
+          {/* Top Customer Module */}
+          <div className="sidebar-box module-box text-center">
+            <h3 className="module-title">Top Customer</h3>
+            <p className="module-empty-text">No recent top purchaser to display.</p>
+          </div>
+
+          {/* Recent Payments Module */}
+          <div className="sidebar-box module-box">
+            <h3 className="module-title">Recent Payments</h3>
+            <div className="recent-payment-item">
+              <img src="https://mc-heads.net/avatar/steve/32" alt="Avatar" className="rp-avatar"/>
+              <div className="rp-info">
+                <div className="rp-name">HayashiKoga</div>
+                <div className="rp-desc">VIP Master Rank - $7.00</div>
+                <div className="rp-date">24th Mar 24</div>
+              </div>
+            </div>
+            <div className="recent-payment-item">
+              <img src="https://mc-heads.net/avatar/alex/32" alt="Avatar" className="rp-avatar"/>
+              <div className="rp-info">
+                <div className="rp-name">Savmavar</div>
+                <div className="rp-desc">6$ - $6.00</div>
+                <div className="rp-date">22nd Mar 24</div>
+              </div>
+            </div>
+            <div className="recent-payment-item">
+              <img src="https://mc-heads.net/avatar/Notch/32" alt="Avatar" className="rp-avatar"/>
+              <div className="rp-info">
+                <div className="rp-name">SixTeen_9</div>
+                <div className="rp-desc">Champion Rank - $2.99</div>
+                <div className="rp-date">17th Mar 24</div>
+              </div>
+            </div>
+          </div>
+
         </div>
 
         {/* Main Content */}
@@ -419,31 +479,65 @@ export default function ShopClient({ initialCategories }: { initialCategories: a
 
         .shop-layout { display: flex; gap: 30px; align-items: flex-start; }
         
-        .shop-sidebar { width: 280px; flex-shrink: 0; }
+        .shop-sidebar { width: 300px; flex-shrink: 0; display: flex; flex-direction: column; gap: 20px; }
         
-        .sidebar-box {
-          background: #111;
-          border-radius: 12px;
-          padding: 25px;
-          border: 2px solid #222;
+        .module-box {
+          background: #121212;
+          padding: 20px;
+          border-radius: 4px;
         }
         
-        .sidebar-title { font-size: 1.2rem; color: #fbbf24; margin-bottom: 20px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; text-align: center; }
+        .module-title { font-size: 1.1rem; color: white; margin-bottom: 20px; font-weight: 700; text-align: center; }
+        .module-empty-text { font-size: 0.85rem; color: #ccc; margin: 0; }
         
-        .category-list { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 10px; margin: 0;}
+        .category-list { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 5px; margin: 0;}
         
         .cat-btn {
           width: 100%; text-align: left; background: transparent; border: none;
-          padding: 15px 20px; color: #ccc; font-size: 1.3rem; font-weight: 600;
-          cursor: pointer; transition: all 0.2s ease; border-radius: 8px;
+          padding: 10px 15px; color: #e5e5e5; font-size: 1rem; font-weight: 600;
+          cursor: pointer; transition: all 0.2s ease; border-radius: 4px;
           font-family: inherit;
           display: flex; align-items: center; gap: 10px; text-decoration: none;
         }
-        .cat-btn:hover { background: #222; color: white; }
-        .cat-btn.active { background: #222; color: white; border-left: 4px solid #fbbf24; }
+        .cat-btn:hover { background: rgba(255,255,255,0.05); color: white; }
+        .cat-btn.active { color: #4bc8c8; font-weight: bold; }
 
-        .back-home-btn { color: #10b981; }
-        .back-home-btn:hover { background: rgba(16,185,129,0.1); color: #34d399; }
+        .back-home-btn { color: white; }
+        
+        /* Featured */
+        .featured-item { text-align: center; }
+        .featured-img { width: 100%; max-width: 150px; margin: 0 auto 15px; display: block; }
+        .featured-price { font-size: 1.2rem; font-weight: bold; color: white; }
+        .featured-price-sub { font-size: 0.9rem; color: white; margin-bottom: 15px; }
+        
+        /* Form Inputs */
+        .input-dark {
+          width: 100%; background: black; border: 1px solid #000; color: white;
+          padding: 12px; font-size: 0.9rem; text-align: center; margin-bottom: 10px;
+        }
+        .input-dark:focus { outline: none; border-color: #333; }
+        
+        /* Buttons */
+        .w-full { width: 100%; }
+        .btn-cyan {
+          background: #4bc8c8; color: black; border: none; padding: 12px;
+          font-weight: bold; cursor: pointer; transition: 0.2s; font-size: 0.95rem;
+        }
+        .btn-cyan:hover { background: #3ab0b0; }
+        .btn-grey {
+          background: #ccc; color: black; border: none; padding: 12px;
+          font-weight: bold; cursor: pointer; transition: 0.2s; font-size: 0.95rem;
+        }
+        .btn-grey:hover { background: #bbb; }
+        
+        /* Recent Payments */
+        .recent-payment-item { display: flex; gap: 15px; align-items: center; margin-bottom: 15px; }
+        .recent-payment-item:last-child { margin-bottom: 0; }
+        .rp-avatar { width: 32px; height: 32px; border-radius: 4px; }
+        .rp-info { text-align: left; }
+        .rp-name { color: white; font-size: 0.9rem; font-weight: bold; }
+        .rp-desc { color: white; font-size: 0.8rem; }
+        .rp-date { color: #888; font-size: 0.75rem; }
 
         .shop-main { flex-grow: 1; min-width: 0; }
         
@@ -458,7 +552,7 @@ export default function ShopClient({ initialCategories }: { initialCategories: a
           padding: 40px;
           border-bottom: 2px solid #222;
           text-align: left;
-          background: #151515;
+          background: #121212;
         }
         .category-header h2 { color: white; font-size: 3rem; margin: 0 0 10px 0; font-weight: 800; }
         .cat-desc { color: #aaa; font-size: 1.3rem; line-height: 1.6; max-width: 1000px; margin: 0;}
@@ -473,29 +567,28 @@ export default function ShopClient({ initialCategories }: { initialCategories: a
         }
         
         .package-card {
-          background: #151515;
-          border: 2px solid #222;
-          border-radius: 12px;
+          background: #121212;
+          border: 1px solid #222;
+          border-radius: 4px;
           overflow: hidden;
           transition: all 0.3s;
           display: flex;
           flex-direction: column;
         }
         .package-card:hover {
-          transform: translateY(-8px);
+          transform: translateY(-4px);
           box-shadow: 0 15px 30px rgba(0,0,0,0.5);
-          border-color: #fbbf24;
+          border-color: #4bc8c8;
         }
         
         .pkg-image-wrapper {
           height: 280px;
-          background: #1a1a1a;
+          background: #0a0a0a;
           display: flex;
           align-items: center;
           justify-content: center;
           padding: 30px;
           cursor: pointer;
-          border-bottom: 2px solid #222;
         }
         .pkg-image { max-width: 100%; max-height: 100%; object-fit: contain; transition: transform 0.3s; transform: scale(1.5); }
         .package-card:hover .pkg-image { transform: scale(1.6); }
@@ -503,22 +596,21 @@ export default function ShopClient({ initialCategories }: { initialCategories: a
         
         .pkg-details { padding: 25px; text-align: center; flex-grow: 1; cursor: pointer; }
         .pkg-name { color: white; font-size: 1.8rem; margin: 0 0 10px 0; font-weight: bold; }
-        .pkg-price { color: #10b981; font-size: 1.8rem; font-weight: 800; }
+        .pkg-price { color: white; font-size: 1.5rem; font-weight: 800; margin-bottom: 15px; }
         
         .pkg-actions {
-          padding: 20px 25px;
+          padding: 0 25px 25px 25px;
           display: flex;
           gap: 15px;
-          background: #1a1a1a;
-          border-top: 2px solid #222;
+          background: #121212;
         }
         
         .btn-buy {
           flex-grow: 1;
-          background: #10b981; color: white; border: none; border-radius: 6px;
-          padding: 15px; font-weight: bold; font-size: 1.4rem; cursor: pointer; transition: all 0.2s;
+          background: #4bc8c8; color: black; border: none; border-radius: 0;
+          padding: 15px; font-weight: bold; font-size: 1.2rem; cursor: pointer; transition: all 0.2s;
         }
-        .btn-buy:hover:not(:disabled) { background: #059669; }
+        .btn-buy:hover:not(:disabled) { background: #3ab0b0; }
         .btn-buy:disabled { opacity: 0.6; cursor: not-allowed; }
         
         .btn-info {
