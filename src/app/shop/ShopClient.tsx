@@ -230,12 +230,21 @@ export default function ShopClient({ initialCategories }: { initialCategories: a
           {/* Featured Package Module */}
           <div className="sidebar-box module-box featured-box">
             <h3 className="module-title">Featured Package</h3>
-            <div className="featured-item">
-              <img src="https://i.imgur.com/Kz8V5wN.png" alt="Pokefun" className="featured-img" />
-              <div className="featured-price">50$</div>
-              <div className="featured-price-sub">$50.00</div>
-              <button className="btn-cyan w-full">Add to Basket</button>
-            </div>
+            {categories.length > 0 && categories[0].packages && categories[0].packages.length > 0 ? (
+              <div className="featured-item">
+                <img 
+                  src={categories[0].packages[0].image || "https://i.imgur.com/Kz8V5wN.png"} 
+                  alt={categories[0].packages[0].name} 
+                  className="featured-img" 
+                  style={{ maxHeight: '150px', objectFit: 'contain' }}
+                />
+                <div className="featured-price-sub">{categories[0].packages[0].name}</div>
+                <div className="featured-price">{categories[0].packages[0].total_price} {categories[0].packages[0].currency}</div>
+                <button className="btn-cyan w-full" onClick={() => handleBuy(categories[0].packages[0].id)}>Add to Basket</button>
+              </div>
+            ) : (
+              <p className="module-empty-text">Loading...</p>
+            )}
           </div>
 
           {/* Giftcard Module */}
@@ -473,6 +482,35 @@ export default function ShopClient({ initialCategories }: { initialCategories: a
 
       {/* Clean Styles */}
       <style dangerouslySetInnerHTML={{__html: `
+        /* CSS Variables for Light/Dark Theme */
+        :root {
+          --shop-bg: #e0e3e5;
+          --shop-box: #e0e3e5;
+          --shop-text: #111;
+          --shop-text-muted: #444;
+          --shop-border: #ccc;
+        }
+
+        /* Default to dark mode if .dark class is on parent, or media query */
+        @media (prefers-color-scheme: dark) {
+          :root {
+            --shop-bg: transparent;
+            --shop-box: #111;
+            --shop-text: #fff;
+            --shop-text-muted: #ccc;
+            --shop-border: #222;
+          }
+        }
+        
+        /* Optional global override if Tailwind .dark is used */
+        .dark {
+            --shop-bg: transparent;
+            --shop-box: #111;
+            --shop-text: #fff;
+            --shop-text-muted: #ccc;
+            --shop-border: #222;
+        }
+
         .cobblemon-shop-wrapper {
           position: relative;
           width: 100%;
@@ -498,9 +536,9 @@ export default function ShopClient({ initialCategories }: { initialCategories: a
         }
 
         .giftcard-btn {
-          background: #111;
-          color: white;
-          border: 2px solid #333;
+          background: var(--shop-box);
+          color: var(--shop-text);
+          border: 2px solid var(--shop-border);
           padding: 10px 20px;
           border-radius: 8px;
           font-weight: bold;
@@ -516,27 +554,27 @@ export default function ShopClient({ initialCategories }: { initialCategories: a
           display: flex;
           align-items: center;
           gap: 8px;
-          background: #111;
-          border: 2px solid #333;
+          background: var(--shop-box);
+          border: 2px solid var(--shop-border);
           padding: 10px 15px;
           border-radius: 8px;
-          color: white;
+          color: var(--shop-text);
         }
         
         .currency-select {
           background: transparent;
           border: none;
           font-weight: bold;
-          color: white;
+          color: var(--shop-text);
           font-size: 1.1rem;
           outline: none;
           cursor: pointer;
         }
-        .currency-select option { background: #111; color: white; }
+        .currency-select option { background: var(--shop-box); color: var(--shop-text); }
         
         .user-status-box {
-          background: #111;
-          border: 2px solid #333;
+          background: var(--shop-box);
+          border: 2px solid var(--shop-border);
           border-radius: 8px;
           padding: 8px 15px;
           cursor: pointer;
@@ -548,8 +586,8 @@ export default function ShopClient({ initialCategories }: { initialCategories: a
         
         .user-logged-in { display: flex; align-items: center; gap: 15px; }
         .user-text-info { text-align: right; }
-        .user-label { font-size: 0.9rem; color: #aaa; font-weight: 600; text-transform: uppercase; }
-        .user-name { font-weight: bold; color: white; font-size: 1.2rem; }
+        .user-label { font-size: 0.9rem; color: var(--shop-text-muted); font-weight: 600; text-transform: uppercase; }
+        .user-name { font-weight: bold; color: var(--shop-text); font-size: 1.2rem; }
         .highlight-text { color: #4bc8c8; }
         
         .mc-avatar-container { width: 45px; height: 45px; border-radius: 6px; overflow: hidden; }
@@ -560,39 +598,45 @@ export default function ShopClient({ initialCategories }: { initialCategories: a
         .shop-sidebar { width: 320px; flex-shrink: 0; display: flex; flex-direction: column; gap: 20px; }
         
         .module-box {
-          background: #111;
+          background: var(--shop-box);
           padding: 25px;
           border-radius: 12px;
-          border: 2px solid #222;
+          border: 2px solid var(--shop-border);
           box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
         }
         
-        .module-title { font-size: 1.4rem; color: white; margin-bottom: 20px; font-weight: 800; text-align: center; }
-        .module-empty-text { font-size: 1.1rem; color: #ccc; margin: 0; }
+        .module-title { font-size: 1.4rem; color: var(--shop-text); margin-bottom: 20px; font-weight: 800; text-align: center; }
+        .module-empty-text { font-size: 1.1rem; color: var(--shop-text-muted); margin: 0; }
         
         .category-list { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 10px; margin: 0;}
         
         .cat-btn {
           width: 100%; text-align: left; background: transparent; border: none;
-          padding: 15px 20px; color: #ccc; font-size: 1.3rem; font-weight: 600;
+          padding: 15px 20px; color: var(--shop-text); font-size: 1.8rem; font-weight: bold;
           cursor: pointer; transition: all 0.2s ease; border-radius: 8px;
           font-family: inherit;
           display: flex; align-items: center; gap: 12px; text-decoration: none;
         }
-        .cat-btn:hover { background: #222; color: white; }
-        .cat-btn.active { background: #222; color: #4bc8c8; font-weight: bold; border-left: 4px solid #4bc8c8; }
+        .cat-btn:hover { background: rgba(0,0,0,0.1); color: #4bc8c8; }
+        @media (prefers-color-scheme: dark) {
+          .cat-btn:hover { background: #222; color: #4bc8c8; }
+        }
+        .cat-btn.active { background: rgba(0,0,0,0.1); color: #4bc8c8; font-weight: 900; border-left: 4px solid #4bc8c8; }
+        @media (prefers-color-scheme: dark) {
+           .cat-btn.active { background: #222; }
+        }
 
         .back-home-btn { color: #4bc8c8; }
         
         /* Featured */
         .featured-item { text-align: center; }
         .featured-img { width: 100%; max-width: 180px; margin: 0 auto 15px; display: block; }
-        .featured-price { font-size: 1.5rem; font-weight: bold; color: white; }
-        .featured-price-sub { font-size: 1.1rem; color: #aaa; margin-bottom: 15px; }
+        .featured-price { font-size: 1.5rem; font-weight: bold; color: var(--shop-text); }
+        .featured-price-sub { font-size: 1.1rem; color: var(--shop-text-muted); margin-bottom: 15px; }
         
         /* Form Inputs */
         .input-dark {
-          width: 100%; background: black; border: 2px solid #333; color: white;
+          width: 100%; background: transparent; border: 2px solid var(--shop-border); color: var(--shop-text);
           padding: 15px; font-size: 1.1rem; text-align: center; margin-bottom: 15px; border-radius: 8px;
         }
         .input-dark:focus { outline: none; border-color: #4bc8c8; }
@@ -615,8 +659,8 @@ export default function ShopClient({ initialCategories }: { initialCategories: a
         .recent-payment-item:last-child { margin-bottom: 0; }
         .rp-avatar { width: 40px; height: 40px; border-radius: 8px; }
         .rp-info { text-align: left; }
-        .rp-name { color: white; font-size: 1.1rem; font-weight: bold; }
-        .rp-desc { color: #ccc; font-size: 0.9rem; }
+        .rp-name { color: var(--shop-text); font-size: 1.1rem; font-weight: bold; }
+        .rp-desc { color: var(--shop-text-muted); font-size: 0.9rem; }
         .rp-date { color: #888; font-size: 0.85rem; }
 
         .shop-main { flex-grow: 1; min-width: 0; }
@@ -627,15 +671,15 @@ export default function ShopClient({ initialCategories }: { initialCategories: a
         
         .category-header {
           padding: 40px;
-          border-bottom: 2px solid #222;
+          border-bottom: 2px solid var(--shop-border);
           text-align: left;
-          background: #111;
+          background: var(--shop-box);
           border-radius: 12px 12px 0 0;
-          border: 2px solid #222;
+          border: 2px solid var(--shop-border);
           border-bottom: none;
         }
-        .category-header h2 { color: white; font-size: 3rem; margin: 0 0 10px 0; font-weight: 800; }
-        .cat-desc { color: #ccc; font-size: 1.3rem; line-height: 1.6; max-width: 1000px; margin: 0;}
+        .category-header h2 { color: var(--shop-text); font-size: 3rem; margin: 0 0 10px 0; font-weight: 800; }
+        .cat-desc { color: var(--shop-text-muted); font-size: 1.3rem; line-height: 1.6; max-width: 1000px; margin: 0;}
         .cat-desc img { max-width: 100%; border-radius: 8px; margin-top: 15px; }
         
         /* Grid Layout for Packages */
@@ -644,15 +688,15 @@ export default function ShopClient({ initialCategories }: { initialCategories: a
           grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
           gap: 30px;
           padding: 40px;
-          background: #111;
+          background: var(--shop-box);
           border-radius: 0 0 12px 12px;
-          border: 2px solid #222;
+          border: 2px solid var(--shop-border);
           border-top: none;
         }
         
         .package-card {
-          background: #121212;
-          border: 2px solid #222;
+          background: var(--shop-bg);
+          border: 2px solid var(--shop-border);
           border-radius: 12px;
           overflow: hidden;
           transition: all 0.3s;
@@ -668,27 +712,27 @@ export default function ShopClient({ initialCategories }: { initialCategories: a
         
         .pkg-image-wrapper {
           height: 280px;
-          background: #0a0a0a;
+          background: var(--shop-bg);
           display: flex;
           align-items: center;
           justify-content: center;
           padding: 30px;
           cursor: pointer;
-          border-bottom: 2px solid #222;
+          border-bottom: 2px solid var(--shop-border);
         }
         .pkg-image { max-width: 100%; max-height: 100%; object-fit: contain; transition: transform 0.3s; transform: scale(1.5); }
         .package-card:hover .pkg-image { transform: scale(1.6); }
         .placeholder-icon { font-size: 6rem; color: #333; }
         
         .pkg-details { padding: 25px; text-align: center; flex-grow: 1; cursor: pointer; }
-        .pkg-name { color: white; font-size: 1.8rem; margin: 0 0 10px 0; font-weight: bold; }
+        .pkg-name { color: var(--shop-text); font-size: 1.8rem; margin: 0 0 10px 0; font-weight: bold; }
         .pkg-price { color: #4bc8c8; font-size: 1.6rem; font-weight: 800; margin-bottom: 15px; }
         
         .pkg-actions {
           padding: 0 25px 25px 25px;
           display: flex;
           gap: 15px;
-          background: #121212;
+          background: var(--shop-bg);
         }
         
         .btn-buy {
@@ -716,8 +760,8 @@ export default function ShopClient({ initialCategories }: { initialCategories: a
         }
         
         .clean-modal {
-          background: #111; width: 100%; max-width: 500px; border-radius: 16px;
-          box-shadow: 0 20px 50px rgba(0,0,0,0.5); overflow: hidden; border: 2px solid #222;
+          background: var(--shop-bg); width: 100%; max-width: 500px; border-radius: 16px;
+          box-shadow: 0 20px 50px rgba(0,0,0,0.5); overflow: hidden; border: 2px solid var(--shop-border);
           animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
         .clean-modal.pkg-detail { max-width: 700px; }
@@ -725,11 +769,11 @@ export default function ShopClient({ initialCategories }: { initialCategories: a
         @keyframes popIn { 0% { transform: scale(0.95) translateY(10px); opacity: 0; } 100% { transform: scale(1) translateY(0); opacity: 1; } }
         
         .modal-header {
-          padding: 25px 30px; border-bottom: 2px solid #222;
+          padding: 25px 30px; border-bottom: 2px solid var(--shop-border);
           display: flex; justify-content: space-between; align-items: center;
-          background: #1a1a1a;
+          background: var(--shop-box);
         }
-        .modal-header h2 { margin: 0; font-size: 1.8rem; color: white; font-weight: bold; }
+        .modal-header h2 { margin: 0; font-size: 1.8rem; color: var(--shop-text); font-weight: bold; }
         
         .btn-close {
           background: transparent; border: none; color: #aaa; font-size: 2rem;
@@ -741,11 +785,11 @@ export default function ShopClient({ initialCategories }: { initialCategories: a
         
         .mc-steve-icon { width: 100px; height: 100px; margin: 0 auto 20px; border-radius: 12px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
         .mc-steve-icon img { width: 100%; height: 100%; object-fit: cover; }
-        .modal-body p { color: #ccc; margin-bottom: 25px; font-size: 1.3rem; line-height: 1.5;}
+        .modal-body p { color: var(--shop-text-muted); margin-bottom: 25px; font-size: 1.3rem; line-height: 1.5;}
         
         .clean-input {
-          width: 100%; padding: 18px; border: 2px solid #333; border-radius: 8px; background: #222;
-          font-size: 1.4rem; color: white; margin-bottom: 20px; font-weight: bold;
+          width: 100%; padding: 18px; border: 2px solid var(--shop-border); border-radius: 8px; background: var(--shop-input-bg);
+          font-size: 1.4rem; color: var(--shop-text); margin-bottom: 20px; font-weight: bold;
           text-align: center; transition: border-color 0.2s;
         }
         .clean-input:focus { outline: none; border-color: #10b981; }
@@ -758,12 +802,12 @@ export default function ShopClient({ initialCategories }: { initialCategories: a
         .btn-submit:hover:not(:disabled) { background: #059669; }
         .btn-submit:disabled { opacity: 0.6; cursor: not-allowed;}
         
-        .modal-image-center { height: 250px; display: flex; align-items: center; justify-content: center; margin-bottom: 30px; background: #f8fafc; border-radius: 12px; border: 2px solid #e2e8f0;}
+        .modal-image-center { height: 250px; display: flex; align-items: center; justify-content: center; margin-bottom: 30px; background: var(--shop-input-bg); border-radius: 12px; border: 2px solid var(--shop-border);}
         .modal-image-center img { max-height: 90%; max-width: 90%; object-fit: contain; transform: scale(1.3); }
         
         .modal-price-large { font-size: 2.5rem; font-weight: 900; color: #10b981; text-align: center; margin-bottom: 20px; }
         
-        .html-desc { color: #cbd5e1; font-size: 1.3rem; line-height: 1.6; max-height: 400px; overflow-y: auto; padding-right: 15px; text-align: left;}
+        .html-desc { color: var(--shop-text); font-size: 1.3rem; line-height: 1.6; max-height: 400px; overflow-y: auto; padding-right: 15px; text-align: left;}
         .html-desc p { margin-bottom: 15px; }
         .html-desc ul { margin-left: 20px; margin-bottom: 15px; }
 
