@@ -334,13 +334,13 @@ export default function ShopClient({ initialCategories }: { initialCategories: a
           border: 1px solid #eaeaea;
         }
         
-        .sidebar-title { font-size: 0.9rem; color: #9ca3af; margin-bottom: 15px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; }
+        .sidebar-title { font-size: 1rem; color: #9ca3af; margin-bottom: 15px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; }
         
         .category-list { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 5px; margin: 0;}
         
         .cat-btn {
           width: 100%; text-align: left; background: transparent; border: none;
-          padding: 12px 15px; color: #4b5563; font-size: 1rem; font-weight: 600;
+          padding: 15px 15px; color: #4b5563; font-size: 1.1rem; font-weight: 600;
           cursor: pointer; transition: all 0.2s ease; border-radius: 8px;
         }
         .cat-btn:hover { background: #f3f4f6; color: #1f2937; }
@@ -362,8 +362,8 @@ export default function ShopClient({ initialCategories }: { initialCategories: a
           text-align: center;
           background: #f8fafc;
         }
-        .category-header h2 { color: #0f172a; font-size: 1.8rem; margin: 0 0 10px 0; font-weight: 800; }
-        .cat-desc { color: #64748b; font-size: 1rem; line-height: 1.6; max-width: 600px; margin: 0 auto;}
+        .category-header h2 { color: #0f172a; font-size: 2.2rem; margin: 0 0 10px 0; font-weight: 800; }
+        .cat-desc { color: #64748b; font-size: 1.15rem; line-height: 1.6; max-width: 800px; margin: 0 auto;}
         .cat-desc img { max-width: 100%; border-radius: 8px; margin-top: 15px; }
         
         /* Grid Layout for Packages */
@@ -404,8 +404,8 @@ export default function ShopClient({ initialCategories }: { initialCategories: a
         .placeholder-icon { font-size: 4rem; color: #cbd5e1; }
         
         .pkg-details { padding: 20px; text-align: center; flex-grow: 1; cursor: pointer; }
-        .pkg-name { color: #1e293b; font-size: 1.1rem; margin: 0 0 10px 0; font-weight: bold; }
-        .pkg-price { color: #10b981; font-size: 1.2rem; font-weight: 800; }
+        .pkg-name { color: #1e293b; font-size: 1.25rem; margin: 0 0 10px 0; font-weight: bold; }
+        .pkg-price { color: #10b981; font-size: 1.4rem; font-weight: 800; }
         
         .pkg-actions {
           padding: 15px 20px;
@@ -418,7 +418,7 @@ export default function ShopClient({ initialCategories }: { initialCategories: a
         .btn-buy {
           flex-grow: 1;
           background: #10b981; color: white; border: none; border-radius: 6px;
-          padding: 10px; font-weight: bold; font-size: 1rem; cursor: pointer; transition: all 0.2s;
+          padding: 12px; font-weight: bold; font-size: 1.1rem; cursor: pointer; transition: all 0.2s;
         }
         .btn-buy:hover:not(:disabled) { background: #059669; }
         .btn-buy:disabled { opacity: 0.6; cursor: not-allowed; }
@@ -453,10 +453,10 @@ export default function ShopClient({ initialCategories }: { initialCategories: a
           display: flex; justify-content: space-between; align-items: center;
           background: #f8fafc;
         }
-        .modal-header h2 { margin: 0; font-size: 1.2rem; color: #0f172a; font-weight: bold; }
+        .modal-header h2 { margin: 0; font-size: 1.4rem; color: #0f172a; font-weight: bold; }
         
         .btn-close {
-          background: transparent; border: none; color: #94a3b8; font-size: 1.5rem;
+          background: transparent; border: none; color: #94a3b8; font-size: 1.8rem;
           cursor: pointer; transition: color 0.2s; padding: 0;
         }
         .btn-close:hover { color: #ef4444; }
@@ -465,18 +465,18 @@ export default function ShopClient({ initialCategories }: { initialCategories: a
         
         .mc-steve-icon { width: 80px; height: 80px; margin: 0 auto 20px; border-radius: 12px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
         .mc-steve-icon img { width: 100%; height: 100%; object-fit: cover; }
-        .modal-body p { color: #64748b; margin-bottom: 25px; font-size: 0.95rem; line-height: 1.5;}
+        .modal-body p { color: #64748b; margin-bottom: 25px; font-size: 1.1rem; line-height: 1.5;}
         
         .clean-input {
           width: 100%; padding: 15px; border: 2px solid #e2e8f0; border-radius: 8px;
-          font-size: 1.1rem; color: #0f172a; margin-bottom: 20px; font-weight: bold;
+          font-size: 1.2rem; color: #0f172a; margin-bottom: 20px; font-weight: bold;
           text-align: center; transition: border-color 0.2s;
         }
         .clean-input:focus { outline: none; border-color: #3b82f6; }
         
         .btn-submit {
           width: 100%; background: #3b82f6; color: white; border: none;
-          padding: 15px; border-radius: 8px; font-weight: bold; font-size: 1rem;
+          padding: 15px; border-radius: 8px; font-weight: bold; font-size: 1.1rem;
           cursor: pointer; transition: background 0.2s;
         }
         .btn-submit:hover:not(:disabled) { background: #2563eb; }
@@ -485,10 +485,10 @@ export default function ShopClient({ initialCategories }: { initialCategories: a
         .modal-image-center { height: 150px; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; background: #f8fafc; border-radius: 12px;}
         .modal-image-center img { max-height: 90%; max-width: 90%; object-fit: contain; }
         
-        .modal-price-large { font-size: 1.8rem; font-weight: 900; color: #10b981; text-align: center; margin-bottom: 20px; }
+        .modal-price-large { font-size: 2rem; font-weight: 900; color: #10b981; text-align: center; margin-bottom: 20px; }
         
-        .html-desc { color: #475569; font-size: 0.95rem; line-height: 1.6; max-height: 300px; overflow-y: auto; padding-right: 10px; text-align: left;}
-        .html-desc p { margin-bottom: 12px; }
+        .html-desc { color: #475569; font-size: 1.1rem; line-height: 1.6; max-height: 350px; overflow-y: auto; padding-right: 10px; text-align: left;}
+        .html-desc p { margin-bottom: 15px; }
         .html-desc ul { margin-left: 20px; margin-bottom: 15px; }
 
         @media (max-width: 800px) {
