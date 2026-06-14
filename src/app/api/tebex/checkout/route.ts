@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth';
+import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 
 const PUBLIC_TOKEN = process.env.TEBEX_PUBLIC_TOKEN;
 const PRIVATE_KEY = process.env.TEBEX_PRIVATE_KEY;
