@@ -21,14 +21,37 @@ export async function GET() {
     
     const data = await res.json();
     
-    // Filter out $0.00 payments and take the top 5 real purchases
-    let realPayments = [];
+    // Filter out $0.00 payments
+    let realPayments: any[] = [];
     if (Array.isArray(data)) {
-      realPayments = data.filter((p: any) => parseFloat(p.amount) > 0).slice(0, 5);
+      realPayments = data.filter((p: any) => parseFloat(p.amount) > 0);
     }
     
-    // Always return realPayments, even if it's empty, to never show $0 payments
-    return NextResponse.json(realPayments);
+    // Calculate Top Customer by grouping amounts by player name
+    const playerTotals: Record<string, { total: number, player: any }> = {};
+    for (const p of realPayments) {
+      const name = p.player?.name || 'Unknown';
+      if (!playerTotals[name]) {
+        playerTotals[name] = { total: 0, player: p };
+      }
+      playerTotals[name].total += parseFloat(p.amount);
+    }
+    
+    let topCustomer = null;
+    let maxAmount = 0;
+    for (const name in playerTotals) {
+      if (playerTotals[name].total > maxAmount) {
+        maxAmount = playerTotals[name].total;
+        topCustomer = playerTotals[name].player;
+      }
+    }
+    
+    // We don't need to send the exact amount back to the client if they don't want it, 
+    // but the client can just ignore it. We'll send the top 5 recent and the top customer.
+    return NextResponse.json({
+      recent: realPayments.slice(0, 5),
+      top: topCustomer
+    });
   } catch (error) {
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }

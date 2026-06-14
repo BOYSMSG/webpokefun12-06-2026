@@ -8,6 +8,8 @@ export default function ShopClient({ initialCategories }: { initialCategories: a
   const [categories, setCategories] = useState<any[]>(initialCategories);
   const [activeCategoryId, setActiveCategoryId] = useState<number | string>('home');
   const [selectedPkg, setSelectedPkg] = useState<any | null>(null);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [copied, setCopied] = useState<boolean>(false);
   const [loadingPkg, setLoadingPkg] = useState<number | null>(null);
   
   // Currency State
@@ -39,10 +41,13 @@ export default function ShopClient({ initialCategories }: { initialCategories: a
     fetch('/api/tebex/recent-payments')
       .then(res => res.json())
       .then(data => {
-        if (data && Array.isArray(data)) {
+        if (data && data.recent) {
+          setRecentPayments(data.recent);
+          setTopCustomer(data.top);
+        } else if (Array.isArray(data)) {
           setRecentPayments(data.slice(0, 5));
           if (data.length > 0) {
-            setTopCustomer(data[0]); // Just pick the most recent for now as top
+            setTopCustomer({ player: data[0].player });
           }
         }
       })
@@ -53,10 +58,36 @@ export default function ShopClient({ initialCategories }: { initialCategories: a
       alert("Payment initiated or completed! Thank you for your support.");
       window.history.replaceState({}, document.title, window.location.pathname);
     } else if (params.get('cancel')) {
+      window.history.replaceState({}, document.title, window.location.pathname);
+    } else if (params.get('cancel')) {
       alert("Payment was cancelled.");
       window.history.replaceState({}, document.title, window.location.pathname);
     }
+
+    // Auto-open package if ID is in URL
+    const pkgId = params.get('package');
+    if (pkgId && initialCategories) {
+      for (const cat of initialCategories) {
+        if (cat.packages) {
+          const pkg = cat.packages.find((p: any) => p.id.toString() === pkgId);
+          if (pkg) {
+            setActiveCategoryId(cat.id);
+            setSelectedPkg(pkg);
+            setSelectedImage(pkg.image || null);
+            setCopied(false);
+            break;
+          }
+        }
+      }
+    }
   }, []);
+
+  const handleShare = (pkgId: string) => {
+    const url = window.location.origin + '/store?package=' + pkgId;
+    navigator.clipboard.writeText(url);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   // Fetch new prices when currency changes
   useEffect(() => {
@@ -265,11 +296,12 @@ export default function ShopClient({ initialCategories }: { initialCategories: a
           {/* Top Customer Module */}
           <div className="sidebar-box module-box text-center">
             <h3 className="module-title">Top Customer</h3>
-            {topCustomer ? (
+            {topCustomer && topCustomer.player && topCustomer.player.name ? (
               <div className="recent-payment-item" style={{justifyContent: 'center', margin: '0'}}>
                 <img src={`https://mc-heads.net/avatar/${topCustomer.player.name}/32`} alt="Avatar" className="rp-avatar" style={{width:'40px', height:'40px'}}/>
                 <div className="rp-info">
-                  <div className="rp-name" style={{fontSize: '1rem'}}>{topCustomer.player.name}</div>
+                  <div className="rp-name" style={{fontSize: '1.2rem', textAlign: 'center'}}>{topCustomer.player.name}</div>
+                  <div className="rp-desc" style={{textAlign: 'center', color: '#ffd700'}}><i className="fa-solid fa-crown"></i> Top Supporter</div>
                 </div>
               </div>
             ) : (
@@ -286,7 +318,7 @@ export default function ShopClient({ initialCategories }: { initialCategories: a
                   <img src={`https://mc-heads.net/avatar/${payment.player.name}/32`} alt="Avatar" className="rp-avatar"/>
                   <div className="rp-info">
                     <div className="rp-name">{payment.player.name}</div>
-                    <div className="rp-desc">{payment.packages && payment.packages[0] ? payment.packages[0].name : "Store Package"} - {payment.currency.iso_4217} {payment.amount}</div>
+                    <div className="rp-desc">{payment.packages && payment.packages[0] ? payment.packages[0].name : "Store Package"}</div>
                     <div className="rp-date">{new Date(payment.date).toLocaleDateString()}</div>
                   </div>
                 </div>
@@ -365,7 +397,7 @@ export default function ShopClient({ initialCategories }: { initialCategories: a
                   <div className="package-grid">
                     {activeCategory.packages.map((pkg: any) => (
                       <div key={pkg.id} className="package-card">
-                        <div className="pkg-image-wrapper" onClick={() => setSelectedPkg(pkg)}>
+                        <div className="pkg-image-wrapper" onClick={() => { setSelectedPkg(pkg); setSelectedImage(pkg.image); setCopied(false); }}>
                           {pkg.image ? (
                             <img src={pkg.image} alt={pkg.name} className="pkg-image" />
                           ) : (
@@ -374,7 +406,7 @@ export default function ShopClient({ initialCategories }: { initialCategories: a
                         </div>
                         
                         <div className="pkg-details">
-                          <h3 className="pkg-name" onClick={() => setSelectedPkg(pkg)}>{pkg.name}</h3>
+                          <h3 className="pkg-name" onClick={() => { setSelectedPkg(pkg); setSelectedImage(pkg.image); setCopied(false); }}>{pkg.name}</h3>
                           <div className="pkg-price">{pkg.total_price} {pkg.currency}</div>
                         </div>
                         
@@ -451,14 +483,32 @@ export default function ShopClient({ initialCategories }: { initialCategories: a
           <div className="clean-modal pkg-detail" onClick={e => e.stopPropagation()}>
             <div className="modal-header">
               <h2>{selectedPkg.name}</h2>
-              <button className="btn-close" onClick={() => setSelectedPkg(null)}>
-                <i className="fa-solid fa-xmark"></i>
-              </button>
+              <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+                <button className="btn-share" onClick={() => handleShare(selectedPkg.id)}>
+                  <i className="fa-solid fa-share-nodes"></i> {copied ? 'Copied!' : 'Share'}
+                </button>
+                <button className="btn-close" onClick={() => setSelectedPkg(null)}>
+                  <i className="fa-solid fa-xmark"></i>
+                </button>
+              </div>
             </div>
             <div className="modal-body" style={{textAlign: 'left'}}>
-               {selectedPkg.image && (
+               {selectedImage && (
                  <div className="modal-image-center">
-                   <img src={selectedPkg.image} alt={selectedPkg.name} />
+                   <img src={selectedImage} alt={selectedPkg.name} />
+                 </div>
+               )}
+               {selectedPkg.media && selectedPkg.media.length > 1 && (
+                 <div className="modal-gallery-thumbs">
+                   {selectedPkg.media.map((m: any) => (
+                     <img 
+                       key={m.url} 
+                       src={m.url} 
+                       alt="Thumbnail" 
+                       onClick={() => setSelectedImage(m.url)}
+                       className={selectedImage === m.url ? 'active' : ''}
+                     />
+                   ))}
                  </div>
                )}
                <div className="modal-price-large">{selectedPkg.total_price} {selectedPkg.currency}</div>
@@ -794,9 +844,78 @@ export default function ShopClient({ initialCategories }: { initialCategories: a
         .modal-body { padding: 40px; text-align: center; }
         
         .mc-steve-icon { width: 100px; height: 100px; margin: 0 auto 20px; border-radius: 12px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
-        .mc-steve-icon img { width: 100%; height: 100%; object-fit: cover; }
-        .modal-body p { color: var(--shop-text-muted); margin-bottom: 25px; font-size: 1.3rem; line-height: 1.5;}
-        
+        .modal-image-center {
+          text-align: center;
+          margin-bottom: 20px;
+        }
+        .modal-image-center img {
+          max-width: 100%;
+          max-height: 250px;
+          border-radius: 8px;
+        }
+        .modal-gallery-thumbs {
+          display: flex;
+          gap: 10px;
+          overflow-x: auto;
+          margin-bottom: 20px;
+          justify-content: center;
+        }
+        .modal-gallery-thumbs img {
+          width: 50px;
+          height: 50px;
+          object-fit: cover;
+          border-radius: 6px;
+          cursor: pointer;
+          border: 2px solid transparent;
+          opacity: 0.6;
+          transition: 0.2s;
+        }
+        .modal-gallery-thumbs img:hover {
+          opacity: 1;
+        }
+        .modal-gallery-thumbs img.active {
+          border-color: var(--accent-color);
+          opacity: 1;
+        }
+        .modal-price-large {
+          font-size: 1.8rem;
+          font-weight: 800;
+          color: var(--accent-color);
+          text-align: center;
+          margin-bottom: 20px;
+        }
+        .html-desc {
+          background: rgba(0, 0, 0, 0.2);
+          padding: 20px;
+          border-radius: 8px;
+          margin-bottom: 30px;
+          color: var(--text-muted);
+          font-size: 0.95rem;
+          line-height: 1.6;
+          word-wrap: break-word;
+        }
+        .html-desc h2 {
+          color: var(--text-color);
+          font-size: 1.3rem;
+          margin: 15px 0 10px;
+        }
+        .html-desc strong {
+          color: var(--text-color);
+        }
+        .btn-share {
+          background: rgba(255,255,255,0.1);
+          color: white;
+          border: none;
+          padding: 8px 12px;
+          border-radius: 6px;
+          cursor: pointer;
+          font-size: 0.9rem;
+          font-weight: bold;
+          transition: 0.2s;
+        }
+        .btn-share:hover {
+          background: rgba(255,255,255,0.2);
+        }
         .clean-input {
           width: 100%; padding: 18px; border: 2px solid var(--shop-border); border-radius: 8px; background: var(--shop-input-bg);
           font-size: 1.4rem; color: var(--shop-text); margin-bottom: 20px; font-weight: bold;
