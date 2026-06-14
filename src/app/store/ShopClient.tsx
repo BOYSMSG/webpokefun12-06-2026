@@ -140,7 +140,8 @@ export default function ShopClient({ initialCategories }: { initialCategories: a
       }
       return [...prev, { pkg, qty: 1 }];
     });
-    setShowCartModal(true);
+    // Show a small native toast or just let the badge update
+    // setShowCartModal(true);
     setSelectedPkg(null);
   };
 
@@ -196,14 +197,73 @@ export default function ShopClient({ initialCategories }: { initialCategories: a
         
         <div className="top-right-actions">
           
-          <div className="cart-icon-wrapper" onClick={() => setShowCartModal(true)} style={{ position: 'relative', cursor: 'pointer', marginRight: '15px', display: 'flex', alignItems: 'center', background: 'rgba(255,255,255,0.1)', padding: '10px 15px', borderRadius: '8px' }}>
-            <i className="fa-solid fa-cart-shopping" style={{ fontSize: '1.2rem' }}></i>
-            {cart.length > 0 && (
-              <span style={{ position: 'absolute', top: '-5px', right: '-5px', background: 'var(--accent-color)', color: '#000', borderRadius: '50%', width: '20px', height: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem', fontWeight: 'bold' }}>
-                {cart.reduce((acc, item) => acc + item.qty, 0)}
-              </span>
+          <div style={{ position: 'relative' }}>
+            <div className="cart-icon-wrapper" onClick={() => setShowCartModal(!showCartModal)} style={{ cursor: 'pointer', marginRight: '15px', display: 'flex', alignItems: 'center', background: 'rgba(255,255,255,0.1)', padding: '10px 15px', borderRadius: '8px' }}>
+              <i className="fa-solid fa-cart-shopping" style={{ fontSize: '1.2rem' }}></i>
+              {cart.length > 0 && (
+                <span style={{ position: 'absolute', top: '-5px', right: '10px', background: 'var(--accent-color)', color: '#000', borderRadius: '50%', width: '20px', height: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem', fontWeight: 'bold' }}>
+                  {cart.reduce((acc, item) => acc + item.qty, 0)}
+                </span>
+              )}
+              <span style={{ marginLeft: '10px', fontWeight: 'bold' }}>Basket</span>
+            </div>
+
+            {/* Cart Dropdown */}
+            {showCartModal && (
+              <div className="cart-dropdown" style={{
+                position: 'absolute', top: '120%', right: '15px', width: '350px', background: 'var(--shop-box)', 
+                border: '1px solid var(--shop-border)', borderRadius: '12px', padding: '15px', zIndex: 1000,
+                boxShadow: '0 10px 30px rgba(0,0,0,0.5)'
+              }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--shop-border)', paddingBottom: '10px', marginBottom: '10px' }}>
+                  <h3 style={{ margin: 0 }}>Your Basket</h3>
+                  <button onClick={() => setShowCartModal(false)} style={{ background: 'none', border: 'none', color: 'var(--shop-text)', cursor: 'pointer' }}><i className="fa-solid fa-xmark"></i></button>
+                </div>
+                {cart.length === 0 ? (
+                  <p style={{ textAlign: 'center', color: '#888', padding: '20px 0' }}>Your basket is empty.</p>
+                ) : (
+                  <>
+                    <div style={{ maxHeight: '300px', overflowY: 'auto' }}>
+                      {cart.map((item, idx) => (
+                        <div key={idx} style={{ display: 'flex', gap: '10px', marginBottom: '15px', alignItems: 'center' }}>
+                          <img src={item.pkg.image || "https://i.imgur.com/Kz8V5wN.png"} style={{ width: '40px', height: '40px', borderRadius: '6px', objectFit: 'cover' }} />
+                          <div style={{ flex: 1 }}>
+                            <div style={{ fontSize: '0.9rem', fontWeight: 'bold' }}>{item.pkg.name}</div>
+                            <div style={{ fontSize: '0.8rem', color: 'var(--accent-color)' }}>{item.qty}x {item.pkg.currency} {item.pkg.total_price}</div>
+                          </div>
+                          <button style={{ background: 'none', border: 'none', color: '#ff4444', cursor: 'pointer' }} onClick={() => setCart(prev => prev.filter(i => i.pkg.id !== item.pkg.id))}>
+                            <i className="fa-solid fa-trash"></i>
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                    <div style={{ borderTop: '1px solid var(--shop-border)', paddingTop: '10px', marginTop: '10px' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 'bold', marginBottom: '15px' }}>
+                        <span>Total:</span>
+                        <span style={{ color: 'var(--accent-color)' }}>{cart[0]?.pkg.currency} {cart.reduce((sum, item) => sum + (item.pkg.total_price * item.qty), 0).toFixed(2)}</span>
+                      </div>
+                      
+                      <div style={{ marginBottom: '10px' }}>
+                        <input 
+                          type="text" 
+                          value={mcUsername}
+                          onChange={e => {
+                            setMcUsername(e.target.value);
+                            localStorage.setItem('mcUsername', e.target.value);
+                          }}
+                          placeholder="Minecraft Username"
+                          className="clean-input"
+                          style={{ padding: '10px', width: '100%', fontSize: '0.9rem' }}
+                        />
+                      </div>
+                      <button className="btn-cyan w-full" onClick={handleCheckout} disabled={loadingPkg === -1 || !mcUsername} style={{ padding: '10px' }}>
+                        {loadingPkg === -1 ? <i className="fa-solid fa-spinner fa-spin"></i> : "Secure Checkout"}
+                      </button>
+                    </div>
+                  </>
+                )}
+              </div>
             )}
-            <span style={{ marginLeft: '10px', fontWeight: 'bold' }}>Cart</span>
           </div>
 
           <div className="currency-selector-wrapper">
@@ -446,7 +506,7 @@ export default function ShopClient({ initialCategories }: { initialCategories: a
                             onClick={() => handleAddToCart(pkg)}
                             disabled={loadingPkg === pkg.id}
                           >
-                            {loadingPkg === pkg.id ? <i className="fa-solid fa-spinner fa-spin"></i> : "Buy Now"}
+                            {loadingPkg === pkg.id ? <i className="fa-solid fa-spinner fa-spin"></i> : "Add to Basket"}
                           </button>
                           <button className="btn-info" onClick={() => setSelectedPkg(pkg)}>
                             <i className="fa-solid fa-circle-info"></i>
@@ -522,49 +582,53 @@ export default function ShopClient({ initialCategories }: { initialCategories: a
                 </button>
               </div>
             </div>
-            <div className="modal-body" style={{textAlign: 'left'}}>
-               {selectedImage && (
-                 <div className="modal-image-center">
-                   <img src={selectedImage} alt={selectedPkg.name} />
-                 </div>
-               )}
-               {selectedPkg.media && selectedPkg.media.length > 1 && (
-                 <div className="modal-gallery-thumbs">
-                   {selectedPkg.media.map((m: any) => (
-                     <img 
-                       key={m.url} 
-                       src={m.url} 
-                       alt="Thumbnail" 
-                       onClick={() => setSelectedImage(m.url)}
-                       className={selectedImage === m.url ? 'active' : ''}
-                     />
-                   ))}
-                 </div>
-               )}
-               <div className="modal-price-large">{selectedPkg.total_price} {selectedPkg.currency}</div>
+            <div className="modal-body" style={{textAlign: 'left', display: 'flex', flexDirection: 'column', maxHeight: '70vh'}}>
+               <div style={{ flex: 1, overflowY: 'auto', paddingRight: '10px' }}>
+                 {selectedImage && (
+                   <div className="modal-image-center">
+                     <img src={selectedImage} alt={selectedPkg.name} />
+                   </div>
+                 )}
+                 {selectedPkg.media && selectedPkg.media.length > 1 && (
+                   <div className="modal-gallery-thumbs">
+                     {selectedPkg.media.map((m: any) => (
+                       <img 
+                         key={m.url} 
+                         src={m.url} 
+                         alt="Thumbnail" 
+                         onClick={() => setSelectedImage(m.url)}
+                         className={selectedImage === m.url ? 'active' : ''}
+                       />
+                     ))}
+                   </div>
+                 )}
+                 <div className="modal-price-large">{selectedPkg.total_price} {selectedPkg.currency}</div>
+                 
+                 <div 
+                   className="modal-desc html-desc" 
+                   dangerouslySetInnerHTML={{ __html: (() => {
+                     if (!selectedPkg.description) return '';
+                     let html = selectedPkg.description;
+                     html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+                     html = html.replace(/<p>##\s*(.*?)<\/p>/g, '<h2>$1</h2>');
+                     html = html.replace(/##\s*(.*?)(<br|<\/p>|\n)/g, '<h2>$1</h2>$2');
+                     html = html.replace(/<p>\*\s*(.*?)<\/p>/g, '<li>$1</li>');
+                     html = html.replace(/<p>---<\/p>/g, '<hr />');
+                     return html;
+                   })() }} 
+                 />
+               </div>
                
-               <div 
-                 className="modal-desc html-desc" 
-                 dangerouslySetInnerHTML={{ __html: (() => {
-                   if (!selectedPkg.description) return '';
-                   let html = selectedPkg.description;
-                   html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-                   html = html.replace(/<p>##\s*(.*?)<\/p>/g, '<h2>$1</h2>');
-                   html = html.replace(/##\s*(.*?)(<br|<\/p>|\n)/g, '<h2>$1</h2>$2');
-                   html = html.replace(/<p>\*\s*(.*?)<\/p>/g, '<li>$1</li>');
-                   html = html.replace(/<p>---<\/p>/g, '<hr />');
-                   return html;
-                 })() }} 
-               />
-               
-               <button 
-                  className="btn-submit"
-                  style={{width: '100%', marginTop: '20px', padding: '15px', fontSize: '1.1rem'}}
-                  onClick={() => handleAddToCart(selectedPkg)}
-                  disabled={loadingPkg === selectedPkg.id}
-                >
-                  {loadingPkg === selectedPkg.id ? "Processing..." : "Add to Basket"}
-                </button>
+               <div style={{ paddingTop: '15px', borderTop: '1px solid var(--shop-border)', marginTop: '10px' }}>
+                 <button 
+                    className="btn-submit"
+                    style={{width: '100%', padding: '15px', fontSize: '1.1rem'}}
+                    onClick={() => handleAddToCart(selectedPkg)}
+                    disabled={loadingPkg === selectedPkg.id}
+                  >
+                    {loadingPkg === selectedPkg.id ? "Processing..." : "Add to Basket"}
+                  </button>
+               </div>
             </div>
           </div>
         </div>
@@ -980,82 +1044,7 @@ export default function ShopClient({ initialCategories }: { initialCategories: a
           .shop-sidebar { width: 100%; }
         }
       `}} />
-      {/* Cart Modal */}
-      {showCartModal && (
-        <div className="modal-overlay" onClick={() => setShowCartModal(false)}>
-          <div className="clean-modal cart-modal" onClick={e => e.stopPropagation()} style={{ maxWidth: '600px' }}>
-            <div className="modal-header">
-              <h2>Your Cart <i className="fa-solid fa-cart-shopping"></i></h2>
-              <button className="btn-close" onClick={() => setShowCartModal(false)}>
-                <i className="fa-solid fa-xmark"></i>
-              </button>
-            </div>
-            <div className="modal-body" style={{textAlign: 'left', padding: '20px'}}>
-              {cart.length === 0 ? (
-                <p style={{ textAlign: 'center', fontSize: '1.2rem', color: '#888' }}>Your cart is empty.</p>
-              ) : (
-                <div className="cart-items-list" style={{ marginBottom: '20px' }}>
-                  {cart.map((item, idx) => (
-                    <div key={idx} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #333', padding: '15px 0' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
-                        <img src={item.pkg.image || "https://i.imgur.com/Kz8V5wN.png"} style={{ width: '50px', height: '50px', borderRadius: '8px', objectFit: 'cover' }} />
-                        <div>
-                          <h4 style={{ margin: 0, fontSize: '1.1rem' }}>{item.pkg.name}</h4>
-                          <div style={{ color: 'var(--accent-color)' }}>{item.pkg.currency} {item.pkg.total_price}</div>
-                        </div>
-                      </div>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                        <div style={{ background: '#222', display: 'flex', borderRadius: '6px', overflow: 'hidden' }}>
-                          <button style={{ background: 'none', border: 'none', color: 'white', padding: '5px 10px', cursor: 'pointer' }} 
-                            onClick={() => setCart(prev => prev.map(i => i.pkg.id === item.pkg.id ? { ...i, qty: Math.max(1, i.qty - 1) } : i))}>-</button>
-                          <div style={{ padding: '5px 10px', background: '#111' }}>{item.qty}</div>
-                          <button style={{ background: 'none', border: 'none', color: 'white', padding: '5px 10px', cursor: 'pointer' }}
-                            onClick={() => {
-                              if (item.pkg.disable_quantity) {
-                                alert("You can only buy one of this item.");
-                                return;
-                              }
-                              setCart(prev => prev.map(i => i.pkg.id === item.pkg.id ? { ...i, qty: i.qty + 1 } : i));
-                            }}>+</button>
-                        </div>
-                        <button style={{ background: 'rgba(255,0,0,0.2)', color: '#ff4444', border: 'none', padding: '8px 12px', borderRadius: '6px', cursor: 'pointer' }}
-                          onClick={() => setCart(prev => prev.filter(i => i.pkg.id !== item.pkg.id))}>
-                          <i className="fa-solid fa-trash"></i>
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-                  
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '20px', fontSize: '1.5rem', fontWeight: 'bold' }}>
-                    <span>Total:</span>
-                    <span style={{ color: 'var(--accent-color)' }}>{cart[0].pkg.currency} {cart.reduce((sum, item) => sum + (item.pkg.total_price * item.qty), 0).toFixed(2)}</span>
-                  </div>
-
-                  <hr style={{ border: '1px solid #333', margin: '20px 0' }} />
-                  
-                  <h4 style={{ marginBottom: '10px' }}>Minecraft Username</h4>
-                  <p style={{ fontSize: '0.9rem', color: '#aaa', marginBottom: '10px' }}>Enter your exact username to receive the items in-game.</p>
-                  <input 
-                    type="text" 
-                    value={mcUsername}
-                    onChange={e => {
-                      setMcUsername(e.target.value);
-                      localStorage.setItem('mcUsername', e.target.value);
-                    }}
-                    placeholder="Your Minecraft Username"
-                    className="clean-input"
-                    style={{ padding: '15px', marginBottom: '20px' }}
-                  />
-                  
-                  <button className="btn-cyan w-full" onClick={handleCheckout} disabled={loadingPkg === -1 || !mcUsername || cart.length === 0} style={{ padding: '15px', fontSize: '1.2rem' }}>
-                    {loadingPkg === -1 ? <i className="fa-solid fa-spinner fa-spin"></i> : <><i className="fa-solid fa-lock"></i> Secure Checkout</>}
-                  </button>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Removed the old Cart Modal screen because it's now a dropdown */}
 
     </div>
   );
