@@ -21,7 +21,6 @@ export default function ShopClient({ initialCategories }: { initialCategories: a
     if (saved) {
       setMcUsername(saved);
     } else {
-      // Auto-show login modal if no username is set
       setShowLoginModal(true);
     }
 
@@ -73,653 +72,564 @@ export default function ShopClient({ initialCategories }: { initialCategories: a
   const activeCategory = initialCategories.find(c => c.id === activeCategoryId) || initialCategories[0];
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', paddingBottom: '100px', maxWidth: '1200px', margin: '0 auto' }}>
+    <div className="premium-shop-wrapper">
       
-      {/* Top Banner Area like Cobblemon Islands */}
-      <div className="shop-top-banner">
-        <div className="server-info">
-          <div className="ip-box">
-             <i className="fa-solid fa-play" style={{ color: '#fbbf24', fontSize: '1.5rem' }}></i>
-             <div>
-               <div style={{ fontWeight: 'bold', fontSize: '1.2rem', color: 'white' }}>play.pokefun.in</div>
-               <div style={{ fontSize: '0.85rem', color: '#fbbf24' }}>Join our amazing server!</div>
-             </div>
-          </div>
-          <div className="social-links">
-             <a href="https://discord.gg/pokefun" target="_blank" className="social-btn discord"><i className="fa-brands fa-discord"></i></a>
-             <a href="https://youtube.com/@Pokefunsmp" target="_blank" className="social-btn youtube"><i className="fa-brands fa-youtube"></i></a>
-          </div>
-        </div>
-        
-        {/* User Login/Cart Status */}
-        <div className="user-status-box" onClick={() => setShowLoginModal(true)} style={{ cursor: 'pointer' }}>
-           {mcUsername ? (
-             <div className="user-logged-in">
-               <img src={`https://mc-heads.net/avatar/${mcUsername}`} alt={mcUsername} />
-               <div>
-                 <div style={{ fontSize: '0.8rem', color: '#aaa' }}>Guest's Bag</div>
-                 <div style={{ fontWeight: 'bold', color: 'white' }}>{mcUsername}</div>
-               </div>
-             </div>
-           ) : (
-             <div className="user-logged-in">
-               <img src="https://mc-heads.net/avatar/steve" alt="Guest" />
-               <div>
-                 <div style={{ fontSize: '0.8rem', color: '#aaa' }}>Guest's Bag</div>
-                 <div style={{ fontWeight: 'bold', color: '#fbbf24' }}>click-to-login</div>
-               </div>
-             </div>
-           )}
-        </div>
-      </div>
+      {/* Animated Background Gradients */}
+      <div className="bg-glow bg-glow-1"></div>
+      <div className="bg-glow bg-glow-2"></div>
 
-      <div className="shop-layout">
+      <div className="shop-content-container">
         
-        {/* Sidebar */}
-        <div className="shop-sidebar">
-          <div className="sidebar-box menu-box">
-            <h3 className="sidebar-title">START SHOPPING</h3>
-            <ul className="category-list">
-              {initialCategories.map(category => (
-                <li key={category.id}>
-                  <button 
-                    onClick={() => setActiveCategoryId(category.id)}
-                    className={activeCategoryId === category.id ? 'cat-btn active' : 'cat-btn'}
-                  >
-                    {category.name}
+        {/* TOP RIGHT NAV (Giftcard, Currency, Login) */}
+        <div className="shop-top-right-nav slide-down">
+          <button className="top-nav-btn glass-panel" onClick={() => alert("Giftcards coming soon!")}>
+            <i className="fa-solid fa-gift"></i> check giftcard
+          </button>
+          <button className="top-nav-btn glass-panel">
+            <i className="fa-solid fa-dollar-sign"></i> USD
+          </button>
+          
+          <div className="user-status-box glass-panel" onClick={() => setShowLoginModal(true)}>
+             {mcUsername ? (
+               <div className="user-logged-in">
+                 <div className="user-text-info">
+                   <div className="user-label">Guest's Bag</div>
+                   <div className="user-name">{mcUsername}</div>
+                 </div>
+                 <div className="mc-avatar-container">
+                   <img src={`https://mc-heads.net/avatar/${mcUsername}`} alt={mcUsername} className="mc-face" />
+                 </div>
+               </div>
+             ) : (
+               <div className="user-logged-in">
+                 <div className="user-text-info">
+                   <div className="user-label" style={{color: 'white'}}>Guest's Bag</div>
+                   <div className="user-name highlight-text">click to login</div>
+                 </div>
+                 <div className="mc-avatar-container">
+                   <img src="https://mc-heads.net/avatar/steve" alt="Guest" className="mc-face" />
+                 </div>
+               </div>
+             )}
+          </div>
+        </div>
+
+        {/* LOGO AND IP AREA */}
+        <div className="shop-header-area fade-in-up">
+           <div className="shop-logo-container">
+             {/* Text Logo as fallback if image isn't available */}
+             <h1 className="shop-main-logo">
+               <span className="logo-poke">POKE</span>
+               <span className="logo-fun">FUN</span>
+               <div className="logo-sub">OFFICIAL STORE</div>
+             </h1>
+           </div>
+
+           <div className="shop-server-info">
+              <div className="ip-box glass-panel">
+                 <i className="fa-solid fa-play" style={{ color: '#fbbf24', fontSize: '1.8rem' }}></i>
+                 <div>
+                   <div className="ip-text">play.pokefun.in</div>
+                   <div className="ip-sub"><span style={{color: '#fbbf24', fontWeight: 'bold'}}>345</span> players online</div>
+                 </div>
+              </div>
+              <div className="social-links">
+                 <a href="#" className="social-btn twitter"><i className="fa-brands fa-twitter"></i></a>
+                 <a href="https://discord.gg/pokefun" target="_blank" className="social-btn discord"><i className="fa-brands fa-discord"></i></a>
+              </div>
+           </div>
+        </div>
+
+        {/* ANNOUNCEMENT BANNER */}
+        <div className="announcement-banner glass-panel fade-in-up">
+           <div className="banner-icon">
+             <i className="fa-solid fa-hourglass-half"></i>
+           </div>
+           <div className="banner-text">
+             <div className="banner-top">Only 16d 17h left before the Summer Sale is gone for good!</div>
+             <div className="banner-main">The Pokefun Summer Crate is now available for a limited time!</div>
+           </div>
+        </div>
+
+        <div className="shop-layout">
+          
+          {/* Sidebar */}
+          <div className="shop-sidebar fade-in-left">
+            <div className="sidebar-box glass-panel menu-box">
+              <h3 className="sidebar-title">START SHOPPING</h3>
+              <ul className="category-list">
+                {/* Home link placeholder */}
+                <li>
+                  <button className="cat-btn" onClick={() => router.push('/')}>
+                    <i className="fa-solid fa-earth-americas" style={{marginRight: '10px', color: '#3b82f6'}}></i> Home
                   </button>
                 </li>
-              ))}
-            </ul>
-          </div>
-          
-          <div className="sidebar-box widget-box">
-            <h3 className="sidebar-title">SUPPORT GOAL</h3>
-            <div style={{ background: '#1a1a1a', padding: '15px', borderRadius: '8px', border: '1px solid #333', textAlign: 'center' }}>
-              <p style={{ fontSize: '0.9rem', color: '#ccc', marginBottom: '10px' }}>Help us reach our monthly server goal!</p>
-              <div className="progress-bar-bg">
-                <div className="progress-bar-fill" style={{ width: '45%' }}></div>
+                {initialCategories.map(category => (
+                  <li key={category.id}>
+                    <button 
+                      onClick={() => setActiveCategoryId(category.id)}
+                      className={activeCategoryId === category.id ? 'cat-btn active' : 'cat-btn'}
+                    >
+                      {category.name}
+                      {activeCategoryId === category.id && <span className="active-dot"></span>}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            
+            <div className="sidebar-box glass-panel widget-box">
+              <h3 className="sidebar-title">COMMUNITY GOAL</h3>
+              <div className="goal-container">
+                <p className="goal-text">When the Community Goal is reached, all online players will receive rewards!</p>
+                <div className="progress-bar-bg">
+                  <div className="progress-bar-fill shine-anim" style={{ width: '45%' }}></div>
+                </div>
+                <div className="goal-percentage">45% completed</div>
               </div>
-              <div style={{ fontSize: '0.8rem', color: '#fbbf24', marginTop: '5px', fontWeight: 'bold' }}>45% Completed</div>
             </div>
           </div>
+
+          {/* Main Content */}
+          <div className="shop-main fade-in-up">
+            {activeCategory ? (
+              <div className="category-container glass-panel">
+                <div className="category-header">
+                  <h2>WELCOME TO THE OFFICIAL STORE OF</h2>
+                  <h1 style={{color: '#fbbf24', fontSize: '2rem', margin: '5px 0 15px 0'}}>Pokefun Network</h1>
+                  <div className="cat-desc" style={{textAlign: 'center', marginBottom: '20px'}}>
+                     Every purchase supports the server and helps us grow with future content updates!
+                  </div>
+                  
+                  {/* Category Description Banner */}
+                  {activeCategory.description && (
+                     <div className="category-banner-image" dangerouslySetInnerHTML={{ __html: activeCategory.description }} />
+                  )}
+                </div>
+                
+                <div className="package-list">
+                  <div className="package-list-header">
+                     <i className="fa-solid fa-list" style={{marginRight: '10px', color: '#fbbf24'}}></i> {activeCategory.name}
+                  </div>
+                  {activeCategory.packages.map((pkg: any, index: number) => (
+                    <div 
+                      key={pkg.id} 
+                      className="package-list-item" 
+                      style={{ animationDelay: \`\${index * 0.1}s\` }}
+                    >
+                      <div className="pkg-left" onClick={() => setSelectedPkg(pkg)}>
+                        {pkg.image ? (
+                          <img src={pkg.image} alt={pkg.name} className="pkg-image" />
+                        ) : (
+                          <div className="pkg-image-fallback"><i className="fa-solid fa-box-open"></i></div>
+                        )}
+                        <div className="image-glow"></div>
+                      </div>
+                      
+                      <div className="pkg-middle" onClick={() => setSelectedPkg(pkg)}>
+                        <h3 className="pkg-name">{pkg.name}</h3>
+                        <div className="pkg-price">
+                          <span className="price-amount">{pkg.total_price}</span> 
+                          <span className="currency-code">{pkg.currency}</span>
+                        </div>
+                      </div>
+                      
+                      <div className="pkg-right">
+                        <button className="btn-info" onClick={() => setSelectedPkg(pkg)}>!</button>
+                        <button 
+                          className="btn-buy premium-btn"
+                          onClick={() => handleBuy(pkg.id)}
+                          disabled={loadingPkg === pkg.id}
+                        >
+                          <div className="btn-content">
+                            {loadingPkg === pkg.id ? <i className="fa-solid fa-spinner fa-spin"></i> : "+ Buy"}
+                          </div>
+                          <div className="btn-shine"></div>
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                {activeCategory.packages.length === 0 && (
+                  <div className="empty-category">
+                    <i className="fa-solid fa-box-open empty-icon"></i>
+                    <p>No packages available in this category.</p>
+                  </div>
+                )}
+              </div>
+            ) : (
+               <div className="empty-category glass-panel">No categories found.</div>
+            )}
+          </div>
+
         </div>
 
-        {/* Main Content */}
-        <div className="shop-main">
-          {activeCategory ? (
-            <div className="category-container">
-              <div className="category-header">
-                <h2><i className="fa-solid fa-list" style={{ color: '#fbbf24', marginRight: '10px' }}></i> {activeCategory.name}</h2>
-                <div className="cat-desc" dangerouslySetInnerHTML={{ __html: activeCategory.description || "Select a package below to purchase." }} />
+        {/* MC Username Login Modal */}
+        {showLoginModal && (
+          <div className="pkg-modal-overlay glass-overlay" onClick={() => setShowLoginModal(false)}>
+            <div className="mc-login-modal glass-panel modal-pop" onClick={e => e.stopPropagation()}>
+              <div className="modal-header-premium">
+                <h2>Minecraft Account</h2>
               </div>
-              
-              <div className="package-list">
-                {activeCategory.packages.map((pkg: any) => (
-                  <div key={pkg.id} className="package-list-item">
-                    <div className="pkg-left" onClick={() => setSelectedPkg(pkg)}>
-                      {pkg.image ? (
-                        <img src={pkg.image} alt={pkg.name} className="pkg-image" />
-                      ) : (
-                        <div className="pkg-image-fallback"><i className="fa-solid fa-box-open"></i></div>
-                      )}
-                    </div>
-                    
-                    <div className="pkg-middle" onClick={() => setSelectedPkg(pkg)}>
-                      <h3 className="pkg-name">{pkg.name}</h3>
-                      <div className="pkg-price">{pkg.total_price} {pkg.currency}</div>
-                    </div>
-                    
-                    <div className="pkg-right">
-                      <button className="btn-info" onClick={() => setSelectedPkg(pkg)}>!</button>
-                      <button 
-                        className="btn-buy"
-                        onClick={() => handleBuy(pkg.id)}
-                        disabled={loadingPkg === pkg.id}
-                      >
-                        {loadingPkg === pkg.id ? <i className="fa-solid fa-spinner fa-spin"></i> : "+ Buy"}
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-              {activeCategory.packages.length === 0 && (
-                <div style={{ textAlign: 'center', padding: '50px', color: '#888' }}>
-                  No packages available in this category.
+              <div className="modal-body-premium">
+                <div className="mc-steve-icon">
+                  <img src="https://mc-heads.net/avatar/steve/100" alt="Minecraft" />
                 </div>
-              )}
+                <p>Please enter your exact Minecraft username to receive your items in-game.</p>
+                <form onSubmit={handleSaveUsername} className="mc-form">
+                  <div className="input-wrapper">
+                    <i className="fa-solid fa-gamepad input-icon"></i>
+                    <input 
+                      type="text" 
+                      value={tempUsername}
+                      onChange={e => setTempUsername(e.target.value)}
+                      placeholder="Username"
+                      className="premium-input"
+                      autoFocus
+                    />
+                  </div>
+                  <button type="submit" className="premium-btn btn-submit-mc">
+                    <div className="btn-content">CONTINUE <i className="fa-solid fa-arrow-right"></i></div>
+                    <div className="btn-shine"></div>
+                  </button>
+                </form>
+              </div>
             </div>
-          ) : (
-             <div style={{ textAlign: 'center', padding: '100px 0', color: 'gray' }}>No categories found.</div>
-          )}
-        </div>
+          </div>
+        )}
+
+        {/* Package Detail Modal */}
+        {selectedPkg && (
+          <div className="pkg-modal-overlay glass-overlay" onClick={() => setSelectedPkg(null)}>
+            <div className="pkg-detail-modal glass-panel modal-pop" onClick={e => e.stopPropagation()}>
+              <button className="btn-close-premium" onClick={() => setSelectedPkg(null)}>
+                <i className="fa-solid fa-xmark"></i>
+              </button>
+              
+              <div className="pkg-modal-split">
+                <div className="pkg-modal-left">
+                   <div className="modal-image-wrapper">
+                     {selectedPkg.image ? (
+                       <img src={selectedPkg.image} alt={selectedPkg.name} className="modal-pkg-img" />
+                     ) : (
+                       <i className="fa-solid fa-box-open fallback-big"></i>
+                     )}
+                     <div className="modal-image-glow"></div>
+                   </div>
+                   <div className="modal-price-tag">
+                      {selectedPkg.total_price} {selectedPkg.currency}
+                   </div>
+                </div>
+                
+                <div className="pkg-modal-right">
+                  <h2 className="modal-title-premium">{selectedPkg.name}</h2>
+                  
+                  <div className="modal-scroll-desc custom-scrollbar">
+                    <div className="html-desc" dangerouslySetInnerHTML={{ __html: selectedPkg.description }} />
+                  </div>
+                  
+                  <div className="modal-checkout-area">
+                    <button 
+                      className="premium-btn btn-checkout"
+                      onClick={() => handleBuy(selectedPkg.id)}
+                      disabled={loadingPkg === selectedPkg.id}
+                    >
+                      <div className="btn-content">
+                        {loadingPkg === selectedPkg.id ? (
+                          <><i className="fa-solid fa-spinner fa-spin"></i> Processing...</>
+                        ) : (
+                          "Add to cart"
+                        )}
+                      </div>
+                      <div className="btn-shine"></div>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
 
       </div>
 
-      {/* MC Username Login Modal */}
-      {showLoginModal && (
-        <div className="pkg-modal-overlay" onClick={() => setShowLoginModal(false)}>
-          <div className="mc-login-modal" onClick={e => e.stopPropagation()}>
-            <div className="pkg-modal-header" style={{ justifyContent: 'center' }}>
-              <h2 style={{ color: '#fbbf24' }}>ENTER MINECRAFT USERNAME</h2>
-            </div>
-            <div className="pkg-modal-body" style={{ textAlign: 'center', padding: '40px 30px' }}>
-              <p style={{ color: '#ccc', marginBottom: '25px', fontSize: '1.1rem' }}>Please enter your Minecraft username to continue shopping.</p>
-              <form onSubmit={handleSaveUsername}>
-                <input 
-                  type="text" 
-                  value={tempUsername}
-                  onChange={e => setTempUsername(e.target.value)}
-                  placeholder="e.g. Notch"
-                  className="mc-username-input"
-                  autoFocus
-                />
-                <button type="submit" className="btn-mc-login">CONTINUE</button>
-              </form>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Package Detail Modal */}
-      {selectedPkg && (
-        <div className="pkg-modal-overlay" onClick={() => setSelectedPkg(null)}>
-          <div className="pkg-modal-container" onClick={e => e.stopPropagation()}>
-            <div className="pkg-modal-header">
-              <h2>{selectedPkg.name}</h2>
-              <button className="btn-close" onClick={() => setSelectedPkg(null)}><i className="fa-solid fa-xmark"></i></button>
-            </div>
-            
-            <div className="pkg-modal-body">
-              <div className="modal-scroll-area">
-                 {selectedPkg.image && (
-                   <div style={{ textAlign: 'center', marginBottom: '20px', background: 'rgba(0,0,0,0.2)', padding: '20px', borderRadius: '10px' }}>
-                     <img src={selectedPkg.image} alt={selectedPkg.name} style={{ maxHeight: '150px', objectFit: 'contain' }} />
-                   </div>
-                 )}
-                 <div className="modal-description" dangerouslySetInnerHTML={{ __html: selectedPkg.description }} />
-              </div>
-            </div>
-            
-            <div className="pkg-modal-footer">
-              <div className="modal-price">{selectedPkg.total_price} {selectedPkg.currency}</div>
-              <div className="modal-actions">
-                <button 
-                  className="btn-add-cart"
-                  onClick={() => handleBuy(selectedPkg.id)}
-                  disabled={loadingPkg === selectedPkg.id}
-                >
-                  {loadingPkg === selectedPkg.id ? 'Loading...' : 'Add to cart'}
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Styles for Shop Layout */}
+      {/* Ultra-Premium CSS Styles matching Cobblemon Islands Layout */}
       <style dangerouslySetInnerHTML={{__html: `
-        .shop-top-banner {
+        /* Base Variables & Wrappers */
+        .premium-shop-wrapper {
+          position: relative;
+          min-height: 100vh;
+          overflow-x: hidden;
+          background: #111; /* Very dark background */
+        }
+        
+        .shop-content-container {
+          position: relative;
+          z-index: 10;
+          display: flex;
+          flex-direction: column;
+          gap: 20px;
+          padding: 20px 20px 100px 20px;
+          max-width: 1100px;
+          margin: 0 auto;
+        }
+        
+        /* Animated Background Elements */
+        .bg-glow {
+          position: fixed;
+          border-radius: 50%;
+          filter: blur(120px);
+          opacity: 0.1;
+          z-index: 0;
+          animation: floatGlow 20s infinite alternate;
+        }
+        .bg-glow-1 { top: -10%; left: -5%; width: 600px; height: 600px; background: #fbbf24; }
+        .bg-glow-2 { bottom: 10%; right: -10%; width: 800px; height: 800px; background: #fbbf24; animation-delay: -10s; }
+        @keyframes floatGlow { 0% { transform: translate(0, 0) scale(1); } 100% { transform: translate(50px, 50px) scale(1.1); } }
+
+        /* Glassmorphism Panels */
+        .glass-panel {
+          background: #1a1a1a;
+          border: 1px solid rgba(251, 191, 36, 0.2);
+          box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+        }
+        
+        /* Top Right Nav */
+        .shop-top-right-nav {
+          display: flex;
+          justify-content: flex-end;
+          align-items: center;
+          gap: 15px;
+          margin-bottom: 20px;
+        }
+        
+        .top-nav-btn {
+          background: #111;
+          border: 1px solid #333;
+          color: white;
+          padding: 10px 20px;
+          border-radius: 20px;
+          font-weight: bold;
+          font-size: 0.9rem;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          transition: all 0.2s;
+        }
+        .top-nav-btn:hover { background: #222; border-color: #fbbf24; }
+        
+        .user-status-box {
+          background: #111;
+          border: 1px solid #333;
+          border-radius: 8px;
+          padding: 8px 15px;
+          cursor: pointer;
+          transition: all 0.2s;
+        }
+        .user-status-box:hover { border-color: #fbbf24; background: #222; }
+        
+        .user-logged-in { display: flex; align-items: center; gap: 15px; }
+        .user-text-info { text-align: right; }
+        .user-label { font-size: 0.8rem; font-weight: bold; }
+        .user-name { font-weight: 800; color: white; font-size: 1rem; }
+        .highlight-text { color: #fbbf24; }
+        
+        .mc-avatar-container { width: 35px; height: 35px; border-radius: 4px; overflow: hidden; }
+        .mc-face { width: 100%; height: 100%; object-fit: cover; }
+
+        /* Header Area (Logo + IP) */
+        .shop-header-area {
           display: flex;
           justify-content: space-between;
           align-items: center;
           margin-bottom: 20px;
-          gap: 20px;
           flex-wrap: wrap;
+          gap: 30px;
         }
         
-        .server-info {
-          display: flex;
-          gap: 20px;
-          align-items: center;
+        .shop-logo-container { flex-grow: 1; }
+        .shop-main-logo {
+          font-size: 3.5rem; font-weight: 900; margin: 0; line-height: 1; font-style: italic;
+          text-shadow: 2px 2px 0 #000, -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 0 5px 15px rgba(0,0,0,0.5);
         }
+        .logo-poke { color: white; }
+        .logo-fun { color: #fbbf24; }
+        .logo-sub { font-size: 1rem; color: #fbbf24; letter-spacing: 4px; text-transform: uppercase; font-style: normal; margin-top: 5px; text-shadow: none;}
+        
+        .shop-server-info { display: flex; align-items: center; gap: 25px; }
         
         .ip-box {
-          display: flex;
-          align-items: center;
-          gap: 15px;
-          background: rgba(0,0,0,0.6);
-          padding: 12px 25px;
-          border-radius: 50px;
-          border: 1px solid rgba(251, 191, 36, 0.3);
+          display: flex; align-items: center; gap: 15px; padding: 10px 20px; border-radius: 12px;
+          background: transparent; border: none;
         }
+        .ip-text { font-weight: 900; font-size: 1.3rem; color: white; letter-spacing: 0.5px; }
+        .ip-sub { font-size: 0.9rem; color: #ccc; }
         
-        .social-links {
-          display: flex;
-          gap: 10px;
-        }
+        .social-links { display: flex; gap: 15px; flex-direction: column; }
         
         .social-btn {
-          width: 45px;
-          height: 45px;
-          border-radius: 50%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-size: 1.2rem;
-          color: white;
-          background: rgba(0,0,0,0.6);
-          border: 1px solid rgba(255,255,255,0.1);
-          transition: all 0.2s;
+          width: 45px; height: 45px; border-radius: 10px; display: flex; align-items: center; justify-content: center;
+          font-size: 1.5rem; color: #fbbf24; background: #1a1a1a; transition: all 0.2s;
         }
-        
-        .social-btn.discord:hover { background: #5865F2; border-color: #5865F2; }
-        .social-btn.youtube:hover { background: #FF0000; border-color: #FF0000; }
-        
-        .user-status-box {
-          background: rgba(0,0,0,0.6);
-          border: 1px solid rgba(255,255,255,0.1);
-          border-radius: 50px;
-          padding: 8px 20px;
-          transition: background 0.2s;
+        .social-btn:hover { background: #fbbf24; color: black; transform: scale(1.1) rotate(5deg); }
+
+        /* Announcement Banner */
+        .announcement-banner {
+          display: flex; align-items: center; gap: 20px; padding: 15px 25px;
+          border-radius: 8px; border: 2px solid #fbbf24; background: #111;
+          margin-bottom: 20px; box-shadow: 0 0 20px rgba(251,191,36,0.1);
         }
+        .banner-icon { font-size: 2rem; color: #fbbf24; }
+        .banner-top { font-size: 0.9rem; font-weight: bold; color: #fbbf24; margin-bottom: 5px; }
+        .banner-main { font-size: 1.1rem; color: white; font-weight: bold; }
+
+        /* Shop Layout */
+        .shop-layout { display: flex; gap: 25px; align-items: flex-start; }
         
-        .user-status-box:hover {
-          background: rgba(255,255,255,0.1);
-        }
+        .shop-sidebar { width: 250px; flex-shrink: 0; display: flex; flex-direction: column; gap: 20px; }
         
-        .user-logged-in {
-          display: flex;
-          align-items: center;
-          gap: 12px;
-        }
+        .sidebar-title { font-size: 1rem; color: #fbbf24; text-align: center; margin-bottom: 15px; font-weight: 800; letter-spacing: 1px; }
+        .sidebar-box { border-radius: 8px; padding: 20px; border: 1px solid #fbbf24; background: #111; }
         
-        .user-logged-in img {
-          width: 35px;
-          height: 35px;
-          border-radius: 4px; /* Minecraft heads are usually square */
-        }
-        
-        .mc-login-modal {
-          background: #1a1a1a;
-          width: 100%;
-          max-width: 450px;
-          border-radius: 8px;
-          display: flex;
-          flex-direction: column;
-          box-shadow: 0 10px 30px rgba(0,0,0,0.8);
-          animation: slideDown 0.3s ease;
-          border: 1px solid #fbbf24;
-        }
-        
-        .mc-username-input {
-          width: 100%;
-          padding: 15px;
-          background: #000;
-          border: 1px solid #333;
-          color: white;
-          font-size: 1.2rem;
-          border-radius: 8px;
-          margin-bottom: 20px;
-          text-align: center;
-        }
-        
-        .mc-username-input:focus {
-          outline: none;
-          border-color: #fbbf24;
-        }
-        
-        .btn-mc-login {
-          width: 100%;
-          background: #fbbf24;
-          color: black;
-          border: none;
-          padding: 15px;
-          font-size: 1.2rem;
-          font-weight: bold;
-          border-radius: 8px;
-          cursor: pointer;
-          transition: background 0.2s;
-        }
-        
-        .btn-mc-login:hover {
-          background: #f59e0b;
-        }
-        
-        .shop-layout {
-          display: flex;
-          gap: 25px;
-          align-items: flex-start;
-        }
-        
-        .shop-sidebar {
-          width: 280px;
-          flex-shrink: 0;
-          display: flex;
-          flex-direction: column;
-          gap: 20px;
-        }
-        
-        .sidebar-title {
-          font-size: 1rem;
-          color: #fbbf24;
-          text-align: center;
-          margin-bottom: 15px;
-          font-weight: 800;
-          letter-spacing: 1px;
-        }
-        
-        .sidebar-box {
-          background: #222;
-          border-radius: 12px;
-          padding: 20px;
-          border: 1px solid #333;
-        }
-        
-        .menu-box {
-          padding: 20px 10px;
-        }
-        
-        .category-list {
-          list-style: none;
-          padding: 0;
-          display: flex;
-          flex-direction: column;
-        }
+        .category-list { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 5px; }
         
         .cat-btn {
-          width: 100%;
-          text-align: left;
-          background: transparent;
-          border: none;
-          padding: 15px 20px;
-          color: #ccc;
-          font-size: 1.05rem;
-          font-weight: bold;
-          cursor: pointer;
-          transition: all 0.2s;
-          border-left: 3px solid transparent;
+          width: 100%; text-align: left; background: transparent; border: none;
+          padding: 12px 15px; color: white; font-size: 1.1rem; font-weight: bold;
+          cursor: pointer; transition: all 0.2s ease; border-radius: 6px;
         }
+        .cat-btn:hover { background: #222; }
+        .cat-btn.active { background: #222; border-left: 4px solid #fbbf24; }
         
-        .cat-btn:hover {
-          background: rgba(255,255,255,0.05);
-          color: white;
-        }
+        .goal-container { text-align: center; }
+        .goal-text { font-size: 0.85rem; color: #ccc; margin-bottom: 15px; line-height: 1.4; font-weight: bold; }
+        .progress-bar-bg { width: 100%; height: 20px; background: #222; border: 1px solid #fbbf24; overflow: hidden; }
+        .progress-bar-fill { height: 100%; background: #fbbf24; }
+        .goal-percentage { font-size: 0.85rem; color: white; margin-top: 10px; font-weight: bold; }
+
+        /* Main Content List */
+        .shop-main { flex-grow: 1; min-width: 0; }
         
-        .cat-btn.active {
-          background: rgba(251, 191, 36, 0.1);
-          border-left: 3px solid #fbbf24;
-          color: #fbbf24;
-        }
+        .category-container { border-radius: 8px; overflow: hidden; background: #111; border: 1px solid #333; }
         
-        .progress-bar-bg {
-          width: 100%;
-          height: 12px;
-          background: #333;
-          border-radius: 10px;
-          overflow: hidden;
-        }
+        .category-header { padding: 30px; text-align: center; border-bottom: 1px solid #222; }
+        .category-header h2 { color: white; font-size: 1rem; letter-spacing: 2px; margin: 0; font-weight: bold;}
+        .category-banner-image img { max-width: 100%; border-radius: 8px; margin-top: 20px; }
         
-        .progress-bar-fill {
-          height: 100%;
-          background: #fbbf24;
-          border-radius: 10px;
-        }
-        
-        .shop-main {
-          flex-grow: 1;
-          min-width: 0;
-        }
-        
-        .category-container {
-          background: #222;
-          border-radius: 12px;
-          border: 1px solid #333;
-          overflow: hidden;
-        }
-        
-        .category-header {
-          background: #1a1a1a;
-          padding: 20px 25px;
-          border-bottom: 1px solid #333;
-        }
-        
-        .category-header h2 {
-          color: white;
-          font-size: 1.5rem;
-          margin: 0 0 10px 0;
-          display: flex;
-          align-items: center;
-        }
-        
-        .cat-desc {
-          color: #aaa;
-          font-size: 0.95rem;
-          line-height: 1.5;
-        }
-        
-        .package-list {
-          display: flex;
-          flex-direction: column;
-        }
+        .package-list { display: flex; flex-direction: column; }
+        .package-list-header { background: #fbbf24; color: black; font-weight: 900; padding: 12px 20px; font-size: 1.2rem; }
         
         .package-list-item {
-          display: flex;
-          align-items: center;
-          padding: 20px 25px;
-          border-bottom: 1px solid #333;
-          transition: background 0.2s;
+          display: flex; align-items: center; padding: 20px; border-bottom: 1px solid #222;
+          background: #1a1a1a; transition: all 0.2s;
         }
-        
-        .package-list-item:last-child {
-          border-bottom: none;
-        }
-        
-        .package-list-item:hover {
-          background: rgba(255,255,255,0.02);
-        }
+        .package-list-item:hover { background: #222; }
         
         .pkg-left {
-          width: 80px;
-          height: 80px;
-          flex-shrink: 0;
-          margin-right: 20px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          background: rgba(0,0,0,0.2);
-          border-radius: 50%;
-          padding: 10px;
-          cursor: pointer;
+          width: 70px; height: 70px; flex-shrink: 0; margin-right: 20px;
+          display: flex; align-items: center; justify-content: center;
+          background: #111; border-radius: 50%; padding: 10px; border: 1px solid #333; cursor: pointer;
         }
+        .pkg-image { max-width: 90%; max-height: 90%; object-fit: contain; transition: transform 0.2s; }
+        .package-list-item:hover .pkg-image { transform: scale(1.1); }
+        .pkg-image-fallback { font-size: 2.5rem; color: #444; }
         
-        .pkg-image {
-          max-width: 100%;
-          max-height: 100%;
-          object-fit: contain;
-        }
+        .pkg-middle { flex-grow: 1; cursor: pointer; }
+        .pkg-name { color: white; font-size: 1.2rem; margin: 0 0 5px 0; font-weight: bold; }
+        .pkg-price { color: #aaa; font-size: 0.9rem; font-weight: bold; }
+        .price-amount { color: white; font-size: 1rem; }
         
-        .pkg-image-fallback {
-          font-size: 2.5rem;
-          color: #555;
-        }
-        
-        .pkg-middle {
-          flex-grow: 1;
-          cursor: pointer;
-        }
-        
-        .pkg-name {
-          color: white;
-          font-size: 1.2rem;
-          margin: 0 0 5px 0;
-        }
-        
-        .pkg-price {
-          color: #aaa;
-          font-size: 0.9rem;
-        }
-        
-        .pkg-right {
-          display: flex;
-          align-items: center;
-          gap: 10px;
-        }
+        .pkg-right { display: flex; align-items: center; gap: 10px; }
         
         .btn-info {
-          width: 40px;
-          height: 40px;
-          background: #3b82f6;
-          color: white;
-          border: none;
-          border-radius: 8px;
-          font-size: 1.2rem;
-          font-weight: bold;
-          cursor: pointer;
-          transition: background 0.2s;
+          width: 40px; height: 40px; background: #3b82f6; color: white; border: none; border-radius: 6px;
+          font-size: 1.2rem; font-weight: bold; cursor: pointer; transition: all 0.2s;
         }
-        
         .btn-info:hover { background: #2563eb; }
         
         .btn-buy {
-          background: #10b981;
-          color: white;
-          border: none;
-          border-radius: 8px;
-          padding: 0 20px;
-          height: 40px;
-          font-size: 1rem;
-          font-weight: bold;
-          cursor: pointer;
-          transition: background 0.2s;
+          background: #10b981; color: white; border: none; border-radius: 6px; padding: 0 20px;
+          height: 40px; font-size: 1rem; font-weight: bold; cursor: pointer; transition: all 0.2s;
         }
-        
         .btn-buy:hover:not(:disabled) { background: #059669; }
         .btn-buy:disabled { opacity: 0.6; cursor: not-allowed; }
         
-        /* Modal Styles */
-        .pkg-modal-overlay {
-          position: fixed;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          background: rgba(0,0,0,0.85);
-          z-index: 1000;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          padding: 20px;
+        .premium-btn { position: relative; overflow: hidden; }
+        .btn-content { position: relative; z-index: 2; }
+        .btn-shine {
+          position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
+          background: linear-gradient(to right, transparent, rgba(255,255,255,0.3), transparent);
+          transform: skewX(-20deg); z-index: 1;
+        }
+        .premium-btn:hover .btn-shine { animation: shine 0.6s ease; }
+        @keyframes shine { 100% { left: 200%; } }
+
+        /* Modals */
+        .glass-overlay { background: rgba(0,0,0,0.85); backdrop-filter: blur(5px); }
+        .modal-pop { animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        @keyframes popIn { 0% { transform: scale(0.9) translateY(20px); opacity: 0; } 100% { transform: scale(1) translateY(0); opacity: 1; } }
+
+        /* MC Login Modal */
+        .mc-login-modal { max-width: 400px; padding: 0; overflow: hidden; background: #111; border: 1px solid #fbbf24; }
+        .modal-header-premium { padding: 20px; background: #fbbf24; text-align: center; }
+        .modal-header-premium h2 { color: black; font-size: 1.2rem; font-weight: 900; margin: 0; }
+        .modal-body-premium { padding: 30px; text-align: center; }
+        .mc-steve-icon { width: 80px; height: 80px; margin: 0 auto 20px; border-radius: 8px; overflow: hidden; }
+        .mc-steve-icon img { width: 100%; height: 100%; object-fit: cover; }
+        .modal-body-premium p { color: #ccc; font-size: 0.95rem; margin-bottom: 25px; font-weight: bold; }
+        
+        .input-wrapper { position: relative; margin-bottom: 20px; }
+        .input-icon { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #666; }
+        .premium-input {
+          width: 100%; padding: 15px 15px 15px 45px; background: #222; border: 2px solid #333;
+          color: white; font-size: 1.1rem; font-weight: bold; border-radius: 8px;
+        }
+        .premium-input:focus { outline: none; border-color: #fbbf24; }
+        
+        .btn-submit-mc {
+          width: 100%; background: #3b82f6; color: white; padding: 15px; font-size: 1.1rem; font-weight: bold; border-radius: 8px; border: none; cursor: pointer;
+        }
+
+        /* Package Detail Modal */
+        .pkg-detail-modal { max-width: 600px; position: relative; padding: 0; background: #111; border: 1px solid #333; }
+        .btn-close-premium {
+          position: absolute; top: 15px; right: 15px; width: 35px; height: 35px; border-radius: 50%;
+          background: rgba(255,255,255,0.1); border: none; color: white; cursor: pointer; z-index: 10;
         }
         
-        .pkg-modal-container {
-          background: #1a1a1a;
-          width: 100%;
-          max-width: 600px;
-          border-radius: 8px;
-          display: flex;
-          flex-direction: column;
-          box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-          animation: slideDown 0.3s ease;
-          border: 1px solid #333;
-          max-height: 90vh;
+        .pkg-modal-split { display: flex; flex-direction: column; }
+        .pkg-modal-left {
+          background: #fbbf24; padding: 20px; text-align: center; border-radius: 8px 8px 0 0;
         }
+        .modal-image-wrapper { height: 120px; display: flex; align-items: center; justify-content: center; }
+        .modal-pkg-img { max-height: 100%; max-width: 100%; object-fit: contain; }
+        .fallback-big { font-size: 4rem; color: rgba(0,0,0,0.5); }
+        .modal-price-tag { display: none; }
         
-        @keyframes slideDown {
-          from { transform: translateY(-30px); opacity: 0; }
-          to { transform: translateY(0); opacity: 1; }
+        .pkg-modal-right { padding: 30px; display: flex; flex-direction: column; }
+        .modal-title-premium { color: white; font-size: 1.8rem; font-weight: 900; margin: 0 0 20px 0; text-align: center; }
+        
+        .modal-scroll-desc { flex-grow: 1; overflow-y: auto; max-height: 40vh; margin-bottom: 25px; background: #1a1a1a; padding: 20px; border-radius: 8px; }
+        .html-desc { color: #ccc; font-size: 0.95rem; line-height: 1.6; }
+        
+        .modal-checkout-area { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #333; padding-top: 20px; }
+        .btn-checkout {
+          background: #3b82f6; color: white; border: none; padding: 15px 30px; border-radius: 8px; font-weight: bold; font-size: 1.1rem; cursor: pointer;
         }
-        
-        .pkg-modal-header {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          padding: 15px 25px;
-          border-bottom: 1px solid #333;
-          background: #222;
-          border-radius: 8px 8px 0 0;
-        }
-        
-        .pkg-modal-header h2 {
-          margin: 0;
-          color: white;
-          font-size: 1.3rem;
-        }
-        
-        .btn-close {
-          background: transparent;
-          border: none;
-          color: #aaa;
-          font-size: 1.5rem;
-          cursor: pointer;
-        }
-        
-        .btn-close:hover { color: white; }
-        
-        .pkg-modal-body {
-          padding: 25px;
-          overflow-y: auto;
-          background: #1a1a1a;
-        }
-        
-        .modal-description {
-          color: #ddd;
-          line-height: 1.6;
-          font-size: 0.95rem;
-        }
-        
-        .modal-description p { margin-bottom: 15px; }
-        .modal-description ul { margin-left: 20px; margin-bottom: 15px; }
-        .modal-description li { margin-bottom: 5px; }
-        
-        .pkg-modal-footer {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          padding: 20px 25px;
-          background: #222;
-          border-top: 1px solid #333;
-          border-radius: 0 0 8px 8px;
-        }
-        
-        .modal-price {
-          font-size: 1.2rem;
-          color: white;
-          font-weight: bold;
-        }
-        
-        .modal-actions {
-          display: flex;
-          gap: 15px;
-        }
-        
-        .btn-add-cart {
-          background: #3b82f6;
-          color: white;
-          border: none;
-          padding: 12px 25px;
-          border-radius: 6px;
-          font-size: 1rem;
-          font-weight: bold;
-          cursor: pointer;
-          transition: background 0.2s;
-        }
-        
-        .btn-add-cart:hover:not(:disabled) { background: #2563eb; }
-        .btn-add-cart:disabled { opacity: 0.6; cursor: not-allowed; }
-        
+
+        /* Animation Classes */
+        .fade-in-left { animation: fadeInLeft 0.5s ease backwards; }
+        .fade-in-up { animation: fadeUp 0.5s ease backwards; animation-delay: 0.1s; }
+        .slide-down { animation: slideDown 0.5s ease backwards; }
+        @keyframes fadeInLeft { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: translateX(0); } }
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+
         @media (max-width: 900px) {
-          .shop-layout {
-            flex-direction: column;
-          }
-          .shop-sidebar {
-            width: 100%;
-          }
-          .package-list-item {
-            flex-wrap: wrap;
-          }
-          .pkg-right {
-            width: 100%;
-            margin-top: 15px;
-            justify-content: flex-end;
-          }
-          .shop-top-banner {
-            flex-direction: column;
-            align-items: stretch;
-          }
-          .ip-box {
-            justify-content: center;
-          }
+          .shop-layout { flex-direction: column; }
+          .shop-sidebar { width: 100%; }
+          .package-list-item { flex-wrap: wrap; }
+          .pkg-right { width: 100%; margin-top: 15px; justify-content: flex-end; }
         }
       `}} />
     </div>
