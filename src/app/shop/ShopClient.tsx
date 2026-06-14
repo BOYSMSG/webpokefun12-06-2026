@@ -464,7 +464,7 @@ export default function ShopClient({ initialCategories }: { initialCategories: a
                <div className="modal-price-large">{selectedPkg.total_price} {selectedPkg.currency}</div>
                
                <div className="modal-desc html-desc">
-                 <ReactMarkdown>{selectedPkg.description}</ReactMarkdown>
+                 <ReactMarkdown>{selectedPkg.description ? selectedPkg.description.replace(/<\/?p>/g, '\n').replace(/<br\s*\/?>/g, '\n') : ''}</ReactMarkdown>
                </div>
                
                <button 
@@ -810,6 +810,11 @@ export default function ShopClient({ initialCategories }: { initialCategories: a
         .html-desc { color: var(--shop-text); font-size: 1.3rem; line-height: 1.6; max-height: 400px; overflow-y: auto; padding-right: 15px; text-align: left;}
         .html-desc p { margin-bottom: 15px; }
         .html-desc ul { margin-left: 20px; margin-bottom: 15px; }
+        .html-desc h1, .html-desc h2, .html-desc h3 { margin: 20px 0 10px 0; font-weight: 800; color: var(--shop-text); }
+        .html-desc h2 { font-size: 1.8rem; }
+        .html-desc h3 { font-size: 1.5rem; }
+        .html-desc strong { color: #4bc8c8; font-weight: bold; }
+        .html-desc a { color: #10b981; text-decoration: underline; }
 
         @media (max-width: 800px) {
           .shop-layout { flex-direction: column; }
