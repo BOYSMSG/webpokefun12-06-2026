@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import ReactMarkdown from 'react-markdown';
 
 export default function ShopClient({ initialCategories }: { initialCategories: any[] }) {
   const [activeCategoryId, setActiveCategoryId] = useState<number | null>(initialCategories.length > 0 ? initialCategories[0].id : null);
@@ -237,7 +238,9 @@ export default function ShopClient({ initialCategories }: { initialCategories: a
                )}
                <div className="modal-price-large">{selectedPkg.total_price} {selectedPkg.currency}</div>
                
-               <div className="modal-desc html-desc" dangerouslySetInnerHTML={{ __html: selectedPkg.description }} />
+               <div className="modal-desc html-desc">
+                 <ReactMarkdown>{selectedPkg.description}</ReactMarkdown>
+               </div>
                
                <button 
                   className="btn-submit"
