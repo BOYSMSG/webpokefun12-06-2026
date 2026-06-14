@@ -8,7 +8,7 @@ export async function GET() {
     }
 
     // Fetch latest payments from Tebex API (plugin API) - fetching more so we can filter
-    const res = await fetch(`https://plugin.tebex.io/payments?limit=25`, {
+    const res = await fetch(`https://plugin.tebex.io/payments?limit=100`, {
       headers: {
         'X-Tebex-Secret': secretKey
       },
@@ -27,7 +27,8 @@ export async function GET() {
       realPayments = data.filter((p: any) => parseFloat(p.amount) > 0).slice(0, 5);
     }
     
-    return NextResponse.json(realPayments.length > 0 ? realPayments : data);
+    // Always return realPayments, even if it's empty, to never show $0 payments
+    return NextResponse.json(realPayments);
   } catch (error) {
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
