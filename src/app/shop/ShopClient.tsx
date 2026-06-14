@@ -5,9 +5,14 @@ import { useRouter } from 'next/navigation';
 import ReactMarkdown from 'react-markdown';
 
 export default function ShopClient({ initialCategories }: { initialCategories: any[] }) {
+  const [categories, setCategories] = useState<any[]>(initialCategories);
   const [activeCategoryId, setActiveCategoryId] = useState<number | null>(initialCategories.length > 0 ? initialCategories[0].id : null);
   const [selectedPkg, setSelectedPkg] = useState<any | null>(null);
   const [loadingPkg, setLoadingPkg] = useState<number | null>(null);
+  
+  // Currency State
+  const [currency, setCurrency] = useState<string>('USD');
+  const [isFetchingCurrency, setIsFetchingCurrency] = useState<boolean>(false);
   
   // Minecraft Username State
   const [mcUsername, setMcUsername] = useState<string>('');
@@ -17,10 +22,13 @@ export default function ShopClient({ initialCategories }: { initialCategories: a
   const router = useRouter();
 
   useEffect(() => {
-    // Load saved username
-    const saved = localStorage.getItem('mcUsername');
-    if (saved) {
-      setMcUsername(saved);
+    // Load saved username and currency
+    const savedName = localStorage.getItem('mcUsername');
+    if (savedName) setMcUsername(savedName);
+
+    const savedCurrency = localStorage.getItem('shopCurrency');
+    if (savedCurrency && savedCurrency !== 'USD') {
+      setCurrency(savedCurrency);
     }
 
     const params = new URLSearchParams(window.location.search);
@@ -32,6 +40,34 @@ export default function ShopClient({ initialCategories }: { initialCategories: a
       window.history.replaceState({}, document.title, window.location.pathname);
     }
   }, []);
+
+  // Fetch new prices when currency changes
+  useEffect(() => {
+    const fetchCurrencyPrices = async () => {
+      setIsFetchingCurrency(true);
+      try {
+        const res = await fetch(`/api/tebex/categories?currency=${currency}`);
+        if (res.ok) {
+          const data = await res.json();
+          if (data && data.data) {
+            setCategories(data.data);
+          }
+        }
+      } catch (err) {
+        console.error("Failed to fetch currency prices", err);
+      }
+      setIsFetchingCurrency(false);
+    };
+
+    // If it's not the initial render load (which is USD) or we have a saved currency
+    fetchCurrencyPrices();
+  }, [currency]);
+
+  const handleCurrencyChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const newCurr = e.target.value;
+    setCurrency(newCurr);
+    localStorage.setItem('shopCurrency', newCurr);
+  };
 
   const handleSaveUsername = (e: React.FormEvent) => {
     e.preventDefault();
@@ -68,7 +104,7 @@ export default function ShopClient({ initialCategories }: { initialCategories: a
     }
   };
 
-  const activeCategory = initialCategories.find(c => c.id === activeCategoryId) || initialCategories[0];
+  const activeCategory = categories.find(c => c.id === activeCategoryId) || categories[0];
 
   return (
     <div className="clean-shop-wrapper">
@@ -81,6 +117,18 @@ export default function ShopClient({ initialCategories }: { initialCategories: a
         </div>
         
         <div className="top-right-actions">
+          
+          <div className="currency-selector-wrapper">
+            {isFetchingCurrency ? <i className="fa-solid fa-spinner fa-spin currency-spinner"></i> : <i className="fa-solid fa-earth-americas"></i>}
+            <select className="currency-select" value={currency} onChange={handleCurrencyChange} disabled={isFetchingCurrency}>
+              <option value="USD">USD ($)</option>
+              <option value="EUR">EUR (€)</option>
+              <option value="GBP">GBP (£)</option>
+              <option value="CAD">CAD ($)</option>
+              <option value="AUD">AUD ($)</option>
+              <option value="INR">INR (₹)</option>
+            </select>
+          </div>
           
           <div className="user-status-box" onClick={() => setShowLoginModal(true)}>
              {mcUsername ? (
@@ -287,14 +335,29 @@ export default function ShopClient({ initialCategories }: { initialCategories: a
           gap: 15px;
         }
         
-        .currency-badge {
-          background: #f3f4f6;
-          color: #4b5563;
-          padding: 8px 15px;
+        .currency-selector-wrapper {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          background: #f8fafc;
+          border: 1px solid #e2e8f0;
+          padding: 6px 12px;
           border-radius: 8px;
+          color: #4b5563;
+        }
+        
+        .currency-select {
+          background: transparent;
+          border: none;
           font-weight: bold;
-          font-size: 0.9rem;
-          border: 1px solid #e5e7eb;
+          color: #1f2937;
+          font-size: 0.95rem;
+          outline: none;
+          cursor: pointer;
+        }
+        
+        .currency-spinner {
+          color: #3b82f6;
         }
         
         .user-status-box {
