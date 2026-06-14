@@ -193,7 +193,7 @@ export default function ShopClient({ initialCategories }: { initialCategories: a
       `}} />
 
       {/* TOP NAV & STATUS */}
-      <div className="shop-top-bar" style={{ position: 'sticky', top: 0, zIndex: 100, background: 'var(--shop-bg)' }}>
+      <div className="shop-top-bar" style={{ position: 'sticky', top: 0, zIndex: 100, background: 'rgba(15, 23, 42, 0.95)', backdropFilter: 'blur(10px)', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
         <div className="shop-logo">
            <img src="/images/logo.png" alt="Logo" style={{height: '60px'}} onError={(e) => e.currentTarget.style.display='none'} />
         </div>
