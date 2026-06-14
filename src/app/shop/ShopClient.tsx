@@ -132,8 +132,8 @@ export default function ShopClient({ initialCategories }: { initialCategories: a
       
       {/* Global Style Override for Shop Page */}
       <style dangerouslySetInnerHTML={{__html: `
-        /* We DO NOT hide the global header or footer here, we integrate with it */
-        .desktop-sidebar-container { display: none !important; } /* Hide the default website sidebar, shop has its own */
+        /* Keep global header and footer visible, just hide the default sidebar */
+        .desktop-sidebar-container { display: none !important; } 
         main { padding-top: 40px !important; }
       `}} />
 
@@ -292,8 +292,8 @@ export default function ShopClient({ initialCategories }: { initialCategories: a
         {/* Main Content */}
         <div className="shop-main">
           {activeCategoryId === 'home' ? (
-            <div className="category-container store-home-container" style={{ padding: '40px', background: '#f8fafc', border: '1px solid #cbd5e1', borderRadius: '12px', color: '#334155' }}>
-              <h2 style={{ color: '#0f172a', fontSize: '3rem', marginBottom: '20px', textAlign: 'center', fontWeight: '800' }}>WELCOME TO THE OFFICIAL <br/><span style={{color: '#10b981'}}>POKEFUN STORE</span></h2>
+            <div className="category-container store-home-container" style={{ padding: '40px', background: '#111', border: '1px solid #222', borderRadius: '12px', color: '#ccc' }}>
+              <h2 style={{ color: 'white', fontSize: '3rem', marginBottom: '20px', textAlign: 'center', fontWeight: '800' }}>WELCOME TO THE OFFICIAL <br/><span style={{color: '#4bc8c8'}}>POKEFUN STORE</span></h2>
               
               <p style={{ fontSize: '1.2rem', lineHeight: '1.6', marginBottom: '20px', textAlign: 'center' }}>
                 <strong>POKEFUN JAVA</strong> is a free-to-play 1st Public cracked Minecraft Server of <strong>Cobblemon 1.7.1 and many more</strong>. Purchase items here to enhance your Pokémon journey, unlock special perks, and show off a unique style on the server!
@@ -303,12 +303,12 @@ export default function ShopClient({ initialCategories }: { initialCategories: a
                 To begin, please select a category from the sidebar.
               </p>
             
-              <div style={{ background: 'rgba(245, 158, 11, 0.1)', borderLeft: '5px solid #f59e0b', padding: '20px', marginBottom: '30px', color: '#b45309', fontSize: '1.2rem', borderRadius: '4px' }}>
+              <div style={{ background: 'rgba(251, 191, 36, 0.1)', borderLeft: '5px solid #fbbf24', padding: '20px', marginBottom: '30px', color: '#fbbf24', fontSize: '1.2rem', borderRadius: '4px' }}>
                 <strong>NOTE</strong> - Please ensure you enter your correct <strong>Java Edition Gamertag</strong> to receive your items.<br/>
                 Purchases are credited to the player name entered at checkout.
               </div>
             
-              <h3 style={{ color: '#0f172a', fontSize: '2.2rem', marginTop: '40px', marginBottom: '20px', borderBottom: '2px solid #e2e8f0', paddingBottom: '10px' }}>⭐ EPIC SERVER FEATURES ⭐</h3>
+              <h3 style={{ color: 'white', fontSize: '2.2rem', marginTop: '40px', marginBottom: '20px', borderBottom: '2px solid #333', paddingBottom: '10px' }}>⭐ EPIC SERVER FEATURES ⭐</h3>
               <p style={{ fontSize: '1.2rem', marginBottom: '15px' }}>Dive into the most feature-rich Cobblemon experience!</p>
               <ul style={{ fontSize: '1.2rem', lineHeight: '1.8', marginBottom: '30px', listStyle: 'none', padding: 0 }}>
                 <li>💰 <strong>Global Trade System (GTS) & Shops:</strong> Buy, sell, and trade Pokémon and items with players worldwide to get rich!</li>
@@ -319,16 +319,16 @@ export default function ShopClient({ initialCategories }: { initialCategories: a
                 <li>💡 <strong>Plus Many More:</strong> PokeBuilder, Orbs/Plates, Daily Quests, and Fusion Pokémon coming soon!</li>
               </ul>
             
-              <h3 style={{ color: '#0f172a', fontSize: '2.2rem', marginTop: '40px', marginBottom: '20px', borderBottom: '2px solid #e2e8f0', paddingBottom: '10px' }}>SUPPORT</h3>
+              <h3 style={{ color: 'white', fontSize: '2.2rem', marginTop: '40px', marginBottom: '20px', borderBottom: '2px solid #333', paddingBottom: '10px' }}>SUPPORT</h3>
               <p style={{ fontSize: '1.2rem', lineHeight: '1.6', marginBottom: '15px' }}>
                 Need questions answered? Waited more than 20 minutes for your package? Ask the community/staff on <strong>Discord</strong>, or submit a support ticket there for payment issues.
               </p>
-              <p style={{ fontSize: '1.2rem', marginBottom: '20px' }}>Public Contact Email: <a href="mailto:contactmcpefun@gmail.com" style={{color: '#10b981', fontWeight: 'bold'}}>contactmcpefun@gmail.com</a></p>
+              <p style={{ fontSize: '1.2rem', marginBottom: '20px' }}>Public Contact Email: <a href="mailto:contactmcpefun@gmail.com" style={{color: '#4bc8c8', fontWeight: 'bold'}}>contactmcpefun@gmail.com</a></p>
               <a href="https://discord.com/invite/NtE8QBkmwR" target="_blank" rel="noopener noreferrer" className="btn-cyan" style={{ display: 'inline-block', textDecoration: 'none', padding: '15px 30px', borderRadius: '8px', marginBottom: '40px', fontWeight: 'bold', fontSize: '1.2rem' }}>
                 <i className="fa-brands fa-discord"></i> Join Our Discord Server
               </a>
             
-              <h3 style={{ color: '#0f172a', fontSize: '2.2rem', marginTop: '40px', marginBottom: '20px', borderBottom: '2px solid #e2e8f0', paddingBottom: '10px' }}>REFUND POLICY</h3>
+              <h3 style={{ color: 'white', fontSize: '2.2rem', marginTop: '40px', marginBottom: '20px', borderBottom: '2px solid #333', paddingBottom: '10px' }}>REFUND POLICY</h3>
               <p style={{ fontSize: '1.2rem', lineHeight: '1.6', marginBottom: '15px' }}>
                 All payments are final and non-refundable. Attempting a chargeback will result in a permanent banishment from all of our servers and associated stores.
               </p>
@@ -498,9 +498,9 @@ export default function ShopClient({ initialCategories }: { initialCategories: a
         }
 
         .giftcard-btn {
-          background: #f8fafc;
-          color: #1e293b;
-          border: 2px solid #cbd5e1;
+          background: #111;
+          color: white;
+          border: 2px solid #333;
           padding: 10px 20px;
           border-radius: 8px;
           font-weight: bold;
@@ -510,47 +510,47 @@ export default function ShopClient({ initialCategories }: { initialCategories: a
           align-items: center;
           gap: 8px;
         }
-        .giftcard-btn:hover { border-color: #10b981; color: #10b981; }
+        .giftcard-btn:hover { border-color: #4bc8c8; color: #4bc8c8; }
         
         .currency-selector-wrapper {
           display: flex;
           align-items: center;
           gap: 8px;
-          background: #f8fafc;
-          border: 2px solid #cbd5e1;
+          background: #111;
+          border: 2px solid #333;
           padding: 10px 15px;
           border-radius: 8px;
-          color: #1e293b;
+          color: white;
         }
         
         .currency-select {
           background: transparent;
           border: none;
           font-weight: bold;
-          color: #1e293b;
+          color: white;
           font-size: 1.1rem;
           outline: none;
           cursor: pointer;
         }
-        .currency-select option { background: white; color: black; }
+        .currency-select option { background: #111; color: white; }
         
         .user-status-box {
-          background: #f8fafc;
-          border: 2px solid #cbd5e1;
+          background: #111;
+          border: 2px solid #333;
           border-radius: 8px;
           padding: 8px 15px;
           cursor: pointer;
           transition: all 0.2s;
         }
         .user-status-box:hover {
-          border-color: #10b981;
+          border-color: #4bc8c8;
         }
         
         .user-logged-in { display: flex; align-items: center; gap: 15px; }
         .user-text-info { text-align: right; }
-        .user-label { font-size: 0.9rem; color: #64748b; font-weight: 600; text-transform: uppercase; }
-        .user-name { font-weight: bold; color: #0f172a; font-size: 1.2rem; }
-        .highlight-text { color: #10b981; }
+        .user-label { font-size: 0.9rem; color: #aaa; font-weight: 600; text-transform: uppercase; }
+        .user-name { font-weight: bold; color: white; font-size: 1.2rem; }
+        .highlight-text { color: #4bc8c8; }
         
         .mc-avatar-container { width: 45px; height: 45px; border-radius: 6px; overflow: hidden; }
         .mc-face { width: 100%; height: 100%; object-fit: cover; }
@@ -560,64 +560,64 @@ export default function ShopClient({ initialCategories }: { initialCategories: a
         .shop-sidebar { width: 320px; flex-shrink: 0; display: flex; flex-direction: column; gap: 20px; }
         
         .module-box {
-          background: #f8fafc;
+          background: #111;
           padding: 25px;
           border-radius: 12px;
-          border: 1px solid #e2e8f0;
-          box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+          border: 2px solid #222;
+          box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
         }
         
-        .module-title { font-size: 1.4rem; color: #0f172a; margin-bottom: 20px; font-weight: 800; text-align: center; }
-        .module-empty-text { font-size: 1.1rem; color: #64748b; margin: 0; }
+        .module-title { font-size: 1.4rem; color: white; margin-bottom: 20px; font-weight: 800; text-align: center; }
+        .module-empty-text { font-size: 1.1rem; color: #ccc; margin: 0; }
         
         .category-list { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 10px; margin: 0;}
         
         .cat-btn {
           width: 100%; text-align: left; background: transparent; border: none;
-          padding: 15px 20px; color: #475569; font-size: 1.3rem; font-weight: 600;
+          padding: 15px 20px; color: #ccc; font-size: 1.3rem; font-weight: 600;
           cursor: pointer; transition: all 0.2s ease; border-radius: 8px;
           font-family: inherit;
           display: flex; align-items: center; gap: 12px; text-decoration: none;
         }
-        .cat-btn:hover { background: #e2e8f0; color: #0f172a; }
-        .cat-btn.active { background: #e2e8f0; color: #10b981; font-weight: bold; border-left: 4px solid #10b981; }
+        .cat-btn:hover { background: #222; color: white; }
+        .cat-btn.active { background: #222; color: #4bc8c8; font-weight: bold; border-left: 4px solid #4bc8c8; }
 
-        .back-home-btn { color: #10b981; }
+        .back-home-btn { color: #4bc8c8; }
         
         /* Featured */
         .featured-item { text-align: center; }
         .featured-img { width: 100%; max-width: 180px; margin: 0 auto 15px; display: block; }
-        .featured-price { font-size: 1.5rem; font-weight: bold; color: #0f172a; }
-        .featured-price-sub { font-size: 1.1rem; color: #64748b; margin-bottom: 15px; }
+        .featured-price { font-size: 1.5rem; font-weight: bold; color: white; }
+        .featured-price-sub { font-size: 1.1rem; color: #aaa; margin-bottom: 15px; }
         
         /* Form Inputs */
         .input-dark {
-          width: 100%; background: white; border: 2px solid #cbd5e1; color: #0f172a;
+          width: 100%; background: black; border: 2px solid #333; color: white;
           padding: 15px; font-size: 1.1rem; text-align: center; margin-bottom: 15px; border-radius: 8px;
         }
-        .input-dark:focus { outline: none; border-color: #10b981; }
+        .input-dark:focus { outline: none; border-color: #4bc8c8; }
         
         /* Buttons */
         .w-full { width: 100%; }
         .btn-cyan {
-          background: #10b981; color: white; border: none; padding: 15px; border-radius: 8px;
+          background: #4bc8c8; color: black; border: none; padding: 15px; border-radius: 8px;
           font-weight: bold; cursor: pointer; transition: 0.2s; font-size: 1.2rem;
         }
-        .btn-cyan:hover { background: #059669; }
+        .btn-cyan:hover { background: #3ab0b0; }
         .btn-grey {
-          background: #cbd5e1; color: #0f172a; border: none; padding: 15px; border-radius: 8px;
+          background: #ccc; color: black; border: none; padding: 15px; border-radius: 8px;
           font-weight: bold; cursor: pointer; transition: 0.2s; font-size: 1.2rem;
         }
-        .btn-grey:hover { background: #94a3b8; }
+        .btn-grey:hover { background: #bbb; }
         
         /* Recent Payments */
         .recent-payment-item { display: flex; gap: 15px; align-items: center; margin-bottom: 15px; }
         .recent-payment-item:last-child { margin-bottom: 0; }
         .rp-avatar { width: 40px; height: 40px; border-radius: 8px; }
         .rp-info { text-align: left; }
-        .rp-name { color: #0f172a; font-size: 1.1rem; font-weight: bold; }
-        .rp-desc { color: #475569; font-size: 0.9rem; }
-        .rp-date { color: #94a3b8; font-size: 0.85rem; }
+        .rp-name { color: white; font-size: 1.1rem; font-weight: bold; }
+        .rp-desc { color: #ccc; font-size: 0.9rem; }
+        .rp-date { color: #888; font-size: 0.85rem; }
 
         .shop-main { flex-grow: 1; min-width: 0; }
         
@@ -627,15 +627,15 @@ export default function ShopClient({ initialCategories }: { initialCategories: a
         
         .category-header {
           padding: 40px;
-          border-bottom: 2px solid #e2e8f0;
+          border-bottom: 2px solid #222;
           text-align: left;
-          background: #f8fafc;
+          background: #111;
           border-radius: 12px 12px 0 0;
-          border: 1px solid #e2e8f0;
+          border: 2px solid #222;
           border-bottom: none;
         }
-        .category-header h2 { color: #0f172a; font-size: 3rem; margin: 0 0 10px 0; font-weight: 800; }
-        .cat-desc { color: #475569; font-size: 1.3rem; line-height: 1.6; max-width: 1000px; margin: 0;}
+        .category-header h2 { color: white; font-size: 3rem; margin: 0 0 10px 0; font-weight: 800; }
+        .cat-desc { color: #ccc; font-size: 1.3rem; line-height: 1.6; max-width: 1000px; margin: 0;}
         .cat-desc img { max-width: 100%; border-radius: 8px; margin-top: 15px; }
         
         /* Grid Layout for Packages */
@@ -644,66 +644,66 @@ export default function ShopClient({ initialCategories }: { initialCategories: a
           grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
           gap: 30px;
           padding: 40px;
-          background: #f8fafc;
+          background: #111;
           border-radius: 0 0 12px 12px;
-          border: 1px solid #e2e8f0;
+          border: 2px solid #222;
           border-top: none;
         }
         
         .package-card {
-          background: #ffffff;
-          border: 2px solid #e2e8f0;
+          background: #121212;
+          border: 2px solid #222;
           border-radius: 12px;
           overflow: hidden;
           transition: all 0.3s;
           display: flex;
           flex-direction: column;
-          box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+          box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
         }
         .package-card:hover {
           transform: translateY(-8px);
-          box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-          border-color: #10b981;
+          box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.8);
+          border-color: #4bc8c8;
         }
         
         .pkg-image-wrapper {
           height: 280px;
-          background: #f1f5f9;
+          background: #0a0a0a;
           display: flex;
           align-items: center;
           justify-content: center;
           padding: 30px;
           cursor: pointer;
-          border-bottom: 1px solid #e2e8f0;
+          border-bottom: 2px solid #222;
         }
         .pkg-image { max-width: 100%; max-height: 100%; object-fit: contain; transition: transform 0.3s; transform: scale(1.5); }
         .package-card:hover .pkg-image { transform: scale(1.6); }
-        .placeholder-icon { font-size: 6rem; color: #cbd5e1; }
+        .placeholder-icon { font-size: 6rem; color: #333; }
         
         .pkg-details { padding: 25px; text-align: center; flex-grow: 1; cursor: pointer; }
-        .pkg-name { color: #0f172a; font-size: 1.8rem; margin: 0 0 10px 0; font-weight: bold; }
-        .pkg-price { color: #10b981; font-size: 1.6rem; font-weight: 800; margin-bottom: 15px; }
+        .pkg-name { color: white; font-size: 1.8rem; margin: 0 0 10px 0; font-weight: bold; }
+        .pkg-price { color: #4bc8c8; font-size: 1.6rem; font-weight: 800; margin-bottom: 15px; }
         
         .pkg-actions {
           padding: 0 25px 25px 25px;
           display: flex;
           gap: 15px;
-          background: #ffffff;
+          background: #121212;
         }
         
         .btn-buy {
           flex-grow: 1;
-          background: #10b981; color: white; border: none; border-radius: 8px;
+          background: #4bc8c8; color: black; border: none; border-radius: 8px;
           padding: 15px; font-weight: bold; font-size: 1.3rem; cursor: pointer; transition: all 0.2s;
         }
-        .btn-buy:hover:not(:disabled) { background: #059669; }
+        .btn-buy:hover:not(:disabled) { background: #3ab0b0; }
         .btn-buy:disabled { opacity: 0.6; cursor: not-allowed; }
         
         .btn-info {
-          width: 55px; background: #f1f5f9; color: #64748b; border: 2px solid #e2e8f0;
+          width: 55px; background: #222; color: #aaa; border: 2px solid #333;
           border-radius: 8px; cursor: pointer; transition: all 0.2s; font-size: 1.3rem;
         }
-        .btn-info:hover { color: #10b981; border-color: #10b981; background: #ffffff; }
+        .btn-info:hover { color: #4bc8c8; border-color: #4bc8c8; background: #333; }
         
         .empty-category { text-align: center; padding: 60px 20px; color: #9ca3af; }
         .empty-icon { font-size: 3rem; margin-bottom: 15px; color: #cbd5e1;}
