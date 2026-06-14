@@ -144,10 +144,16 @@ export default function ShopClient({ initialCategories }: { initialCategories: a
             {isFetchingCurrency ? <i className="fa-solid fa-spinner fa-spin currency-spinner"></i> : <i className="fa-solid fa-earth-americas"></i>}
             <select className="currency-select" value={currency} onChange={handleCurrencyChange} disabled={isFetchingCurrency}>
               <option value="USD">USD ($)</option>
-              <option value="EUR">EUR (€)</option>
-              <option value="GBP">GBP (£)</option>
-              <option value="CAD">CAD ($)</option>
               <option value="AUD">AUD ($)</option>
+              <option value="BRL">BRL (R$)</option>
+              <option value="CAD">CAD ($)</option>
+              <option value="DKK">DKK (kr)</option>
+              <option value="EUR">EUR (€)</option>
+              <option value="NOK">NOK (kr)</option>
+              <option value="NZD">NZD ($)</option>
+              <option value="PLN">PLN (zł)</option>
+              <option value="GBP">GBP (£)</option>
+              <option value="SEK">SEK (kr)</option>
               <option value="INR">INR (₹)</option>
             </select>
           </div>
