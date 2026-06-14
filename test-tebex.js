@@ -16,12 +16,10 @@ async function test() {
   } else {
      console.log("Data:", data);
   }
-  // Also check recent payments
-  const secretKey = process.env.TEBEX_PRIVATE_KEY;
-  let res3 = await fetch(`https://plugin.tebex.io/payments?limit=5`, { headers: { 'X-Tebex-Secret': secretKey }});
-  let data3 = await res3.json();
-  console.log("Recent payments is array?", Array.isArray(data3));
-  if (!Array.isArray(data3)) console.log("Recent payments keys:", Object.keys(data3));
+  let exRes = await fetch('https://api.exchangerate-api.com/v4/latest/USD');
+  let exData = await exRes.json();
+  console.log("Exchange Rate EUR:", exData.rates['EUR']);
+  console.log("Exchange Rate INR:", exData.rates['INR']);
 }
 
 test();
