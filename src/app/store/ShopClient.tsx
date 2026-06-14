@@ -465,7 +465,16 @@ export default function ShopClient({ initialCategories }: { initialCategories: a
                
                <div 
                  className="modal-desc html-desc" 
-                 dangerouslySetInnerHTML={{ __html: selectedPkg.description || '' }} 
+                 dangerouslySetInnerHTML={{ __html: (() => {
+                   if (!selectedPkg.description) return '';
+                   let html = selectedPkg.description;
+                   html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+                   html = html.replace(/<p>##\s*(.*?)<\/p>/g, '<h2>$1</h2>');
+                   html = html.replace(/##\s*(.*?)(<br|<\/p>|\n)/g, '<h2>$1</h2>$2');
+                   html = html.replace(/<p>\*\s*(.*?)<\/p>/g, '<li>$1</li>');
+                   html = html.replace(/<p>---<\/p>/g, '<hr />');
+                   return html;
+                 })() }} 
                />
                
                <button 
