@@ -463,9 +463,10 @@ export default function ShopClient({ initialCategories }: { initialCategories: a
                )}
                <div className="modal-price-large">{selectedPkg.total_price} {selectedPkg.currency}</div>
                
-               <div className="modal-desc html-desc">
-                 <ReactMarkdown>{selectedPkg.description ? selectedPkg.description.replace(/<\/?p>/g, '\n').replace(/<br\s*\/?>/g, '\n') : ''}</ReactMarkdown>
-               </div>
+               <div 
+                 className="modal-desc html-desc" 
+                 dangerouslySetInnerHTML={{ __html: selectedPkg.description || '' }} 
+               />
                
                <button 
                   className="btn-submit"
