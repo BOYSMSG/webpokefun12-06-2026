@@ -7,6 +7,7 @@ export interface IGym extends Document {
   leaderUsername?: string; // The username of the appointed leader
   status: 'OPEN' | 'BOOKED';
   levelCap?: number;
+  rules?: string; // Admin/Leader custom rules for the gym
   createdAt: Date;
 }
 
@@ -17,6 +18,7 @@ const GymSchema: Schema = new Schema({
   leaderUsername: { type: String },
   status: { type: String, enum: ['OPEN', 'BOOKED'], default: 'OPEN' },
   levelCap: { type: Number, default: 50 },
+  rules: { type: String, default: '' },
   createdAt: { type: Date, default: Date.now }
 });
 

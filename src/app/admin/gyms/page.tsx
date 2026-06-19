@@ -101,6 +101,30 @@ export default function AdminGymsPage() {
     setProcessing(prev => ({ ...prev, [gymId]: false }));
   };
 
+  const handleEditRules = async (gymId: string, currentRules: string) => {
+    const rules = prompt("Enter the rules for this gym (shown to challengers):", currentRules || "");
+    if (rules === null) return;
+
+    setProcessing(prev => ({ ...prev, [gymId]: true }));
+    try {
+      const res = await fetch('/api/gyms/rules', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ gymId, rules })
+      });
+      const data = await res.json();
+      if (data.success) {
+        alert('Rules updated successfully.');
+        fetchData();
+      } else {
+        alert(data.error || 'Failed to update rules');
+      }
+    } catch (err) {
+      alert(`Error updating rules`);
+    }
+    setProcessing(prev => ({ ...prev, [gymId]: false }));
+  };
+
   if (status === 'loading' || loading) return <div style={{ textAlign: 'center', marginTop: '100px', color: 'white' }}>Loading admin data...</div>;
   if (!isAdmin) return null;
 
@@ -127,13 +151,22 @@ export default function AdminGymsPage() {
                 <p style={{ margin: '5px 0', color: 'gray' }}><strong>Leader:</strong> <span style={{ color: '#fff' }}>{gym.leaderUsername}</span></p>
                 <p style={{ margin: '5px 0 15px 0', color: 'gray' }}><strong>Type:</strong> {gym.type}</p>
                 
-                <button 
-                  onClick={() => handleRevoke(gym._id)}
-                  disabled={processing[gym._id]}
-                  style={{ width: '100%', padding: '10px', background: 'transparent', color: '#ef4444', border: '1px solid #ef4444', borderRadius: '6px', cursor: processing[gym._id] ? 'not-allowed' : 'pointer', fontWeight: 'bold' }}
-                >
-                  {processing[gym._id] ? 'Processing...' : 'Revoke Leader'}
-                </button>
+                <div style={{ display: 'flex', gap: '10px' }}>
+                  <button 
+                    onClick={() => handleEditRules(gym._id, gym.rules)}
+                    disabled={processing[gym._id]}
+                    style={{ flex: 1, padding: '10px', background: 'transparent', color: '#10b981', border: '1px solid #10b981', borderRadius: '6px', cursor: processing[gym._id] ? 'not-allowed' : 'pointer', fontWeight: 'bold' }}
+                  >
+                    Edit Rules
+                  </button>
+                  <button 
+                    onClick={() => handleRevoke(gym._id)}
+                    disabled={processing[gym._id]}
+                    style={{ flex: 1, padding: '10px', background: 'transparent', color: '#ef4444', border: '1px solid #ef4444', borderRadius: '6px', cursor: processing[gym._id] ? 'not-allowed' : 'pointer', fontWeight: 'bold' }}
+                  >
+                    {processing[gym._id] ? 'Processing...' : 'Revoke'}
+                  </button>
+                </div>
               </div>
             ))
           )}

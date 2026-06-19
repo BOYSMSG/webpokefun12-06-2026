@@ -52,6 +52,15 @@ export async function GET(req: Request) {
       };
     });
 
+    if (userUsernames.has('Pokefun Bot')) {
+      userMap['Pokefun Bot'] = {
+        name: 'Pokefun Bot',
+        username: 'Pokefun Bot',
+        image: 'https://ui-avatars.com/api/?name=PB&background=ef4444&color=fff',
+        status: 'Online'
+      };
+    }
+
     return NextResponse.json({ messages, contacts: userMap, myUsername });
   } catch (error) {
     console.error("Error fetching messages", error);

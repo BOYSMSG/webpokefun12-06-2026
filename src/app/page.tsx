@@ -3,8 +3,6 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 
-import SaleBanner from "@/components/SaleBanner";
-
 export default function HomePage() {
   const [playerCount, setPlayerCount] = useState<number | null>(null);
   const [storeConfig, setStoreConfig] = useState<any>(null);
@@ -34,11 +32,16 @@ export default function HomePage() {
   return (
     <>
       <div className="p-body-inner" style={{ display: "flex", alignItems: "center", justifyContent: "center", maxWidth: "1200px", margin: "0 auto", color: "white", gap: "60px", position: "relative", zIndex: 10 }}>
-          <div id="players" className="info-card" style={{ flex: 1, display: "flex", alignItems: "center", gap: "30px", justifyContent: "flex-end", color: "white", fontWeight: 900 }}>
-              <i className="fa-regular fa-circle-play"></i>
-              <div className="info-text">
-                  <div className="if-large">PLAYERS <span className="count">{playerCount !== null ? playerCount : "..."}</span></div>
-                  <div className="if-small">play.pokefun.in</div>
+          <div style={{ flex: 1, display: "flex", alignItems: "center", gap: "20px", justifyContent: "flex-end" }}>
+              <Link href="/store" style={{ background: '#f59e0b', color: 'white', textDecoration: 'none', padding: '12px 24px', borderRadius: '30px', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '10px', boxShadow: '0 4px 15px rgba(245, 158, 11, 0.4)', transition: 'transform 0.2s', whiteSpace: 'nowrap' }} onMouseOver={e => e.currentTarget.style.transform = 'translateY(-2px)'} onMouseOut={e => e.currentTarget.style.transform = 'none'}>
+                  <i className="fa-solid fa-cart-shopping"></i> STORE
+              </Link>
+              <div id="players" className="info-card" style={{ display: "flex", alignItems: "center", gap: "30px", color: "white", fontWeight: 900 }}>
+                  <i className="fa-regular fa-circle-play"></i>
+                  <div className="info-text">
+                      <div className="if-large">PLAYERS <span className="count">{playerCount !== null ? playerCount : "..."}</span></div>
+                      <div className="if-small">play.pokefun.in</div>
+                  </div>
               </div>
           </div>
           <div id="logo">
@@ -78,16 +81,6 @@ export default function HomePage() {
                       <img src="/images/logo.png" alt="Pokefun Logo" className="animate__animated animate__pulse animate__infinite animate__slower" style={{ height: "150px", margin: "0 auto 20px", display: "block", filter: "drop-shadow(0 0 20px rgba(6, 182, 212, 0.6))" }} />
                       <h2 className="animate__animated animate__fadeInUp" style={{ fontSize: "5.4rem", fontFamily: "'Righteous', cursive", fontWeight: 800, color: "var(--accent-gold)", textShadow: "0 4px 15px rgba(245, 158, 11, 0.5)", textTransform: "uppercase", letterSpacing: "2px" }}>The Best Cobblemon Server & Community</h2>
                   </div>
-
-                  {/* SALE BANNER */}
-                  {storeConfig?.saleActive && (
-                    <SaleBanner 
-                      endDate={storeConfig.saleEndDate}
-                      title={storeConfig.saleTitle}
-                      subtitle={storeConfig.saleSubtitle}
-                      link="/store"
-                    />
-                  )}
 
                   {/* COMMUNITY PROMO */}
                   <div style={{ background: 'linear-gradient(135deg, #4c1d95 0%, #065f46 100%)', borderRadius: '20px', padding: '50px', textAlign: 'center', marginBottom: '80px', border: '1px solid rgba(255,255,255,0.2)', boxShadow: '0 15px 40px rgba(0,0,0,0.5)' }}>

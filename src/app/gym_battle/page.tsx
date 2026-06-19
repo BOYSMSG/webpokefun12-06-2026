@@ -12,6 +12,7 @@ export default function GymBattlePage() {
     time: '',
     teamLink: ''
   });
+  const [agreedToRules, setAgreedToRules] = useState(false);
   const [submitLoading, setSubmitLoading] = useState(false);
   const [message, setMessage] = useState('');
 
@@ -36,6 +37,10 @@ export default function GymBattlePage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (selectedGym?.rules && !agreedToRules) {
+      setMessage('error: You must agree to the gym rules before challenging.');
+      return;
+    }
     setSubmitLoading(true);
     setMessage('');
 
@@ -51,6 +56,7 @@ export default function GymBattlePage() {
         setMessage('success: ' + data.message);
         setSelectedGym(null);
         setFormData({ date: '', time: '', teamLink: '' });
+        setAgreedToRules(false);
       } else {
         setMessage('error: ' + data.error);
       }
@@ -174,10 +180,27 @@ export default function GymBattlePage() {
                   <textarea name="teamLink" placeholder="Any specific rules or links to your pokepaste?" rows={3} value={formData.teamLink} onChange={handleChange} style={{ width: "100%", padding: "10px", borderRadius: "6px", background: "#2a2e33", border: "1px solid #444", color: "#fff", resize: "vertical" }}></textarea>
                 </div>
 
+                {selectedGym.rules && (
+                  <div style={{ marginBottom: "20px", background: "rgba(245, 158, 11, 0.1)", border: "1px solid #f59e0b", borderRadius: "8px", padding: "15px" }}>
+                    <h4 style={{ color: "#f59e0b", margin: "0 0 10px 0" }}>Gym Rules</h4>
+                    <p style={{ color: "#e5e7eb", fontSize: "0.9rem", whiteSpace: "pre-wrap", margin: "0 0 15px 0" }}>{selectedGym.rules}</p>
+                    <label style={{ display: "flex", alignItems: "center", gap: "10px", cursor: "pointer" }}>
+                      <input 
+                        type="checkbox" 
+                        required 
+                        checked={agreedToRules} 
+                        onChange={(e) => setAgreedToRules(e.target.checked)} 
+                        style={{ width: "18px", height: "18px", accentColor: "#f59e0b" }} 
+                      />
+                      <span style={{ color: "#a3a3a3", fontSize: "0.85rem" }}>I readed all info and fee structure for gym battle</span>
+                    </label>
+                  </div>
+                )}
+
                 <button 
                   type="submit" 
-                  disabled={submitLoading}
-                  style={{ width: "100%", background: "var(--ghost-accent-color)", color: "#000", border: "none", padding: "12px", borderRadius: "6px", cursor: submitLoading ? "not-allowed" : "pointer", fontWeight: "bold", fontSize: "1.1rem" }}
+                  disabled={submitLoading || (selectedGym.rules && !agreedToRules)}
+                  style={{ width: "100%", background: "var(--ghost-accent-color)", color: "#000", border: "none", padding: "12px", borderRadius: "6px", cursor: submitLoading || (selectedGym.rules && !agreedToRules) ? "not-allowed" : "pointer", fontWeight: "bold", fontSize: "1.1rem" }}
                 >
                   {submitLoading ? "Sending..." : "Send Challenge"}
                 </button>
