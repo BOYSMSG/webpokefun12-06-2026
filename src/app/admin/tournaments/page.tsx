@@ -47,7 +47,7 @@ export default function AdminTournamentsPage() {
       const res = await fetch('/api/tournaments', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id, action: 'force_end' })
+        body: JSON.stringify({ tournamentId: id, action: 'FORCE_END' })
       });
       const data = await res.json();
       if (data.success) {
@@ -67,7 +67,7 @@ export default function AdminTournamentsPage() {
       const res = await fetch('/api/tournaments', {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id })
+        body: JSON.stringify({ tournamentId: id })
       });
       const data = await res.json();
       if (data.success) {
