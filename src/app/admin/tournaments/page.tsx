@@ -11,37 +11,23 @@ export default function AdminTournamentsPage() {
   const [tournaments, setTournaments] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [isAdmin, setIsAdmin] = useState(false);
   const [winnerInputs, setWinnerInputs] = useState<Record<string, {first: string, second: string, third: string}>>({});
+
+  const myRole = (session?.user as any)?.role;
+  const myPermissions = (session?.user as any)?.permissions || [];
+  const isAdmin = myRole === 'OWNER' || myRole === 'ADMIN' || myPermissions.includes('MANAGE_EVENTS_TOURNAMENTS');
 
   useEffect(() => {
     if (status === 'unauthenticated') {
       router.push('/');
-    } else if (session) {
-      checkAdminAndFetchTournaments();
-    }
-  }, [session, status]);
-
-  const checkAdminAndFetchTournaments = async () => {
-    try {
-      const res = await fetch('/api/admin/users');
-      const data = await res.json();
-      if (data.success) {
-        const currentUser = data.users.find((u: any) => u.email === session?.user?.email);
-        const myRole = currentUser?.role || 'USER';
-        const myPerms = currentUser?.permissions || [];
-        if (myRole === 'ADMIN' || myRole === 'OWNER' || myPerms.includes('MANAGE_EVENTS_TOURNAMENTS')) {
-          setIsAdmin(true);
-          fetchTournaments();
-        } else {
-          router.push('/');
-        }
+    } else if (status === 'authenticated') {
+      if (!isAdmin) {
+        router.push('/');
+      } else {
+        fetchTournaments();
       }
-    } catch (err) {
-      console.error(err);
-      router.push('/');
     }
-  };
+  }, [session, status, isAdmin, router]);
 
   const fetchTournaments = async () => {
     try {
