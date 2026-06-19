@@ -21,11 +21,16 @@ export async function GET() {
     
     const data = await res.json();
     
-    // Filter out $0.00 payments
+    // Filter out payments if needed, but allow $0.00 for testing or free packages
     let realPayments: any[] = [];
     if (Array.isArray(data)) {
-      realPayments = data.filter((p: any) => parseFloat(p.amount) > 0);
+      realPayments = data;
+    } else if (data && Array.isArray(data.data)) {
+      realPayments = data.data;
     }
+    
+    // Only count completed payments
+    realPayments = realPayments.filter((p: any) => p.status === 'Complete');
     
     // Calculate Top Customer by grouping amounts by player name
     const playerTotals: Record<string, { total: number, player: any }> = {};
@@ -38,7 +43,7 @@ export async function GET() {
     }
     
     let topCustomer = null;
-    let maxAmount = 0;
+    let maxAmount = -1;
     for (const name in playerTotals) {
       if (playerTotals[name].total > maxAmount) {
         maxAmount = playerTotals[name].total;
