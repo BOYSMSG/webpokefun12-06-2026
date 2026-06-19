@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import dbConnect from '@/lib/mongoose';
 import Poll from '@/models/Poll';
+import Message from '@/models/Message';
+import Notification from '@/models/Notification';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 
@@ -43,6 +45,22 @@ export async function POST(request: NextRequest) {
     });
 
     await poll.save();
+
+    // Send DM to voter
+    await Message.create({
+      senderId: 'System',
+      receiverId: userName,
+      content: `🎉 Thank you for voting on **${poll.question}**! You've received a participation reward. Please check in-game or contact an admin to claim!`
+    });
+
+    // Send Alert to voter
+    await Notification.create({
+      title: 'Vote Reward!',
+      message: `You voted on a poll and received a reward. Check your DMs!`,
+      isGlobal: false,
+      userId: userName,
+      icon: 'fa-solid fa-gift'
+    });
 
     return NextResponse.json({ success: true, poll });
   } catch (error) {

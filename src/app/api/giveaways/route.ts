@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import dbConnect from '@/lib/mongoose';
 import Giveaway from '@/models/Giveaway';
+import Message from '@/models/Message';
+import Notification from '@/models/Notification';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 
@@ -28,6 +30,23 @@ export async function GET(request: NextRequest) {
           // Pure random
           const shuffled = [...gw.participants].sort(() => 0.5 - Math.random());
           gw.winners = shuffled.slice(0, gw.winnersCount);
+        }
+
+        // Send DM to each winner
+        for (const winner of gw.winners) {
+          await Message.create({
+            senderId: 'System',
+            receiverId: winner,
+            content: `🎉 Congratulations! You have won the giveaway for **${gw.prize}**! Please contact an admin or open a ticket on our Discord to claim your reward.`
+          });
+
+          await Notification.create({
+            title: 'Giveaway Winner!',
+            message: `Congratulations! You won the giveaway for ${gw.prize}. Check your DMs!`,
+            isGlobal: false,
+            userId: winner,
+            icon: 'fa-solid fa-trophy'
+          });
         }
       }
       await gw.save();
