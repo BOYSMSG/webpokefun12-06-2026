@@ -30,10 +30,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: false, error: 'User not found.' }, { status: 404 });
     }
 
-    // Check if rank holder or admin
-    if (!currentUser.isRankHolder && !['ADMIN', 'OWNER'].includes(currentUser.role)) {
-      return NextResponse.json({ success: false, error: 'You must be a Rank Holder to apply for a Gym Leader position.' }, { status: 403 });
-    }
+    // Rank holder check removed at admin's request
 
     const gym = await Gym.findById(gymId);
     if (!gym) {

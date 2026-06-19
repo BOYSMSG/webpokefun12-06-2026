@@ -7,6 +7,7 @@ import SaleBanner from "@/components/SaleBanner";
 
 export default function HomePage() {
   const [playerCount, setPlayerCount] = useState<number | null>(null);
+  const [storeConfig, setStoreConfig] = useState<any>(null);
 
   useEffect(() => {
     fetch("https://api.mcsrvstat.us/3/play.pokefun.in")
@@ -19,6 +20,15 @@ export default function HomePage() {
         }
       })
       .catch(() => setPlayerCount(0));
+
+    fetch('/api/store-config')
+      .then(res => res.json())
+      .then(data => {
+        if (data.success && data.config) {
+          setStoreConfig(data.config);
+        }
+      })
+      .catch(() => {});
   }, []);
 
   return (
@@ -70,12 +80,14 @@ export default function HomePage() {
                   </div>
 
                   {/* SALE BANNER */}
-                  <SaleBanner 
-                    endDate="2026-06-30T23:59:59"
-                    title="Summer Sale"
-                    subtitle="Up to 20% OFF on all Ranks & Keys is now available for a limited time!"
-                    link="/store"
-                  />
+                  {storeConfig?.saleActive && (
+                    <SaleBanner 
+                      endDate={storeConfig.saleEndDate}
+                      title={storeConfig.saleTitle}
+                      subtitle={storeConfig.saleSubtitle}
+                      link="/store"
+                    />
+                  )}
 
                   {/* COMMUNITY PROMO */}
                   <div style={{ background: 'linear-gradient(135deg, #4c1d95 0%, #065f46 100%)', borderRadius: '20px', padding: '50px', textAlign: 'center', marginBottom: '80px', border: '1px solid rgba(255,255,255,0.2)', boxShadow: '0 15px 40px rgba(0,0,0,0.5)' }}>

@@ -147,6 +147,15 @@ export default function AdminPage() {
           </div>
         )}
 
+        {(myRole === 'OWNER' || myRole === 'ADMIN') && (
+          <div style={{ background: 'rgba(255,255,255,0.05)', padding: '30px', borderRadius: '16px', border: '1px solid #444' }}>
+            <i className="fa-solid fa-store" style={{ fontSize: '2rem', color: '#facc15', marginBottom: '15px' }}></i>
+            <h2>Store Configuration</h2>
+            <p style={{ color: 'gray', marginBottom: '15px' }}>Turn the store sale banner on or off, configure the discount amount, and set the timer.</p>
+            <button onClick={() => router.push('/admin/store-config')} style={{ padding: '8px 15px', background: '#facc15', color: 'black', border: 'none', borderRadius: '5px', cursor: 'pointer', fontWeight: 'bold' }}>Manage Store Config</button>
+          </div>
+        )}
+
         {canManageRoles && (
           <div style={{ background: 'rgba(255,255,255,0.05)', padding: '30px', borderRadius: '16px', border: '1px solid #444' }}>
             <i className="fa-solid fa-cloud-arrow-up" style={{ fontSize: '2rem', color: '#8b5cf6', marginBottom: '15px' }}></i>

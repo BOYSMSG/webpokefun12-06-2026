@@ -46,10 +46,10 @@ export const authOptions: NextAuthOptions = {
                 permissions: ['DELETE_POSTS', 'ANNOUNCEMENTS', 'MANAGE_ROLES', 'READ_DMS', 'BAN_USERS']
               });
             }
-            return { id: adminUser._id.toString(), name: adminUser.name, email: adminUser.email, role: adminUser.role, permissions: adminUser.permissions };
+            return { id: adminUser._id.toString(), username: adminUser.username, name: adminUser.name, email: adminUser.email, role: adminUser.role, permissions: adminUser.permissions };
           } catch (error) {
             console.warn("MongoDB connection failed in Admin Auth, allowing temporary admin session.");
-            return { id: "temp-admin-id", name: "Pokefun Admin", email: credentials.email, role: "OWNER", permissions: ['DELETE_POSTS', 'ANNOUNCEMENTS', 'MANAGE_ROLES', 'READ_DMS', 'BAN_USERS'] };
+            return { id: "temp-admin-id", username: "admin", name: "Pokefun Admin", email: credentials.email, role: "OWNER", permissions: ['DELETE_POSTS', 'ANNOUNCEMENTS', 'MANAGE_ROLES', 'READ_DMS', 'BAN_USERS'] };
           }
         }
         return null;
@@ -113,12 +113,14 @@ export const authOptions: NextAuthOptions = {
           if (dbUser) {
              (user as any).role = dbUser.role;
              (user as any).permissions = dbUser.permissions || [];
+             (user as any).username = dbUser.username;
              user.image = dbUser.image || user.image; // Force NextAuth to use the prioritized DB image
           }
         } catch (error) {
           console.warn("MongoDB connection failed in signIn, allowing temporary session for local testing.");
           (user as any).role = "USER";
           (user as any).permissions = [];
+          (user as any).username = "temp_user";
         }
       }
       return true;
@@ -127,6 +129,7 @@ export const authOptions: NextAuthOptions = {
       if (user) {
         token.role = (user as any).role;
         token.permissions = (user as any).permissions;
+        token.username = (user as any).username;
         token.picture = user.image; // Override JWT picture with our prioritized image
       }
       return token;
@@ -135,6 +138,7 @@ export const authOptions: NextAuthOptions = {
       if (session.user) {
         (session.user as any).role = token.role;
         (session.user as any).permissions = token.permissions || [];
+        (session.user as any).username = token.username;
       }
       return session;
     }

@@ -28,9 +28,19 @@ export default function ShopClient({ initialCategories }: { initialCategories: a
   const [showLoginModal, setShowLoginModal] = useState<boolean>(false);
   const [tempUsername, setTempUsername] = useState<string>('');
   
+  const [storeConfig, setStoreConfig] = useState<any>(null);
   const router = useRouter();
 
   useEffect(() => {
+    fetch('/api/store-config')
+      .then(res => res.json())
+      .then(data => {
+        if (data.success && data.config) {
+          setStoreConfig(data.config);
+        }
+      })
+      .catch(() => {});
+
     // Load saved username and currency
     const savedName = localStorage.getItem('mcUsername');
     if (savedName) setMcUsername(savedName);
@@ -364,10 +374,12 @@ export default function ShopClient({ initialCategories }: { initialCategories: a
                 />
                 <div className="featured-price-sub">{categories[0].packages[0].name}</div>
                 <div className="featured-price">
-                  <span style={{ textDecoration: 'line-through', color: '#a3a3a3', fontSize: '0.85em', marginRight: '8px' }}>
-                    {(parseFloat(categories[0].packages[0].total_price) * 1.25).toFixed(2)} {categories[0].packages[0].currency}
-                  </span>
-                  <span style={{ color: '#e74c3c', fontWeight: 'bold' }}>
+                  {storeConfig?.saleActive && (
+                    <span style={{ textDecoration: 'line-through', color: '#a3a3a3', fontSize: '0.85em', marginRight: '8px' }}>
+                      {(parseFloat(categories[0].packages[0].total_price) * (100 / (100 - (storeConfig.discountPercentage || 20)))).toFixed(2)} {categories[0].packages[0].currency}
+                    </span>
+                  )}
+                  <span style={{ color: storeConfig?.saleActive ? '#e74c3c' : 'white', fontWeight: 'bold' }}>
                     {categories[0].packages[0].total_price} {categories[0].packages[0].currency}
                   </span>
                 </div>
@@ -436,11 +448,13 @@ export default function ShopClient({ initialCategories }: { initialCategories: a
             <div className="category-container store-home-container" style={{ padding: '40px', background: '#111', border: '1px solid #222', borderRadius: '12px', color: '#ccc' }}>
               <h2 style={{ color: 'white', fontSize: '3rem', marginBottom: '20px', textAlign: 'center', fontWeight: '800' }}>WELCOME TO THE OFFICIAL <br/><span style={{color: '#4bc8c8'}}>POKEFUN STORE</span></h2>
               
-              <SaleBanner 
-                endDate="2026-06-30T23:59:59"
-                title="Summer Sale"
-                subtitle="Up to 20% OFF on all Ranks & Keys is now available for a limited time!"
-              />
+              {storeConfig?.saleActive && (
+                <SaleBanner 
+                  endDate={storeConfig.saleEndDate}
+                  title={storeConfig.saleTitle}
+                  subtitle={storeConfig.saleSubtitle}
+                />
+              )}
 
               <p style={{ fontSize: '1.2rem', lineHeight: '1.6', marginBottom: '20px', textAlign: 'center' }}>
                 <strong>POKEFUN JAVA</strong> is a free-to-play 1st Public cracked Minecraft Server of <strong>Cobblemon 1.7.1 and many more</strong>. Purchase items here to enhance your Pokémon journey, unlock special perks, and show off a unique style on the server!
@@ -514,10 +528,12 @@ export default function ShopClient({ initialCategories }: { initialCategories: a
                         <div className="pkg-details">
                           <h3 className="pkg-name" onClick={() => { setSelectedPkg(pkg); setSelectedImage(pkg.image); setCopied(false); }}>{pkg.name}</h3>
                           <div className="pkg-price">
-                            <span style={{ textDecoration: 'line-through', color: '#a3a3a3', fontSize: '0.85em', marginRight: '8px' }}>
-                              {(parseFloat(pkg.total_price) * 1.25).toFixed(2)} {pkg.currency}
-                            </span>
-                            <span style={{ color: '#e74c3c', fontWeight: 'bold' }}>
+                            {storeConfig?.saleActive && (
+                              <span style={{ textDecoration: 'line-through', color: '#a3a3a3', fontSize: '0.85em', marginRight: '8px' }}>
+                                {(parseFloat(pkg.total_price) * (100 / (100 - (storeConfig.discountPercentage || 20)))).toFixed(2)} {pkg.currency}
+                              </span>
+                            )}
+                            <span style={{ color: storeConfig?.saleActive ? '#e74c3c' : 'white', fontWeight: 'bold' }}>
                               {pkg.total_price} {pkg.currency}
                             </span>
                           </div>
