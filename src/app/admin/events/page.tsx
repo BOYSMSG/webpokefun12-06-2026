@@ -117,9 +117,9 @@ export default function AdminEventsPage() {
                 </div>
 
                 <div style={{ background: 'rgba(0,0,0,0.3)', padding: '15px', borderRadius: '10px' }}>
-                  <h3 style={{ fontSize: '1rem', color: '#a3a3a3', marginBottom: '10px' }}>Participants ({ev.participants.length} / {ev.maxPlayers})</h3>
+                  <h3 style={{ fontSize: '1rem', color: '#a3a3a3', marginBottom: '10px' }}>Applicants ({ev.applicants?.length || 0} / {ev.maxPlayers})</h3>
                   <div style={{ maxHeight: '100px', overflowY: 'auto', fontSize: '0.9rem', color: '#fff' }}>
-                    {ev.participants.length > 0 ? ev.participants.join(', ') : 'No entries yet.'}
+                    {ev.applicants && ev.applicants.length > 0 ? ev.applicants.join(', ') : 'No entries yet.'}
                   </div>
                 </div>
 

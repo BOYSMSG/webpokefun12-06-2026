@@ -117,9 +117,9 @@ export default function AdminTournamentsPage() {
                 </div>
 
                 <div style={{ background: 'rgba(0,0,0,0.3)', padding: '15px', borderRadius: '10px' }}>
-                  <h3 style={{ fontSize: '1rem', color: '#a3a3a3', marginBottom: '10px' }}>Participants ({t.participants.length} / {t.maxPlayers})</h3>
+                  <h3 style={{ fontSize: '1rem', color: '#a3a3a3', marginBottom: '10px' }}>Applicants ({t.applicants?.length || 0} / {t.maxPlayers})</h3>
                   <div style={{ maxHeight: '100px', overflowY: 'auto', fontSize: '0.9rem', color: '#fff' }}>
-                    {t.participants.length > 0 ? t.participants.join(', ') : 'No entries yet.'}
+                    {t.applicants && t.applicants.length > 0 ? t.applicants.join(', ') : 'No entries yet.'}
                   </div>
                 </div>
 
