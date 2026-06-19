@@ -11,7 +11,7 @@ export default function AdminEventsPage() {
   const [events, setEvents] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [winnerInputs, setWinnerInputs] = useState<Record<string, {first: string, second: string, third: string}>>({});
+  const [winnerInputs, setWinnerInputs] = useState<Record<string, {first: string, second: string, third: string, endMessage: string}>>({});
 
   const myRole = (session?.user as any)?.role;
   const myPermissions = (session?.user as any)?.permissions || [];
@@ -42,7 +42,8 @@ export default function AdminEventsPage() {
           initialInputs[ev._id] = {
             first: ev.winners?.first || '',
             second: ev.winners?.second || '',
-            third: ev.winners?.third || ''
+            third: ev.winners?.third || '',
+            endMessage: ev.endMessage || ''
           };
         });
         setWinnerInputs(initialInputs);
@@ -60,7 +61,16 @@ export default function AdminEventsPage() {
       const res = await fetch('/api/events', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ eventId: id, action: 'SET_WINNERS', winners: winnerInputs[id] })
+        body: JSON.stringify({ 
+          eventId: id, 
+          action: 'SET_WINNERS', 
+          winners: {
+            first: winnerInputs[id].first,
+            second: winnerInputs[id].second,
+            third: winnerInputs[id].third
+          },
+          endMessage: winnerInputs[id].endMessage
+        })
       });
       const data = await res.json();
       if (data.success) {
@@ -184,8 +194,18 @@ export default function AdminEventsPage() {
                       onChange={(e) => setWinnerInputs({...winnerInputs, [ev._id]: {...winnerInputs[ev._id], third: e.target.value}})}
                       style={{ padding: '8px', borderRadius: '5px', border: '1px solid #555', background: '#222', color: 'white', flex: 1, minWidth: '150px' }}
                     />
+                  </div>
+                  <div style={{ marginTop: '10px' }}>
+                    <textarea 
+                      placeholder="Additional Message for Players (Optional)..." 
+                      value={winnerInputs[ev._id]?.endMessage || ''}
+                      onChange={(e) => setWinnerInputs({...winnerInputs, [ev._id]: {...winnerInputs[ev._id], endMessage: e.target.value}})}
+                      style={{ width: '100%', padding: '8px', borderRadius: '5px', border: '1px solid #555', background: '#222', color: 'white', minHeight: '60px', fontFamily: 'inherit' }}
+                    />
+                  </div>
+                  <div style={{ marginTop: '10px', display: 'flex', justifyContent: 'flex-end' }}>
                     <button onClick={() => setWinners(ev._id)} style={{ padding: '8px 15px', background: '#2ecc71', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer', fontWeight: 'bold' }}>
-                      Save Winners
+                      Save Winners & Message
                     </button>
                   </div>
                 </div>

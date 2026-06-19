@@ -32,10 +32,11 @@ const TournamentSchema: Schema = new Schema({
   eventDate: { type: Date, required: true },
   status: { type: String, enum: ['UPCOMING', 'ONGOING', 'COMPLETED'], default: 'UPCOMING' },
   winners: {
-    first: { type: String },
-    second: { type: String },
-    third: { type: String }
-  }
+    first: { type: String, default: '' },
+    second: { type: String, default: '' },
+    third: { type: String, default: '' }
+  },
+  endMessage: { type: String, default: '' }
 });
 
 const Tournament: Model<ITournament> = mongoose.models.Tournament || mongoose.model<ITournament>('Tournament', TournamentSchema);

@@ -83,7 +83,8 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { action, eventId, targetUsername } = await request.json();
+    const body = await request.json();
+    const { action, eventId, targetUsername, winners, endMessage } = body;
 
     await dbConnect();
     const serverEvent = await ServerEvent.findById(eventId);
@@ -168,8 +169,8 @@ export async function PUT(request: NextRequest) {
          return NextResponse.json({ success: false, error: 'Only admins or authorized staff can set winners.' }, { status: 403 });
       }
 
-      const { winners } = await request.json();
-      serverEvent.winners = winners;
+      if (winners) serverEvent.winners = winners;
+      if (endMessage !== undefined) serverEvent.endMessage = endMessage;
       await serverEvent.save();
 
       return NextResponse.json({ success: true, message: 'Winners updated successfully.', event: serverEvent });

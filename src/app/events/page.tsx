@@ -165,6 +165,11 @@ export default function EventsPage() {
               {t.winners.second && <div><span style={{ color: '#c0c0c0', fontWeight: 'bold' }}>2nd Place:</span> {t.winners.second}</div>}
               {t.winners.third && <div><span style={{ color: '#cd7f32', fontWeight: 'bold' }}>3rd Place:</span> {t.winners.third}</div>}
             </div>
+            {t.endMessage && (
+              <div style={{ marginTop: '10px', paddingTop: '10px', borderTop: '1px solid rgba(241, 196, 15, 0.3)', color: '#fff', fontSize: '0.9rem', fontStyle: 'italic' }}>
+                "{t.endMessage}"
+              </div>
+            )}
           </div>
         )}
 

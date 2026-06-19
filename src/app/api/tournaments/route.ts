@@ -83,7 +83,8 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { action, tournamentId, targetUsername } = await request.json();
+    const body = await request.json();
+    const { action, tournamentId, targetUsername, winners, endMessage } = body;
 
     await dbConnect();
     const tournament = await Tournament.findById(tournamentId);
@@ -168,8 +169,8 @@ export async function PUT(request: NextRequest) {
          return NextResponse.json({ success: false, error: 'Only admins or authorized staff can set winners.' }, { status: 403 });
       }
 
-      const { winners } = await request.json();
-      tournament.winners = winners;
+      if (winners) tournament.winners = winners;
+      if (endMessage !== undefined) tournament.endMessage = endMessage;
       await tournament.save();
 
       return NextResponse.json({ success: true, message: 'Winners updated successfully.', tournament });
