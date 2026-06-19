@@ -30,9 +30,12 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     }
 
-    const userRole = (session.user as any).role;
-    if (!['ADMIN', 'OWNER'].includes(userRole)) {
-       return NextResponse.json({ success: false, error: 'Only admins can create events.' }, { status: 403 });
+    const User = (await import('@/models/User')).default;
+    const currentUser = await User.findOne({ username: ((session.user as any).username || session.user.name) });
+    const canManageEvents = currentUser && (['ADMIN', 'OWNER'].includes(currentUser.role) || currentUser.permissions?.includes('MANAGE_EVENTS_TOURNAMENTS'));
+
+    if (!canManageEvents) {
+       return NextResponse.json({ success: false, error: 'Only admins or authorized staff can create events.' }, { status: 403 });
     }
 
     const { name, description, imageUrl, rules, maxPlayers, eventDate } = await request.json();
@@ -76,7 +79,7 @@ export async function POST(request: NextRequest) {
 export async function PUT(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
-    if (!session || !session.user?.username) {
+    if (!session || !session.user) {
       return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -115,8 +118,10 @@ export async function PUT(request: NextRequest) {
     if (action === 'APPROVE') {
       const User = (await import('@/models/User')).default;
       const currentUser = await User.findOne({ username: ((session.user as any).username || session.user.name) });
-      if (!currentUser || !['ADMIN', 'OWNER'].includes(currentUser.role)) {
-         return NextResponse.json({ success: false, error: 'Only admins can approve applications.' }, { status: 403 });
+      const canManageEvents = currentUser && (['ADMIN', 'OWNER'].includes(currentUser.role) || currentUser.permissions?.includes('MANAGE_EVENTS_TOURNAMENTS'));
+
+      if (!canManageEvents) {
+         return NextResponse.json({ success: false, error: 'Only admins or authorized staff can approve applications.' }, { status: 403 });
       }
 
       if (!serverEvent.applicants.includes(targetUsername)) {
@@ -138,9 +143,52 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json({ success: true, message: 'Player approved successfully.' });
     }
 
+    if (action === 'FORCE_END') {
+      const User = (await import('@/models/User')).default;
+      const currentUser = await User.findOne({ username: ((session.user as any).username || session.user.name) });
+      const canManageEvents = currentUser && (['ADMIN', 'OWNER'].includes(currentUser.role) || currentUser.permissions?.includes('MANAGE_EVENTS_TOURNAMENTS'));
+
+      if (!canManageEvents) {
+         return NextResponse.json({ success: false, error: 'Only admins or authorized staff can force end events.' }, { status: 403 });
+      }
+
+      serverEvent.status = 'ENDED';
+      serverEvent.eventDate = new Date(); // update time to now
+      await serverEvent.save();
+
+      return NextResponse.json({ success: true, message: 'Event force ended successfully.' });
+    }
+
     return NextResponse.json({ success: false, error: 'Invalid action.' }, { status: 400 });
   } catch (error) {
     console.error('Error handling event action:', error);
     return NextResponse.json({ success: false, error: 'Internal Server Error' }, { status: 500 });
   }
 }
+
+export async function DELETE(request: NextRequest) {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session || !session.user) {
+      return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const { eventId } = await request.json();
+
+    await dbConnect();
+    
+    const User = (await import('@/models/User')).default;
+    const currentUser = await User.findOne({ username: ((session.user as any).username || session.user.name) });
+    const canManageEvents = currentUser && (['ADMIN', 'OWNER'].includes(currentUser.role) || currentUser.permissions?.includes('MANAGE_EVENTS_TOURNAMENTS'));
+
+    if (!canManageEvents) {
+       return NextResponse.json({ success: false, error: 'Only admins or authorized staff can delete events.' }, { status: 403 });
+    }
+
+    if (!eventId) {
+      return NextResponse.json({ success: false, error: 'Event ID required' }, { status: 400 });
+    }
+
+    await ServerEvent.findByIdAndDelete(eventId);
+
+    return NextResponse.json({ success: true, message: 'Event deleted successfully' });

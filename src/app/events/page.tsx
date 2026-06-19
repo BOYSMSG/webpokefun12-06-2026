@@ -17,6 +17,7 @@ export default function EventsPage() {
   const [rules, setRules] = useState('');
   const [maxPlayers, setMaxPlayers] = useState('50');
   const [eventDate, setEventDate] = useState('');
+  const [imageUrl, setImageUrl] = useState('');
   const [createLoading, setCreateLoading] = useState(false);
 
   const [actionLoading, setActionLoading] = useState<{ [id: string]: boolean }>({});
@@ -50,12 +51,12 @@ export default function EventsPage() {
       const res = await fetch('/api/events', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, description, rules, maxPlayers, eventDate })
+        body: JSON.stringify({ name, description, rules, maxPlayers, eventDate, imageUrl })
       });
       const data = await res.json();
       if (data.success) {
         setShowCreateModal(false);
-        setName(''); setDescription(''); setRules(''); setMaxPlayers('50'); setEventDate('');
+        setName(''); setDescription(''); setRules(''); setMaxPlayers('50'); setEventDate(''); setImageUrl('');
         fetchEvents();
       } else {
         alert(data.error);
@@ -111,6 +112,12 @@ export default function EventsPage() {
           </span>
         </div>
         
+        {ev.imageUrl && (
+          <div style={{ marginBottom: "20px", width: "100%", maxHeight: "300px", overflow: "hidden", borderRadius: "8px" }}>
+            <img src={ev.imageUrl} alt={ev.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+          </div>
+        )}
+
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "15px", marginBottom: "20px", fontSize: "0.9rem" }}>
           <div style={{ background: "#222", padding: "12px", borderRadius: "8px" }}>
             <div style={{ color: "#888", marginBottom: "5px" }}><i className="fa-regular fa-clock"></i> Date</div>
@@ -231,6 +238,11 @@ export default function EventsPage() {
                 <textarea required value={description} onChange={e => setDescription(e.target.value)} style={{ width: "100%", padding: "10px", borderRadius: "6px", background: "#111", border: "1px solid #333", color: "#fff", resize: "none", minHeight: "60px" }} />
               </div>
               
+              <div style={{ marginBottom: "15px" }}>
+                <label style={{ display: "block", color: "#a3a3a3", marginBottom: "5px", fontSize: "0.9rem" }}>Image URL (Optional)</label>
+                <input type="text" placeholder="https://..." value={imageUrl} onChange={e => setImageUrl(e.target.value)} style={{ width: "100%", padding: "10px", borderRadius: "6px", background: "#111", border: "1px solid #333", color: "#fff" }} />
+              </div>
+
               <div style={{ marginBottom: "15px" }}>
                 <label style={{ display: "block", color: "#a3a3a3", marginBottom: "5px", fontSize: "0.9rem" }}>Details / Rules</label>
                 <textarea value={rules} onChange={e => setRules(e.target.value)} style={{ width: "100%", padding: "10px", borderRadius: "6px", background: "#111", border: "1px solid #333", color: "#fff", resize: "none", minHeight: "60px" }} />

@@ -4,6 +4,30 @@ import React, { useState, useEffect } from "react";
 import Head from "next/head";
 import { useSession } from "next-auth/react";
 
+const CountdownTimer = ({ expiresAt }: { expiresAt: string }) => {
+  const [timeLeft, setTimeLeft] = useState<string>('');
+
+  useEffect(() => {
+    const updateTimer = () => {
+      const diff = new Date(expiresAt).getTime() - new Date().getTime();
+      if (diff <= 0) {
+        setTimeLeft('Ended');
+        return;
+      }
+      const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      const s = Math.floor((diff % (1000 * 60)) / 1000);
+      setTimeLeft(`${d > 0 ? d + 'd ' : ''}${h}h ${m}m ${s}s`);
+    };
+    updateTimer();
+    const interval = setInterval(updateTimer, 1000);
+    return () => clearInterval(interval);
+  }, [expiresAt]);
+
+  return <span>{timeLeft}</span>;
+};
+
 export default function PollsPage() {
   const { data: session } = useSession();
   const [polls, setPolls] = useState<any[]>([]);
@@ -111,6 +135,34 @@ export default function PollsPage() {
     setVoteLoading({ ...voteLoading, [pollId]: false });
   };
 
+  const forceEndPoll = async (id: string) => {
+    if (!confirm('Are you sure you want to force end this poll?')) return;
+    try {
+      const res = await fetch('/api/polls', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id, action: 'force_end' })
+      });
+      if (res.ok) fetchPolls();
+    } catch (e) {
+      alert('Error ending poll');
+    }
+  };
+
+  const deletePoll = async (id: string) => {
+    if (!confirm('Are you sure you want to delete this poll?')) return;
+    try {
+      const res = await fetch('/api/polls', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id })
+      });
+      if (res.ok) fetchPolls();
+    } catch (e) {
+      alert('Error deleting poll');
+    }
+  };
+
   const toggleOptionSelection = (pollId: string, index: number, isMultiple: boolean) => {
     const current = selectedOptions[pollId] || [];
     if (isMultiple) {
@@ -126,20 +178,28 @@ export default function PollsPage() {
 
   const renderPoll = (poll: any) => {
     const totalVotes = poll.options.reduce((sum: number, opt: any) => sum + opt.votes.length, 0);
-    const hasVoted = session?.user?.username && poll.options.some((opt: any) => opt.votes.includes(session.user.username));
+    const userName = (session?.user as any)?.username || session?.user?.name;
+    const hasVoted = userName && poll.options.some((opt: any) => opt.votes.includes(userName));
     const canVote = !hasVoted && poll.isActive && session?.user;
 
     return (
       <div key={poll._id} style={{ background: "rgba(30, 34, 39, 0.7)", borderRadius: "12px", padding: "25px", marginBottom: "20px", border: "1px solid #333", position: "relative" }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "15px" }}>
           <h3 style={{ margin: 0, color: "#fff", fontSize: "1.3rem", fontWeight: 700 }}>{poll.question}</h3>
-          {!poll.isActive && <span style={{ background: "#e74c3c", color: "#fff", padding: "3px 8px", borderRadius: "4px", fontSize: "0.8rem", fontWeight: "bold" }}>Ended</span>}
+          {!poll.isActive ? (
+            <span style={{ background: "#e74c3c", color: "#fff", padding: "3px 8px", borderRadius: "4px", fontSize: "0.8rem", fontWeight: "bold" }}>Ended</span>
+          ) : (
+            <span style={{ background: "rgba(243, 156, 18, 0.2)", color: "#f39c12", padding: "3px 8px", borderRadius: "4px", fontSize: "0.8rem", fontWeight: "bold" }}>
+               Ends in: <CountdownTimer expiresAt={poll.expiresAt} />
+            </span>
+          )}
         </div>
         <div style={{ marginBottom: "20px" }}>
           {poll.options.map((opt: any, index: number) => {
             const percentage = totalVotes === 0 ? 0 : Math.round((opt.votes.length / totalVotes) * 100);
             const isSelected = selectedOptions[poll._id]?.includes(index);
-            const userVotedForThis = session?.user?.username && opt.votes.includes(session.user.username);
+            const userName = (session?.user as any)?.username || session?.user?.name;
+            const userVotedForThis = userName && opt.votes.includes(userName);
 
             return (
               <div 
@@ -187,6 +247,11 @@ export default function PollsPage() {
                   </div>
                   {hasVoted && <span style={{ fontWeight: "bold" }}>{percentage}%</span>}
                 </div>
+                {isAdmin && opt.votes.length > 0 && (
+                  <div style={{ marginTop: "10px", fontSize: "0.8rem", color: "#a3a3a3", wordBreak: "break-all" }}>
+                    <strong>Voters:</strong> {opt.votes.join(', ')}
+                  </div>
+                )}
               </div>
             );
           })}
@@ -210,6 +275,19 @@ export default function PollsPage() {
           )}
           {!session?.user && poll.isActive && <span>Login to vote</span>}
         </div>
+
+        {isAdmin && (
+          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', marginTop: '15px', borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '15px' }}>
+            {poll.isActive && (
+              <button onClick={() => forceEndPoll(poll._id)} style={{ padding: '6px 12px', background: '#f39c12', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer', fontWeight: 'bold', fontSize: '0.8rem' }}>
+                <i className="fa-solid fa-stopwatch"></i> Force End
+              </button>
+            )}
+            <button onClick={() => deletePoll(poll._id)} style={{ padding: '6px 12px', background: '#c0392b', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer', fontWeight: 'bold', fontSize: '0.8rem' }}>
+              <i className="fa-solid fa-trash"></i> Delete
+            </button>
+          </div>
+        )}
       </div>
     );
   };

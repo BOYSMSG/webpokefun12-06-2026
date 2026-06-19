@@ -4,6 +4,30 @@ import React, { useState, useEffect } from "react";
 import Head from "next/head";
 import { useSession } from "next-auth/react";
 
+const CountdownTimer = ({ expiresAt }: { expiresAt: string }) => {
+  const [timeLeft, setTimeLeft] = useState<string>('');
+
+  useEffect(() => {
+    const updateTimer = () => {
+      const diff = new Date(expiresAt).getTime() - new Date().getTime();
+      if (diff <= 0) {
+        setTimeLeft('Ended');
+        return;
+      }
+      const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      const s = Math.floor((diff % (1000 * 60)) / 1000);
+      setTimeLeft(`${d > 0 ? d + 'd ' : ''}${h}h ${m}m ${s}s`);
+    };
+    updateTimer();
+    const interval = setInterval(updateTimer, 1000);
+    return () => clearInterval(interval);
+  }, [expiresAt]);
+
+  return <span>{timeLeft}</span>;
+};
+
 export default function GiveawaysPage() {
   const { data: session } = useSession();
   const [giveaways, setGiveaways] = useState<any[]>([]);
@@ -100,7 +124,9 @@ export default function GiveawaysPage() {
             <p style={{ color: "#a3a3a3", marginTop: "5px", fontSize: "0.95rem" }}>{gw.description}</p>
           </div>
           {gw.status === 'ACTIVE' ? (
-            <span style={{ background: "rgba(46, 204, 113, 0.2)", color: "#2ecc71", padding: "4px 10px", borderRadius: "6px", fontSize: "0.8rem", fontWeight: "bold" }}>ACTIVE</span>
+            <span style={{ background: "rgba(243, 156, 18, 0.2)", color: "#f39c12", padding: "4px 10px", borderRadius: "6px", fontSize: "0.8rem", fontWeight: "bold" }}>
+              Ends in: <CountdownTimer expiresAt={gw.expiresAt} />
+            </span>
           ) : (
             <span style={{ background: "rgba(231, 76, 60, 0.2)", color: "#e74c3c", padding: "4px 10px", borderRadius: "6px", fontSize: "0.8rem", fontWeight: "bold" }}>ENDED</span>
           )}

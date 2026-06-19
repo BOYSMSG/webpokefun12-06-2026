@@ -17,7 +17,7 @@ export interface IUser extends Document {
   };
   followers: string[];
   following: string[];
-  permissions: string[]; // e.g. ['DELETE_POSTS', 'ANNOUNCEMENTS', 'MANAGE_ROLES', 'READ_DMS', 'BAN_USERS']
+  permissions: string[]; // e.g. ['DELETE_POSTS', 'ANNOUNCEMENTS', 'MANAGE_ROLES', 'READ_DMS', 'BAN_USERS', 'MANAGE_EVENTS_TOURNAMENTS', 'MANAGE_GIVEAWAYS_POLLS']
   savedPosts: string[]; // Array of post IDs
   pushSubscriptions?: any[]; // For Web Push notifications
   lastActive?: Date;

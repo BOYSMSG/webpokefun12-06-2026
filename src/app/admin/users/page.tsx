@@ -9,7 +9,9 @@ const PERMISSIONS_LIST = [
   { id: 'ANNOUNCEMENTS', label: 'Post Announcements/Guides' },
   { id: 'MANAGE_ROLES', label: 'Manage Roles & Staff' },
   { id: 'READ_DMS', label: 'Read Player DMs (Spy)' },
-  { id: 'BAN_USERS', label: 'Ban & Warn Users' }
+  { id: 'BAN_USERS', label: 'Ban & Warn Users' },
+  { id: 'MANAGE_GIVEAWAYS_POLLS', label: 'Manage Giveaways & Polls' },
+  { id: 'MANAGE_EVENTS_TOURNAMENTS', label: 'Manage Events & Tournaments' }
 ];
 
 export default function AdminUsersPage() {

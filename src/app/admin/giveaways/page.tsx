@@ -73,6 +73,46 @@ export default function AdminGiveawaysPage() {
     setSaving(prev => ({ ...prev, [id]: false }));
   };
 
+  const forceEndGiveaway = async (id: string) => {
+    if (!confirm('Are you sure you want to forcefully end this giveaway and roll winners right now?')) return;
+    try {
+      const res = await fetch('/api/admin/giveaways', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id, action: 'force_end' })
+      });
+      const data = await res.json();
+      if (data.success) {
+        alert('Giveaway force ended! Winners will be rolled automatically on next fetch.');
+        fetchGiveaways();
+      } else {
+        alert(data.error || 'Failed to force end');
+      }
+    } catch (err) {
+      alert('Error force ending giveaway');
+    }
+  };
+
+  const deleteGiveaway = async (id: string) => {
+    if (!confirm('Are you sure you want to permanently delete this giveaway?')) return;
+    try {
+      const res = await fetch('/api/admin/giveaways', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id })
+      });
+      const data = await res.json();
+      if (data.success) {
+        alert('Giveaway deleted successfully.');
+        fetchGiveaways();
+      } else {
+        alert(data.error || 'Failed to delete');
+      }
+    } catch (err) {
+      alert('Error deleting giveaway');
+    }
+  };
+
   if (status === 'loading' || loading) return <div style={{ textAlign: 'center', marginTop: '100px', color: 'white' }}>Loading admin data...</div>;
   if (!isAdmin) return null;
 
@@ -83,7 +123,7 @@ export default function AdminGiveawaysPage() {
       </button>
 
       <h1 style={{ fontSize: '2.5rem', fontWeight: 800, color: '#ef4444', marginBottom: '10px' }}>Manage Giveaways</h1>
-      <p style={{ color: 'gray', marginBottom: '30px' }}>View all active and past giveaways. You can silently rig active giveaways by setting a force winner.</p>
+      <p style={{ color: 'gray', marginBottom: '30px' }}>View all active and past giveaways. You can silently rig active giveaways by setting a force winner, force end them early, or delete them entirely.</p>
 
       {error && <div style={{ background: '#ef4444', color: 'white', padding: '15px', borderRadius: '8px', marginBottom: '20px' }}>{error}</div>}
 
@@ -143,6 +183,17 @@ export default function AdminGiveawaysPage() {
                       )}
                     </div>
                   )}
+                </div>
+
+                <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', marginTop: '10px', borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '15px' }}>
+                  {isActive && (
+                    <button onClick={() => forceEndGiveaway(gw._id)} style={{ padding: '8px 15px', background: '#f39c12', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer', fontWeight: 'bold' }}>
+                      <i className="fa-solid fa-stopwatch"></i> Force End
+                    </button>
+                  )}
+                  <button onClick={() => deleteGiveaway(gw._id)} style={{ padding: '8px 15px', background: '#c0392b', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer', fontWeight: 'bold' }}>
+                    <i className="fa-solid fa-trash"></i> Delete
+                  </button>
                 </div>
               </div>
             );

@@ -86,9 +86,12 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     }
 
-    const userRole = (session.user as any).role;
-    if (!['ADMIN', 'OWNER'].includes(userRole)) {
-       return NextResponse.json({ success: false, error: 'Only admins can create giveaways.' }, { status: 403 });
+    const User = (await import('@/models/User')).default;
+    const currentUser = await User.findOne({ username: ((session.user as any).username || session.user.name) });
+    const canManageGiveaways = currentUser && (['ADMIN', 'OWNER'].includes(currentUser.role) || currentUser.permissions?.includes('MANAGE_GIVEAWAYS_POLLS'));
+
+    if (!canManageGiveaways) {
+       return NextResponse.json({ success: false, error: 'Only admins or authorized staff can create giveaways.' }, { status: 403 });
     }
 
     const { prize, description, winnersCount, durationHours, imageUrl } = await request.json();

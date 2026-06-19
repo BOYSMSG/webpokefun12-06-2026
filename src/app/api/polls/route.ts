@@ -29,9 +29,12 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     }
 
-    const userRole = (session.user as any).role;
-    if (!['ADMIN', 'OWNER'].includes(userRole)) {
-       return NextResponse.json({ success: false, error: 'Only admins can create polls.' }, { status: 403 });
+    const User = (await import('@/models/User')).default;
+    const currentUser = await User.findOne({ username: ((session.user as any).username || session.user.name) });
+    const canManagePolls = currentUser && (['ADMIN', 'OWNER'].includes(currentUser.role) || currentUser.permissions?.includes('MANAGE_GIVEAWAYS_POLLS'));
+
+    if (!canManagePolls) {
+       return NextResponse.json({ success: false, error: 'Forbidden' }, { status: 403 });
     }
 
     const { question, description, imageUrl, options, durationHours, allowMultiple } = await request.json();
@@ -72,6 +75,76 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ success: true, poll: newPoll });
   } catch (error) {
     console.error('Error creating poll:', error);
+    return NextResponse.json({ success: false, error: 'Internal Server Error' }, { status: 500 });
+  }
+}
+
+export async function PUT(request: NextRequest) {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session || !session.user) {
+      return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const User = (await import('@/models/User')).default;
+    const currentUser = await User.findOne({ username: ((session.user as any).username || session.user.name) });
+    const canManagePolls = currentUser && (['ADMIN', 'OWNER'].includes(currentUser.role) || currentUser.permissions?.includes('MANAGE_GIVEAWAYS_POLLS'));
+
+    if (!canManagePolls) {
+       return NextResponse.json({ success: false, error: 'Forbidden' }, { status: 403 });
+    }
+
+    const { id, action } = await request.json();
+
+    if (!id || action !== 'force_end') {
+      return NextResponse.json({ success: false, error: 'Invalid request' }, { status: 400 });
+    }
+
+    await dbConnect();
+
+    const poll = await Poll.findById(id);
+    if (!poll) {
+      return NextResponse.json({ success: false, error: 'Poll not found' }, { status: 404 });
+    }
+
+    poll.isActive = false;
+    poll.expiresAt = new Date();
+    await poll.save();
+
+    return NextResponse.json({ success: true, message: 'Poll force ended' });
+  } catch (error) {
+    console.error('Error ending poll:', error);
+    return NextResponse.json({ success: false, error: 'Internal Server Error' }, { status: 500 });
+  }
+}
+
+export async function DELETE(request: NextRequest) {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session || !session.user) {
+      return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const User = (await import('@/models/User')).default;
+    const currentUser = await User.findOne({ username: ((session.user as any).username || session.user.name) });
+    const canManagePolls = currentUser && (['ADMIN', 'OWNER'].includes(currentUser.role) || currentUser.permissions?.includes('MANAGE_GIVEAWAYS_POLLS'));
+
+    if (!canManagePolls) {
+       return NextResponse.json({ success: false, error: 'Forbidden' }, { status: 403 });
+    }
+
+    const { id } = await request.json();
+
+    if (!id) {
+      return NextResponse.json({ success: false, error: 'Poll ID required' }, { status: 400 });
+    }
+
+    await dbConnect();
+    await Poll.findByIdAndDelete(id);
+
+    return NextResponse.json({ success: true, message: 'Poll deleted' });
+  } catch (error) {
+    console.error('Error deleting poll:', error);
     return NextResponse.json({ success: false, error: 'Internal Server Error' }, { status: 500 });
   }
 }

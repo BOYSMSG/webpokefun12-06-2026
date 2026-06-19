@@ -21,6 +21,8 @@ export default function AdminPage() {
   const canManageRoles = myRole === 'OWNER' || myRole === 'ADMIN' || myPermissions.includes('MANAGE_ROLES');
   const canBanUsers = myRole === 'OWNER' || myRole === 'ADMIN' || myPermissions.includes('BAN_USERS');
   const canReadDMs = myRole === 'OWNER' || myRole === 'ADMIN' || myPermissions.includes('READ_DMS');
+  const canManageGiveawaysPolls = myRole === 'OWNER' || myRole === 'ADMIN' || myPermissions.includes('MANAGE_GIVEAWAYS_POLLS');
+  const canManageEventsTourneys = myRole === 'OWNER' || myRole === 'ADMIN' || myPermissions.includes('MANAGE_EVENTS_TOURNAMENTS');
 
   // Auto redirect if not privileged but logged in
   useEffect(() => {
@@ -129,13 +131,30 @@ export default function AdminPage() {
           </div>
         )}
 
-        {(myRole === 'OWNER' || myRole === 'ADMIN') && (
+        {canManageGiveawaysPolls && (
           <div style={{ background: 'rgba(255,255,255,0.05)', padding: '30px', borderRadius: '16px', border: '1px solid #444' }}>
             <i className="fa-solid fa-gift" style={{ fontSize: '2rem', color: '#e74c3c', marginBottom: '15px' }}></i>
-            <h2>Manage Giveaways</h2>
+            <h2>Manage Giveaways & Polls</h2>
             <p style={{ color: 'gray', marginBottom: '15px' }}>View active giveaways and secretly rig winners from behind the scenes.</p>
             <button onClick={() => router.push('/admin/giveaways')} style={{ padding: '8px 15px', background: '#e74c3c', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>Manage Giveaways</button>
           </div>
+        )}
+
+        {canManageEventsTourneys && (
+          <>
+            <div style={{ background: 'rgba(255,255,255,0.05)', padding: '30px', borderRadius: '16px', border: '1px solid #444' }}>
+              <i className="fa-solid fa-calendar-star" style={{ fontSize: '2rem', color: '#3b82f6', marginBottom: '15px' }}></i>
+              <h2>Manage Events</h2>
+              <p style={{ color: 'gray', marginBottom: '15px' }}>View all events and see participants.</p>
+              <button onClick={() => router.push('/admin/events')} style={{ padding: '8px 15px', background: '#3b82f6', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>Manage Events</button>
+            </div>
+            <div style={{ background: 'rgba(255,255,255,0.05)', padding: '30px', borderRadius: '16px', border: '1px solid #444' }}>
+              <i className="fa-solid fa-trophy" style={{ fontSize: '2rem', color: '#f59e0b', marginBottom: '15px' }}></i>
+              <h2>Manage Tournaments</h2>
+              <p style={{ color: 'gray', marginBottom: '15px' }}>View all tournaments and see participants.</p>
+              <button onClick={() => router.push('/admin/tournaments')} style={{ padding: '8px 15px', background: '#f59e0b', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>Manage Tournaments</button>
+            </div>
+          </>
         )}
 
         {(myRole === 'OWNER' || myRole === 'ADMIN') && (
