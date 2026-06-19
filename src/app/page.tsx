@@ -31,8 +31,8 @@ export default function HomePage() {
 
   return (
     <>
-      <div className="p-body-inner" style={{ display: "flex", alignItems: "center", justifyContent: "center", maxWidth: "1200px", margin: "0 auto", color: "white", gap: "60px", position: "relative", zIndex: 10 }}>
-          <div style={{ flex: 1, display: "flex", alignItems: "center", gap: "20px", justifyContent: "flex-end" }}>
+      <div className="p-body-inner" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", maxWidth: "1200px", margin: "0 auto", color: "white", gap: "20px", position: "relative", zIndex: 10 }}>
+          <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
               <Link id="store" href="/store" className="info-card" style={{ display: "flex", alignItems: "center", gap: "30px", textDecoration: "none", color: "white", fontWeight: 900 }}>
                   <i className="fa-solid fa-cart-shopping"></i>
                   <div className="info-text">
@@ -48,7 +48,7 @@ export default function HomePage() {
                   </div>
               </div>
           </div>
-          <div id="logo">
+          <div id="logo" style={{ flexShrink: 0, margin: "0 20px" }}>
               <a href="/">
                   <img className="animate__infinite animate__slower animate__animated animate__pulse" src="/images/pokefun_logo.jpg" alt="Pokefun" />
               </a>
@@ -56,13 +56,15 @@ export default function HomePage() {
                   <div className="circle"></div>
               </div>
           </div>
-          <a id="discord" target="_blank" href="https://discord.gg/NtE8QBkmwR" className="info-card" style={{ flex: 1, display: "flex", alignItems: "center", gap: "30px", justifyContent: "flex-start", textDecoration: "none", color: "white", fontWeight: 900 }}>
-              <i className="fa-brands fa-discord"></i>
-              <div className="info-text">
-                  <div className="if-large">DISCORD <span className="count">JOIN</span></div>
-                  <div className="if-small">Join the Community</div>
-              </div>
-          </a>
+          <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "flex-end" }}>
+              <a id="discord" target="_blank" href="https://discord.gg/NtE8QBkmwR" className="info-card" style={{ display: "flex", alignItems: "center", gap: "30px", textDecoration: "none", color: "white", fontWeight: 900 }}>
+                  <i className="fa-brands fa-discord"></i>
+                  <div className="info-text">
+                      <div className="if-large">DISCORD <span className="count">JOIN</span></div>
+                      <div className="if-small">Join the Community</div>
+                  </div>
+              </a>
+          </div>
       </div>
       <div className="custom-shape-divider-bottom-1675067978 custom-shadow" style={{ position: "relative", zIndex: 10, marginTop: "-120px", width: "100vw", marginLeft: "calc(-50vw + 50%)" }}>
           <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
