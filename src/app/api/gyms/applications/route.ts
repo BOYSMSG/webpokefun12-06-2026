@@ -10,21 +10,19 @@ import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 export async function GET(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
-    if (!session || !session.user?.username) {
+    if (!session || !session.user?.email) {
       return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     }
 
     await dbConnect();
 
-    // In a real app, verify admin status here if session doesn't include role
-    // Assuming we verify via DB check for now, or assume frontend guards it.
-    // Let's do a quick safety check
-    import('@/models/User').then(async ({ default: User }) => {
-       const u = await User.findOne({ username: session.user.username });
-       if (!u || !['ADMIN', 'OWNER'].includes(u.role)) {
-          return NextResponse.json({ success: false, error: 'Forbidden' }, { status: 403 });
-       }
-    });
+    // Verify Admin
+    let isAdmin = false;
+    const User = (await import('@/models/User')).default;
+    const u = await User.findOne({ email: session.user.email });
+    if (!u || !['ADMIN', 'OWNER'].includes(u.role)) {
+        return NextResponse.json({ success: false, error: 'Forbidden' }, { status: 403 });
+    }
 
     const applications = await GymApplication.find({}).populate('gymId').sort({ createdAt: -1 });
     return NextResponse.json({ success: true, applications });
@@ -38,7 +36,7 @@ export async function GET(request: NextRequest) {
 export async function PUT(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
-    if (!session || !session.user?.username) {
+    if (!session || !session.user?.email) {
       return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -52,7 +50,7 @@ export async function PUT(request: NextRequest) {
 
     // Verify Admin
     const User = (await import('@/models/User')).default;
-    const currentUser = await User.findOne({ username: session.user.username });
+    const currentUser = await User.findOne({ email: session.user.email });
     if (!currentUser || !['ADMIN', 'OWNER'].includes(currentUser.role)) {
        return NextResponse.json({ success: false, error: 'Forbidden' }, { status: 403 });
     }

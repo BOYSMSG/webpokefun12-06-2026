@@ -7,7 +7,7 @@ import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 export async function GET(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
-    if (!session || !session.user?.username) {
+    if (!session || !session.user?.email) {
       return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -15,7 +15,7 @@ export async function GET(request: NextRequest) {
 
     // Verify Admin
     const User = (await import('@/models/User')).default;
-    const currentUser = await User.findOne({ username: session.user.username });
+    const currentUser = await User.findOne({ email: session.user.email });
     if (!currentUser || !['ADMIN', 'OWNER'].includes(currentUser.role)) {
        return NextResponse.json({ success: false, error: 'Forbidden' }, { status: 403 });
     }
@@ -31,7 +31,7 @@ export async function GET(request: NextRequest) {
 export async function PUT(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
-    if (!session || !session.user?.username) {
+    if (!session || !session.user?.email) {
       return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -45,7 +45,7 @@ export async function PUT(request: NextRequest) {
 
     // Verify Admin
     const User = (await import('@/models/User')).default;
-    const currentUser = await User.findOne({ username: session.user.username });
+    const currentUser = await User.findOne({ email: session.user.email });
     if (!currentUser || !['ADMIN', 'OWNER'].includes(currentUser.role)) {
        return NextResponse.json({ success: false, error: 'Forbidden' }, { status: 403 });
     }
