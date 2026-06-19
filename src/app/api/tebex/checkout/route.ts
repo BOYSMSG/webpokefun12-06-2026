@@ -7,7 +7,7 @@ const PRIVATE_KEY = process.env.TEBEX_PRIVATE_KEY;
 
 export async function POST(req: Request) {
   try {
-    const { packages, mcUsername } = await req.json();
+    const { packages, mcUsername, returnUrl } = await req.json();
     if (!packages || !Array.isArray(packages) || packages.length === 0) {
       return NextResponse.json({ error: "Missing packages array" }, { status: 400 });
     }
@@ -16,6 +16,7 @@ export async function POST(req: Request) {
     }
 
     const authHeader = `Basic ${Buffer.from(`${PUBLIC_TOKEN}:${PRIVATE_KEY}`).toString('base64')}`;
+    const baseUrl = returnUrl || req.headers.get('origin') || process.env.NEXTAUTH_URL || 'https://pokefun.in';
 
     // 1. Create Basket
     const basketRes = await fetch(`https://headless.tebex.io/api/accounts/${PUBLIC_TOKEN}/baskets`, {
@@ -25,8 +26,8 @@ export async function POST(req: Request) {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        complete_url: `${process.env.NEXTAUTH_URL || 'https://pokefun.in'}/store?success=true`,
-        cancel_url: `${process.env.NEXTAUTH_URL || 'https://pokefun.in'}/store?cancel=true`,
+        complete_url: `${baseUrl}/store?success=true`,
+        cancel_url: `${baseUrl}/store?cancel=true`,
         username: mcUsername
       })
     });

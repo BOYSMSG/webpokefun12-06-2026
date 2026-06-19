@@ -171,7 +171,7 @@ export default function ShopClient({ initialCategories }: { initialCategories: a
       const res = await fetch('/api/tebex/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ packages, mcUsername })
+        body: JSON.stringify({ packages, mcUsername, returnUrl: window.location.origin })
       });
       const data = await res.json();
       if (data.checkoutUrl) {
