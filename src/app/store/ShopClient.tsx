@@ -45,6 +45,13 @@ export default function ShopClient({ initialCategories }: { initialCategories: a
     const savedName = localStorage.getItem('mcUsername');
     if (savedName) setMcUsername(savedName);
 
+    const savedCart = localStorage.getItem('pokefun_shop_cart');
+    if (savedCart) {
+      try {
+        setCart(JSON.parse(savedCart));
+      } catch (e) {}
+    }
+
     const savedCurrency = localStorage.getItem('pokefun_shop_currency');
     if (savedCurrency) {
       setCurrency(savedCurrency);
@@ -102,6 +109,12 @@ export default function ShopClient({ initialCategories }: { initialCategories: a
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
+
+  useEffect(() => {
+    if (cart.length >= 0) {
+      localStorage.setItem('pokefun_shop_cart', JSON.stringify(cart));
+    }
+  }, [cart]);
 
   // Fetch new prices when currency changes
   useEffect(() => {
@@ -1080,7 +1093,7 @@ export default function ShopClient({ initialCategories }: { initialCategories: a
         .html-desc h1, .html-desc h2, .html-desc h3 { margin: 20px 0 10px 0; font-weight: 800; color: var(--shop-text); }
         .html-desc h2 { font-size: 1.8rem; }
         .html-desc h3 { font-size: 1.5rem; }
-        .html-desc strong { color: #4bc8c8; font-weight: bold; }
+        .html-desc strong { color: #0284c7; font-weight: bold; }
         .html-desc a { color: #10b981; text-decoration: underline; }
 
         @keyframes cartBounce {

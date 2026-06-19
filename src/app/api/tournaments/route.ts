@@ -192,3 +192,8 @@ export async function DELETE(request: NextRequest) {
     await Tournament.findByIdAndDelete(tournamentId);
 
     return NextResponse.json({ success: true, message: 'Tournament deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting tournament:', error);
+    return NextResponse.json({ success: false, error: 'Internal Server Error' }, { status: 500 });
+  }
+}

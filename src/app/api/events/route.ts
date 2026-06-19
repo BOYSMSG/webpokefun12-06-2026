@@ -192,3 +192,8 @@ export async function DELETE(request: NextRequest) {
     await ServerEvent.findByIdAndDelete(eventId);
 
     return NextResponse.json({ success: true, message: 'Event deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting event:', error);
+    return NextResponse.json({ success: false, error: 'Internal Server Error' }, { status: 500 });
+  }
+}
