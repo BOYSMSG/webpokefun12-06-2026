@@ -10,7 +10,7 @@ import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 export async function POST(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
-    if (!session || !session.user?.username) {
+    if (!session || !session.user) {
       return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -22,7 +22,10 @@ export async function POST(request: NextRequest) {
 
     await dbConnect();
 
-    const currentUser = await User.findOne({ username: session.user.username });
+    const currentUser = await User.findOne({
+      $or: [{ email: session.user.email }, { name: session.user.name }]
+    });
+    
     if (!currentUser) {
       return NextResponse.json({ success: false, error: 'User not found.' }, { status: 404 });
     }

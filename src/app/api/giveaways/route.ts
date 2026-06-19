@@ -63,8 +63,13 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
-    if (!session || !session.user?.email) {
+    if (!session || !session.user) {
       return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const userRole = (session.user as any).role;
+    if (!['ADMIN', 'OWNER'].includes(userRole)) {
+       return NextResponse.json({ success: false, error: 'Only admins can create giveaways.' }, { status: 403 });
     }
 
     const { prize, description, winnersCount, durationHours, imageUrl } = await request.json();
@@ -74,13 +79,6 @@ export async function POST(request: NextRequest) {
     }
 
     await dbConnect();
-
-    // Verify Admin
-    const User = (await import('@/models/User')).default;
-    const currentUser = await User.findOne({ email: session.user.email });
-    if (!currentUser || !['ADMIN', 'OWNER'].includes(currentUser.role)) {
-       return NextResponse.json({ success: false, error: 'Only admins can create giveaways.' }, { status: 403 });
-    }
 
     const expiresAt = new Date();
     expiresAt.setHours(expiresAt.getHours() + parseInt(durationHours));

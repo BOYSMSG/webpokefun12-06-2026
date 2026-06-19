@@ -24,8 +24,6 @@ export default function GiveawaysPage() {
     }
   }, [session]);
 
-  };
-
   const handleCreateGiveaway = async (e: React.FormEvent) => {
     e.preventDefault();
     setCreateLoading(true);

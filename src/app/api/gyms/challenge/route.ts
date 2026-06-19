@@ -8,7 +8,7 @@ import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 export async function POST(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
-    if (!session || !session.user?.username) {
+    if (!session || !session.user) {
       return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -25,15 +25,17 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: false, error: 'This gym does not have an active leader to challenge.' }, { status: 400 });
     }
 
-    if (gym.leaderUsername === session.user.username) {
+    const userName = session.user.name || "Unknown";
+
+    if (gym.leaderUsername === userName) {
       return NextResponse.json({ success: false, error: 'You cannot challenge your own gym.' }, { status: 400 });
     }
 
     // Send DM to the gym leader
-    const messageContent = `**New Gym Challenge!**\n\nChallenger: **${session.user.username}**\nRequested Date: ${date}\nRequested Time: ${time}\n${teamLink ? `Team/Notes: ${teamLink}` : ''}\n\nPlease reply to this message to coordinate the battle!`;
+    const messageContent = `**New Gym Challenge!**\n\nChallenger: **${userName}**\nRequested Date: ${date}\nRequested Time: ${time}\n${teamLink ? `Team/Notes: ${teamLink}` : ''}\n\nPlease reply to this message to coordinate the battle!`;
 
     await new Message({
-      sender: session.user.username,
+      sender: userName,
       recipient: gym.leaderUsername,
       content: messageContent,
       isRead: false

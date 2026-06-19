@@ -7,14 +7,14 @@ import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 export async function POST(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
-    if (!session || !session.user?.username) {
-      return NextResponse.json({ success: false, error: 'You must be logged in to join giveaways.' }, { status: 401 });
+    if (!session || !session.user) {
+      return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     }
 
     const { giveawayId } = await request.json();
 
     if (!giveawayId) {
-      return NextResponse.json({ success: false, error: 'Invalid giveaway ID.' }, { status: 400 });
+      return NextResponse.json({ success: false, error: 'Giveaway ID is required.' }, { status: 400 });
     }
 
     await dbConnect();
@@ -24,15 +24,16 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: false, error: 'Giveaway not found.' }, { status: 404 });
     }
 
-    if (giveaway.status !== 'ACTIVE' || new Date() > new Date(giveaway.expiresAt)) {
-      return NextResponse.json({ success: false, error: 'This giveaway has ended.' }, { status: 400 });
+    if (giveaway.status !== 'ACTIVE') {
+      return NextResponse.json({ success: false, error: 'Giveaway is not active.' }, { status: 400 });
     }
 
-    if (giveaway.participants.includes(session.user.username)) {
+    const userName = session.user.name || "Unknown";
+    if (giveaway.participants.includes(userName)) {
       return NextResponse.json({ success: false, error: 'You have already joined this giveaway.' }, { status: 400 });
     }
 
-    giveaway.participants.push(session.user.username);
+    giveaway.participants.push(userName);
     await giveaway.save();
 
     return NextResponse.json({ success: true, message: 'Successfully joined the giveaway!' });
