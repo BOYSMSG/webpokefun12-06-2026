@@ -55,6 +55,25 @@ export default function NpcGuidePage() {
             {tab === 'npcs' ? 'NPC Database' : tab === 'gyms' ? 'Gym Guide' : tab === 'evs' ? 'EV Training' : 'Warps Directory'}
           </button>
         ))}
+        <Link href="/gym_battle">
+          <button 
+            style={{
+              padding: '12px 24px',
+              borderRadius: '30px',
+              border: '1px solid var(--ghost-accent-color)',
+              background: 'rgba(28, 198, 219, 0.1)',
+              color: 'var(--ghost-accent-color)',
+              fontWeight: 800,
+              cursor: 'pointer',
+              transition: 'all 0.2s',
+              boxShadow: '0 4px 15px rgba(28, 198, 219, 0.3)'
+            }}
+            onMouseOver={(e) => { e.currentTarget.style.background = 'var(--ghost-accent-color)'; e.currentTarget.style.color = '#fff'; }}
+            onMouseOut={(e) => { e.currentTarget.style.background = 'rgba(28, 198, 219, 0.1)'; e.currentTarget.style.color = 'var(--ghost-accent-color)'; }}
+          >
+            <i className="fa-solid fa-khanda"></i> Appoint Gym Battle
+          </button>
+        </Link>
       </div>
 
       {activeTab === 'npcs' && (

@@ -104,7 +104,7 @@ export default function ProfilePage() {
           <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.9rem', margin: '0 0 10px 0', display: 'flex', alignItems: 'center', gap: '5px' }}>
             <i className="fa-solid fa-fingerprint"></i> ID: {profile.email}
           </p>
-          <p style={{ color: '#10b981', fontWeight: 'bold', margin: '0 0 15px 0' }}>{profile.role}</p>
+          <div style={{ display: 'inline-block', background: 'rgba(16, 185, 129, 0.2)', color: '#10b981', padding: '5px 15px', borderRadius: '20px', fontWeight: 'bold', fontSize: '1.2rem', margin: '0 0 15px 0', border: '1px solid #10b981', textTransform: 'uppercase', letterSpacing: '1px' }}>{profile.role}</div>
           <p style={{ color: '#ccc', margin: '0 0 20px 0', lineHeight: 1.6, maxWidth: '600px' }}>{profile.bio || "A passionate Pokemon Trainer!"}</p>
           
           <div style={{ display: 'flex', gap: '20px', color: 'gray', fontSize: '0.9rem', marginBottom: '20px' }}>

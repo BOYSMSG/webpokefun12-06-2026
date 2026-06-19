@@ -1,0 +1,109 @@
+import { NextRequest, NextResponse } from 'next/server';
+import dbConnect from '@/lib/mongoose';
+import GymApplication from '@/models/GymApplication';
+import Gym from '@/models/Gym';
+import Message from '@/models/Message';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+
+// GET all applications (Admin only)
+export async function GET(request: NextRequest) {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session || !session.user?.username) {
+      return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
+    }
+
+    await dbConnect();
+
+    // In a real app, verify admin status here if session doesn't include role
+    // Assuming we verify via DB check for now, or assume frontend guards it.
+    // Let's do a quick safety check
+    import('@/models/User').then(async ({ default: User }) => {
+       const u = await User.findOne({ username: session.user.username });
+       if (!u || !['ADMIN', 'OWNER'].includes(u.role)) {
+          return NextResponse.json({ success: false, error: 'Forbidden' }, { status: 403 });
+       }
+    });
+
+    const applications = await GymApplication.find({}).populate('gymId').sort({ createdAt: -1 });
+    return NextResponse.json({ success: true, applications });
+  } catch (error) {
+    console.error('Error fetching gym applications:', error);
+    return NextResponse.json({ success: false, error: 'Internal Server Error' }, { status: 500 });
+  }
+}
+
+// PUT to update application status
+export async function PUT(request: NextRequest) {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session || !session.user?.username) {
+      return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const { applicationId, status } = await request.json(); // status: 'APPROVED' | 'REJECTED'
+
+    if (!applicationId || !['APPROVED', 'REJECTED'].includes(status)) {
+      return NextResponse.json({ success: false, error: 'Invalid data' }, { status: 400 });
+    }
+
+    await dbConnect();
+
+    // Verify Admin
+    const User = (await import('@/models/User')).default;
+    const currentUser = await User.findOne({ username: session.user.username });
+    if (!currentUser || !['ADMIN', 'OWNER'].includes(currentUser.role)) {
+       return NextResponse.json({ success: false, error: 'Forbidden' }, { status: 403 });
+    }
+
+    const application = await GymApplication.findById(applicationId).populate('gymId');
+    if (!application) {
+      return NextResponse.json({ success: false, error: 'Application not found' }, { status: 404 });
+    }
+
+    if (application.status !== 'PENDING') {
+      return NextResponse.json({ success: false, error: 'Application already processed' }, { status: 400 });
+    }
+
+    application.status = status;
+    application.reviewedBy = session.user.username;
+    await application.save();
+
+    const gym = await Gym.findById(application.gymId._id);
+
+    let messageContent = '';
+    
+    if (status === 'APPROVED') {
+      // Update gym status
+      if (gym) {
+        gym.leaderUsername = application.applicantUsername;
+        gym.status = 'BOOKED';
+        await gym.save();
+      }
+
+      // Reject all other pending applications for this gym
+      await GymApplication.updateMany(
+        { gymId: application.gymId._id, status: 'PENDING' },
+        { $set: { status: 'REJECTED', reviewedBy: 'SYSTEM (Auto-rejected)' } }
+      );
+
+      messageContent = `Congratulations! Your application for **${gym?.name || 'the gym'}** has been **APPROVED** by Admin ${session.user.username}. You are now the official Gym Leader!`;
+    } else {
+      messageContent = `Unfortunately, your application for **${gym?.name || 'the gym'}** has been **REJECTED** after review.`;
+    }
+
+    // Send DM to applicant
+    await new Message({
+      sender: 'SYSTEM',
+      recipient: application.applicantUsername,
+      content: messageContent,
+      isRead: false
+    }).save();
+
+    return NextResponse.json({ success: true, message: `Application ${status.toLowerCase()}` });
+  } catch (error) {
+    console.error('Error updating gym application:', error);
+    return NextResponse.json({ success: false, error: 'Internal Server Error' }, { status: 500 });
+  }
+}

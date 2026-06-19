@@ -29,7 +29,7 @@ export default async function ShopPage() {
 
   return (
     <main style={{ paddingTop: '100px', minHeight: '100vh' }}>
-      <div className="inner" style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 20px' }}>
+      <div className="inner" style={{ maxWidth: '1450px', margin: '0 auto', padding: '0 20px' }}>
         <ShopClient initialCategories={categories} />
       </div>
     </main>

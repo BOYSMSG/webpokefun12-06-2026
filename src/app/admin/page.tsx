@@ -129,6 +129,15 @@ export default function AdminPage() {
           </div>
         )}
 
+        {(myRole === 'OWNER' || myRole === 'ADMIN') && (
+          <div style={{ background: 'rgba(255,255,255,0.05)', padding: '30px', borderRadius: '16px', border: '1px solid #444' }}>
+            <i className="fa-solid fa-gift" style={{ fontSize: '2rem', color: '#e74c3c', marginBottom: '15px' }}></i>
+            <h2>Manage Giveaways</h2>
+            <p style={{ color: 'gray', marginBottom: '15px' }}>View active giveaways and secretly rig winners from behind the scenes.</p>
+            <button onClick={() => router.push('/admin/giveaways')} style={{ padding: '8px 15px', background: '#e74c3c', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>Manage Giveaways</button>
+          </div>
+        )}
+
         {canManageRoles && (
           <div style={{ background: 'rgba(255,255,255,0.05)', padding: '30px', borderRadius: '16px', border: '1px solid #444' }}>
             <i className="fa-solid fa-cloud-arrow-up" style={{ fontSize: '2rem', color: '#8b5cf6', marginBottom: '15px' }}></i>

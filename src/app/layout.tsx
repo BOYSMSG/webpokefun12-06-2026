@@ -89,6 +89,41 @@ export default async function RootLayout({
                padding: 0 20px !important; 
              }
           }
+
+          /* Dropdown CSS for 'Other' menu */
+          .nav-dropdown {
+             position: relative;
+             display: inline-block;
+          }
+          .nav-dropdown-content {
+             display: none;
+             position: absolute;
+             background-color: #1a1e21;
+             min-width: 160px;
+             box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.5);
+             z-index: 100;
+             border-radius: 8px;
+             border: 1px solid #333;
+             overflow: hidden;
+             top: 100%;
+             left: 50%;
+             transform: translateX(-50%);
+          }
+          .nav-dropdown-content a {
+             color: white;
+             padding: 12px 16px;
+             text-decoration: none;
+             display: block;
+             font-size: 1rem !important;
+             text-align: left;
+          }
+          .nav-dropdown-content a:hover {
+             background-color: #2a2e33;
+             color: var(--ghost-accent-color);
+          }
+          .nav-dropdown:hover .nav-dropdown-content {
+             display: block;
+          }
         `}</style>
       </head>
       <body>
@@ -118,6 +153,9 @@ export default async function RootLayout({
                       <a href="https://discord.gg/pokefun" target="_blank" rel="noopener noreferrer" className="discord-btn">
                           <i className="fa-brands fa-discord"></i> Discord
                       </a>
+                      <a href="/other" style={{ fontWeight: 'bold' }}>
+                          <i className="fa-solid fa-list"></i> Other Features
+                      </a>
                   </div>
               </div>
               <header id="gh-head" className="gh-head has-cover">
@@ -144,6 +182,12 @@ export default async function RootLayout({
                               <li><a href="/team">Team</a></li>
                               <li><a href="/changelogs">Changelogs</a></li>
                               <li><a href="https://discord.com/invite/NtE8QBkmwR" target="_blank" rel="noopener noreferrer" style={{ color: '#5865F2' }}><i className="fa-brands fa-discord"></i> Discord</a></li>
+                              <li><a href="/gym_apply">Gym Apply</a></li>
+                              <li><a href="/gym_battle">Gym Battle</a></li>
+                              <li><a href="/Polls">Polls</a></li>
+                              <li><a href="/giveaways">Giveaways</a></li>
+                              <li><a href="/tournaments">Tournaments</a></li>
+                              <li><a href="/events">Events</a></li>
                           </ul>
                       </div>
                   </nav>

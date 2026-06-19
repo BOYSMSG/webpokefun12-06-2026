@@ -22,6 +22,7 @@ export interface IUser extends Document {
   pushSubscriptions?: any[]; // For Web Push notifications
   lastActive?: Date;
   isBanned?: boolean;
+  isRankHolder?: boolean;
   createdAt: Date;
 }
 
@@ -47,6 +48,7 @@ const UserSchema: Schema = new Schema({
   pushSubscriptions: [{ type: Schema.Types.Mixed }], // For Web Push notifications
   lastActive: { type: Date, default: Date.now },
   isBanned: { type: Boolean, default: false },
+  isRankHolder: { type: Boolean, default: false },
   createdAt: { type: Date, default: Date.now }
 });
 

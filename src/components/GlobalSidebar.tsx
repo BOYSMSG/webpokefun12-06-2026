@@ -33,6 +33,15 @@ export default function GlobalSidebar() {
     { title: "Discord", path: "https://discord.com/invite/NtE8QBkmwR", external: true },
   ];
 
+  const otherLinks = [
+    { title: "Gym Apply", path: "/gym_apply" },
+    { title: "Gym Battle", path: "/gym_battle" },
+    { title: "Polls", path: "/polls" },
+    { title: "Giveaways", path: "/giveaways" },
+    { title: "Tournaments", path: "/tournaments" },
+    { title: "Events", path: "/events" },
+  ];
+
   const guideLinks = [
     { title: "NPCs & Gyms Guide", path: "/wiki/guides/npc" },
     { title: "Introduction", path: "/wiki/guides" },
@@ -150,6 +159,15 @@ export default function GlobalSidebar() {
            </h2>
            <nav>
              {infoLinks.map(renderLink)}
+           </nav>
+        </div>
+
+        <div style={{ marginBottom: "25px", padding: "0 10px" }}>
+           <h2 style={{ fontSize: "0.85rem", fontWeight: 800, color: "#94a3b8", textTransform: "uppercase", letterSpacing: "1px", marginBottom: "10px" }}>
+             Other Features
+           </h2>
+           <nav>
+             {otherLinks.map(renderLink)}
            </nav>
         </div>
 

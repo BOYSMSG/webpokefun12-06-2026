@@ -2,9 +2,10 @@ import { NextResponse } from 'next/server';
 import connectDB from '@/lib/mongoose';
 import User from '@/models/User';
 
-export async function GET(request: Request, { params }: { params: { username: string } }) {
+export async function GET(request: Request, props: { params: Promise<{ id: string }> }) {
   try {
-    const { username } = params;
+    const { id } = await props.params;
+    const username = id; // id acts as username parameter
     const url = new URL(request.url);
     const type = url.searchParams.get('type'); // 'followers' or 'following'
 
