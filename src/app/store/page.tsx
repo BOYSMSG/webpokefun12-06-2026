@@ -2,8 +2,9 @@ import React from 'react';
 import ShopClient from './ShopClient';
 
 export const metadata = {
-  title: 'Store - Pokefun',
-  description: 'Support the Pokefun server and unlock awesome premium packages!',
+  title: 'Store - Pokefun | Buy Cobblemon Ranks & Items',
+  description: 'Support the Pokefun server by visiting our official store. Buy premium Cobblemon ranks, keys, shiny Pokemon, and unlock awesome perks!',
+  keywords: ["Cobblemon store", "buy Minecraft Pokemon ranks", "Pokefun store", "buy shiny Pokemon Minecraft", "Minecraft server store"],
 };
 
 export default async function ShopPage() {

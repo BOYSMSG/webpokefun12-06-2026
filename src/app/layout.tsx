@@ -12,8 +12,46 @@ import { ToastProvider } from "@/components/Toast";
 import PushManager from "@/components/PushManager";
 
 export const metadata: Metadata = {
-  title: "Pokefun - Cobblemon SMP",
-  description: "Pokefun is a premier Cobblemon SMP server. Join our community for a unique Pokemon adventure in Minecraft!",
+  title: "Pokefun | Best Cobblemon SMP Minecraft Server",
+  description: "Join Pokefun, the premier Cobblemon SMP multiplayer server! Experience the best Minecraft Pokemon adventure with custom features, active community, and more.",
+  keywords: ["Cobblemon server", "Minecraft Pokemon server", "Cobblemon SMP", "best cobblemon multiplayer", "India's best cobblemon server", "Minecraft server", "Pokemon Minecraft"],
+  openGraph: {
+    title: "Pokefun | Best Cobblemon SMP Minecraft Server",
+    description: "Join Pokefun, the premier Cobblemon SMP multiplayer server! Experience the best Minecraft Pokemon adventure.",
+    url: "https://pokefun.in", // Replace with actual domain if different
+    siteName: "Pokefun",
+    images: [
+      {
+        url: "https://raw.githubusercontent.com/BOYSMSG/webpokefun12-06-2026/main/public/images/logo.png", // Example logo/banner
+        width: 1200,
+        height: 630,
+        alt: "Pokefun Cobblemon Server",
+      },
+    ],
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Pokefun | Best Cobblemon SMP Minecraft Server",
+    description: "Join Pokefun, the premier Cobblemon SMP multiplayer server! Experience the best Minecraft Pokemon adventure.",
+    images: ["https://raw.githubusercontent.com/BOYSMSG/webpokefun12-06-2026/main/public/images/logo.png"],
+  },
+};
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "VideoGame",
+  "name": "Pokefun",
+  "description": "Pokefun is a premier Cobblemon SMP Minecraft server featuring custom features and a great community.",
+  "genre": ["Role-playing game", "Massively multiplayer online game"],
+  "playMode": "MultiPlayer",
+  "applicationCategory": "Game",
+  "gamePlatform": ["PC", "Minecraft Java Edition", "Minecraft Bedrock Edition"],
+  "publisher": {
+    "@type": "Organization",
+    "name": "Pokefun"
+  }
 };
 
 export default async function RootLayout({
@@ -26,6 +64,10 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
         <meta name="HandheldFriendly" content="True" />
         <meta name="viewport" content="width=1200" />
         <link rel="stylesheet" href="/css/screen.css" />
