@@ -3,6 +3,7 @@ import mongoose, { Schema, Document, Model } from 'mongoose';
 export interface ITournament extends Document {
   name: string;
   description: string;
+  imageUrl?: string;
   rules: string;
   maxPlayers: number;
   applicants: string[]; // Usernames who applied
@@ -16,6 +17,7 @@ export interface ITournament extends Document {
 const TournamentSchema: Schema = new Schema({
   name: { type: String, required: true },
   description: { type: String, required: true },
+  imageUrl: { type: String },
   rules: { type: String, default: '' },
   maxPlayers: { type: Number, required: true, default: 32 },
   applicants: [{ type: String }],

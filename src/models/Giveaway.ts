@@ -3,6 +3,7 @@ import mongoose, { Schema, Document, Model } from 'mongoose';
 export interface IGiveaway extends Document {
   prize: string;
   description: string;
+  imageUrl?: string;
   winnersCount: number;
   participants: string[]; // Array of usernames
   winners: string[]; // Array of usernames who won
@@ -16,6 +17,7 @@ export interface IGiveaway extends Document {
 const GiveawaySchema: Schema = new Schema({
   prize: { type: String, required: true },
   description: { type: String, default: '' },
+  imageUrl: { type: String },
   winnersCount: { type: Number, required: true, default: 1 },
   participants: [{ type: String }],
   winners: [{ type: String }],

@@ -7,6 +7,8 @@ export interface IPollOption {
 
 export interface IPoll extends Document {
   question: string;
+  description?: string;
+  imageUrl?: string;
   options: IPollOption[];
   durationHours: number;
   allowMultiple: boolean;
@@ -18,6 +20,8 @@ export interface IPoll extends Document {
 
 const PollSchema: Schema = new Schema({
   question: { type: String, required: true },
+  description: { type: String },
+  imageUrl: { type: String },
   options: [{
     text: { type: String, required: true },
     votes: [{ type: String }] // Array of usernames

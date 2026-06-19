@@ -25,11 +25,11 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
-    if (!session || !session.user?.username) {
+    if (!session || !session.user?.email) {
       return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { question, options, durationHours, allowMultiple } = await request.json();
+    const { question, description, imageUrl, options, durationHours, allowMultiple } = await request.json();
 
     if (!question || !options || options.length < 2) {
       return NextResponse.json({ success: false, error: 'Question and at least 2 options are required.' }, { status: 400 });
@@ -39,7 +39,7 @@ export async function POST(request: NextRequest) {
 
     // Verify Admin
     const User = (await import('@/models/User')).default;
-    const currentUser = await User.findOne({ username: session.user.username });
+    const currentUser = await User.findOne({ email: session.user.email });
     if (!currentUser || !['ADMIN', 'OWNER'].includes(currentUser.role)) {
        return NextResponse.json({ success: false, error: 'Only admins can create polls.' }, { status: 403 });
     }
@@ -49,6 +49,8 @@ export async function POST(request: NextRequest) {
 
     const newPoll = new Poll({
       question,
+      description: description || '',
+      imageUrl: imageUrl || undefined,
       options: options.map((opt: string) => ({ text: opt, votes: [] })),
       durationHours: parseInt(durationHours || 24),
       allowMultiple: !!allowMultiple,

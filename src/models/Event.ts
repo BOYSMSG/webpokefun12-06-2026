@@ -4,6 +4,7 @@ import mongoose, { Schema, Document, Model } from 'mongoose';
 export interface IEvent extends Document {
   name: string;
   description: string;
+  imageUrl?: string;
   rules: string;
   maxPlayers: number;
   applicants: string[];
@@ -17,6 +18,7 @@ export interface IEvent extends Document {
 const EventSchema: Schema = new Schema({
   name: { type: String, required: true },
   description: { type: String, required: true },
+  imageUrl: { type: String },
   rules: { type: String, default: '' },
   maxPlayers: { type: Number, required: true, default: 50 },
   applicants: [{ type: String }],

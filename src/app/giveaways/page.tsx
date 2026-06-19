@@ -7,39 +7,23 @@ import { useSession } from "next-auth/react";
 export default function GiveawaysPage() {
   const { data: session } = useSession();
   const [giveaways, setGiveaways] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [isAdmin, setIsAdmin] = useState(false);
-  const [showCreateModal, setShowCreateModal] = useState(false);
-  
-  // Create Giveaway State
   const [prize, setPrize] = useState('');
   const [description, setDescription] = useState('');
-  const [winnersCount, setWinnersCount] = useState('1');
-  const [durationHours, setDurationHours] = useState('24');
-  const [createLoading, setCreateLoading] = useState(false);
+  const [imageUrl, setImageUrl] = useState('');
+  const [uploadingImage, setUploadingImage] = useState(false);
+  const [winnersCount, setWinnersCount] = useState(1);
+  const [durationHours, setDurationHours] = useState(24);
 
-  const [joinLoading, setJoinLoading] = useState<{ [id: string]: boolean }>({});
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [processing, setProcessing] = useState(false);
 
   useEffect(() => {
     fetchGiveaways();
-    if (session?.user?.role === 'ADMIN' || session?.user?.role === 'OWNER') {
-       setIsAdmin(true);
+    if (session?.user) {
+      setIsAdmin(['OWNER', 'ADMIN'].includes((session.user as any).role));
     }
   }, [session]);
 
-  const fetchGiveaways = () => {
-    fetch('/api/giveaways')
-      .then(res => res.json())
-      .then(data => {
-        if (data.success) {
-          setGiveaways(data.giveaways);
-        }
-        setLoading(false);
-      })
-      .catch(err => {
-        console.error(err);
-        setLoading(false);
-      });
   };
 
   const handleCreateGiveaway = async (e: React.FormEvent) => {

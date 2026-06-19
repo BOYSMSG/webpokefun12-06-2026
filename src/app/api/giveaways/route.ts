@@ -67,7 +67,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { prize, description, winnersCount, durationHours } = await request.json();
+    const { prize, description, winnersCount, durationHours, imageUrl } = await request.json();
 
     if (!prize || !winnersCount || !durationHours) {
       return NextResponse.json({ success: false, error: 'Prize, winners count, and duration are required.' }, { status: 400 });
@@ -88,6 +88,7 @@ export async function POST(request: NextRequest) {
     const newGiveaway = new Giveaway({
       prize,
       description: description || '',
+      imageUrl: imageUrl || undefined,
       winnersCount: parseInt(winnersCount),
       createdBy: session.user.username,
       expiresAt,
