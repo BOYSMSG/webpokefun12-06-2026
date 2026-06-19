@@ -374,12 +374,12 @@ export default function ShopClient({ initialCategories }: { initialCategories: a
                 />
                 <div className="featured-price-sub">{categories[0].packages[0].name}</div>
                 <div className="featured-price">
-                  {categories[0].packages[0].base_price > categories[0].packages[0].total_price && (
+                  {categories[0].packages[0].discount > 0 && (
                     <span style={{ textDecoration: 'line-through', color: '#a3a3a3', fontSize: '0.85em', marginRight: '8px' }}>
-                      {categories[0].packages[0].base_price} {categories[0].packages[0].currency}
+                      {(parseFloat(categories[0].packages[0].base_price) + parseFloat(categories[0].packages[0].discount)).toFixed(2)} {categories[0].packages[0].currency}
                     </span>
                   )}
-                  <span style={{ color: categories[0].packages[0].base_price > categories[0].packages[0].total_price ? '#e74c3c' : 'white', fontWeight: 'bold' }}>
+                  <span style={{ color: categories[0].packages[0].discount > 0 ? '#e74c3c' : 'white', fontWeight: 'bold' }}>
                     {categories[0].packages[0].total_price} {categories[0].packages[0].currency}
                   </span>
                 </div>
@@ -528,12 +528,12 @@ export default function ShopClient({ initialCategories }: { initialCategories: a
                         <div className="pkg-details">
                           <h3 className="pkg-name" onClick={() => { setSelectedPkg(pkg); setSelectedImage(pkg.image); setCopied(false); }}>{pkg.name}</h3>
                           <div className="pkg-price">
-                            {pkg.base_price > pkg.total_price && (
+                            {pkg.discount > 0 && (
                               <span style={{ textDecoration: 'line-through', color: '#a3a3a3', fontSize: '0.85em', marginRight: '8px' }}>
-                                {pkg.base_price} {pkg.currency}
+                                {(parseFloat(pkg.base_price) + parseFloat(pkg.discount)).toFixed(2)} {pkg.currency}
                               </span>
                             )}
-                            <span style={{ color: pkg.base_price > pkg.total_price ? '#e74c3c' : 'white', fontWeight: 'bold' }}>
+                            <span style={{ color: pkg.discount > 0 ? '#e74c3c' : 'white', fontWeight: 'bold' }}>
                               {pkg.total_price} {pkg.currency}
                             </span>
                           </div>

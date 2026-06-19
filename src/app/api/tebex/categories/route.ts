@@ -36,6 +36,9 @@ export async function GET(req: Request) {
               category.packages.forEach((pkg: any) => {
                 pkg.base_price = parseFloat((pkg.base_price * rate).toFixed(2));
                 pkg.total_price = parseFloat((pkg.total_price * rate).toFixed(2));
+                if (pkg.discount) {
+                  pkg.discount = parseFloat((pkg.discount * rate).toFixed(2));
+                }
                 pkg.currency = currency;
               });
             }
