@@ -138,6 +138,15 @@ export default function AdminPage() {
           </div>
         )}
 
+        {(myRole === 'OWNER' || myRole === 'ADMIN') && (
+          <div style={{ background: 'rgba(255,255,255,0.05)', padding: '30px', borderRadius: '16px', border: '1px solid #444' }}>
+            <i className="fa-solid fa-dumbbell" style={{ fontSize: '2rem', color: '#10b981', marginBottom: '15px' }}></i>
+            <h2>Manage Gyms</h2>
+            <p style={{ color: 'gray', marginBottom: '15px' }}>Review gym leader applications, approve/reject them, and manage gym leaders.</p>
+            <button onClick={() => router.push('/admin/gyms')} style={{ padding: '8px 15px', background: '#10b981', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>Manage Gyms</button>
+          </div>
+        )}
+
         {canManageRoles && (
           <div style={{ background: 'rgba(255,255,255,0.05)', padding: '30px', borderRadius: '16px', border: '1px solid #444' }}>
             <i className="fa-solid fa-cloud-arrow-up" style={{ fontSize: '2rem', color: '#8b5cf6', marginBottom: '15px' }}></i>
