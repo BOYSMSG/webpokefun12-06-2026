@@ -59,6 +59,16 @@ export async function POST(request: NextRequest) {
 
     await newPoll.save();
 
+    // Create a global notification
+    const Notification = (await import('@/models/Notification')).default;
+    await new Notification({
+      title: 'New Community Poll',
+      message: `A new poll was posted: "${question}". Cast your vote now!`,
+      url: '/polls',
+      isGlobal: true,
+      icon: 'fa-solid fa-square-poll-vertical'
+    }).save();
+
     return NextResponse.json({ success: true, poll: newPoll });
   } catch (error) {
     console.error('Error creating poll:', error);

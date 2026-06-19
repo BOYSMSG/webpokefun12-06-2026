@@ -93,10 +93,10 @@ export async function PUT(request: NextRequest) {
 
     // Send DM to applicant
     await new Message({
-      sender: 'SYSTEM',
-      recipient: application.applicantUsername,
+      senderId: 'Pokefun Bot',
+      receiverId: application.applicantUsername,
       content: messageContent,
-      isRead: false
+      read: false
     }).save();
 
     return NextResponse.json({ success: true, message: `Application ${status.toLowerCase()}` });

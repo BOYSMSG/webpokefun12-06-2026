@@ -69,10 +69,10 @@ export async function POST(request: NextRequest) {
     const admins = await User.find({ role: { $in: ['ADMIN', 'OWNER'] } });
     const messagePromises = admins.map(admin => {
       return new Message({
-        sender: 'SYSTEM', // System message
-        recipient: admin.username,
+        senderId: 'Pokefun Bot', // System message
+        receiverId: admin.username,
         content: `New Gym Application for **${gym.name}**!\n\n**Applicant:** ${currentUser.username}\n**Minecraft IGN:** ${minecraftIgn}\n**Discord:** ${discordTag}\n**Timezone:** ${timezone}\n\n**Reason:** ${reason}\n\n**Experience:** ${experience}\n\n**Team:** ${teamDraft}\n\n[Action needed] Please review this application.`,
-        isRead: false
+        read: false
       }).save();
     });
 

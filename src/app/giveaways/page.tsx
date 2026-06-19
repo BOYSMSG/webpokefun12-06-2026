@@ -14,8 +14,25 @@ export default function GiveawaysPage() {
   const [winnersCount, setWinnersCount] = useState(1);
   const [durationHours, setDurationHours] = useState(24);
 
+  const [loading, setLoading] = useState(true);
+  const [createLoading, setCreateLoading] = useState(false);
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [forceWinner, setForceWinner] = useState('');
+  const [joinLoading, setJoinLoading] = useState<Record<string, boolean>>({});
+
   const [isAdmin, setIsAdmin] = useState(false);
   const [processing, setProcessing] = useState(false);
+
+  const fetchGiveaways = async () => {
+    try {
+      const res = await fetch('/api/giveaways');
+      const data = await res.json();
+      if (data.success) setGiveaways(data.giveaways);
+    } catch (err) {
+      console.error(err);
+    }
+    setLoading(false);
+  };
 
   useEffect(() => {
     fetchGiveaways();

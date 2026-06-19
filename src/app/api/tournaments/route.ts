@@ -56,6 +56,16 @@ export async function POST(request: NextRequest) {
 
     await newTournament.save();
 
+    // Create a global notification
+    const Notification = (await import('@/models/Notification')).default;
+    await new Notification({
+      title: 'New Tournament Announced',
+      message: `Registration is open for the "${name}" tournament!`,
+      url: '/tournaments',
+      isGlobal: true,
+      icon: 'fa-solid fa-trophy'
+    }).save();
+
     return NextResponse.json({ success: true, tournament: newTournament });
   } catch (error) {
     console.error('Error creating tournament:', error);

@@ -56,6 +56,16 @@ export async function POST(request: NextRequest) {
 
     await newEvent.save();
 
+    // Create a global notification
+    const Notification = (await import('@/models/Notification')).default;
+    await new Notification({
+      title: 'New Event Scheduled',
+      message: `A new event "${title}" has been scheduled for ${new Date(date).toLocaleDateString()}.`,
+      url: '/community', // or wherever events are shown
+      isGlobal: true,
+      icon: 'fa-solid fa-calendar-star'
+    }).save();
+
     return NextResponse.json({ success: true, event: newEvent });
   } catch (error) {
     console.error('Error creating event:', error);

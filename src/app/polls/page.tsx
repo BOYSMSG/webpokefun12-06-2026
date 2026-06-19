@@ -97,7 +97,7 @@ export default function PollsPage() {
       const res = await fetch('/api/polls/vote', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ pollId, optionIndices: selections })
+        body: JSON.stringify({ pollId, optionIndexes: selections })
       });
       const data = await res.json();
       if (data.success) {
