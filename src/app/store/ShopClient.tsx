@@ -374,12 +374,12 @@ export default function ShopClient({ initialCategories }: { initialCategories: a
                 />
                 <div className="featured-price-sub">{categories[0].packages[0].name}</div>
                 <div className="featured-price">
-                  {storeConfig?.saleActive && (
+                  {categories[0].packages[0].base_price > categories[0].packages[0].total_price && (
                     <span style={{ textDecoration: 'line-through', color: '#a3a3a3', fontSize: '0.85em', marginRight: '8px' }}>
-                      {(parseFloat(categories[0].packages[0].total_price) * (100 / (100 - (storeConfig.discountPercentage || 20)))).toFixed(2)} {categories[0].packages[0].currency}
+                      {categories[0].packages[0].base_price} {categories[0].packages[0].currency}
                     </span>
                   )}
-                  <span style={{ color: storeConfig?.saleActive ? '#e74c3c' : 'white', fontWeight: 'bold' }}>
+                  <span style={{ color: categories[0].packages[0].base_price > categories[0].packages[0].total_price ? '#e74c3c' : 'white', fontWeight: 'bold' }}>
                     {categories[0].packages[0].total_price} {categories[0].packages[0].currency}
                   </span>
                 </div>
@@ -528,12 +528,12 @@ export default function ShopClient({ initialCategories }: { initialCategories: a
                         <div className="pkg-details">
                           <h3 className="pkg-name" onClick={() => { setSelectedPkg(pkg); setSelectedImage(pkg.image); setCopied(false); }}>{pkg.name}</h3>
                           <div className="pkg-price">
-                            {storeConfig?.saleActive && (
+                            {pkg.base_price > pkg.total_price && (
                               <span style={{ textDecoration: 'line-through', color: '#a3a3a3', fontSize: '0.85em', marginRight: '8px' }}>
-                                {(parseFloat(pkg.total_price) * (100 / (100 - (storeConfig.discountPercentage || 20)))).toFixed(2)} {pkg.currency}
+                                {pkg.base_price} {pkg.currency}
                               </span>
                             )}
-                            <span style={{ color: storeConfig?.saleActive ? '#e74c3c' : 'white', fontWeight: 'bold' }}>
+                            <span style={{ color: pkg.base_price > pkg.total_price ? '#e74c3c' : 'white', fontWeight: 'bold' }}>
                               {pkg.total_price} {pkg.currency}
                             </span>
                           </div>
