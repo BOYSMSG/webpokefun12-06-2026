@@ -4,7 +4,6 @@ import { Analytics } from "@vercel/analytics/react";
 import GlobalSidebar from "@/components/GlobalSidebar";
 import { Providers } from "@/components/Providers";
 import AuthWidget from "@/components/AuthWidget";
-import GlobalSaleBanner from "@/components/GlobalSaleBanner";
 import WelcomeLoginModal from "@/components/WelcomeLoginModal";
 import AIChatWidget from "@/components/AIChatWidget";
 import { getServerSession } from "next-auth";
@@ -278,7 +277,6 @@ export default async function RootLayout({
           <PushManager />
           <WelcomeLoginModal />
           <AuthWidget />
-          <GlobalSaleBanner />
           <AIChatWidget />
           <Analytics />
           <Script 

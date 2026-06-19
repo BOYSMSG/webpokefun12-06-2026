@@ -46,52 +46,14 @@ export default function GlobalSaleBanner() {
   if (!storeConfig) return null;
 
   return (
-    <Link href="/store" style={{ textDecoration: 'none' }}>
-      <div style={{
-        position: 'fixed',
-        top: '80px',
-        right: '30px',
-        display: 'flex',
-        alignItems: 'center',
-        background: '#1a1a1a',
-        border: '2px solid #f39c12',
-        borderRadius: '8px',
-        padding: '10px 15px',
-        boxShadow: '0 8px 25px rgba(243, 156, 18, 0.2)',
-        cursor: 'pointer',
-        transition: 'transform 0.2s',
-        textAlign: 'left',
-        zIndex: 9998,
-        maxWidth: '300px'
-      }}
-      onMouseOver={e => e.currentTarget.style.transform = 'scale(1.02)'}
-      onMouseOut={e => e.currentTarget.style.transform = 'scale(1)'}
-      >
-        <div style={{
-          background: '#f39c12',
-          color: 'white',
-          width: '35px',
-          height: '35px',
-          borderRadius: '50%',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          fontSize: '16px',
-          flexShrink: 0,
-          marginRight: '12px',
-          boxShadow: '0 0 10px rgba(243, 156, 18, 0.5)'
-        }}>
-          <i className="fa-solid fa-hourglass-half"></i>
+    <Link href="/store" className="info-card" style={{ display: "flex", alignItems: "center", gap: "15px", textDecoration: "none", color: "white", fontWeight: 900, marginBottom: "15px" }}>
+        <i className="fa-solid fa-bolt"></i>
+        <div className="info-text" style={{ textAlign: "left" }}>
+            <div className="if-large" style={{ textTransform: "uppercase" }}>
+                {storeConfig.saleTitle} <span className="count" style={{ background: '#ef4444', color: 'white' }}>{storeConfig.discountPercentage}% OFF</span>
+            </div>
+            <div className="if-small">Ends in {timeLeft}</div>
         </div>
-        <div>
-          <div style={{ color: '#f39c12', fontWeight: 'bold', fontSize: '0.75rem', marginBottom: '2px' }}>
-            Ends in {timeLeft}
-          </div>
-          <div style={{ color: 'white', fontWeight: 'bold', fontSize: '0.85rem' }}>
-            {storeConfig.saleTitle} - {storeConfig.discountPercentage}% OFF
-          </div>
-        </div>
-      </div>
     </Link>
   );
 }

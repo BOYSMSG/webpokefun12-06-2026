@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import GlobalSaleBanner from "@/components/GlobalSaleBanner";
 
 export default function HomePage() {
   const [playerCount, setPlayerCount] = useState<number | null>(null);
@@ -31,33 +32,54 @@ export default function HomePage() {
 
   return (
     <>
-      <div className="p-body-inner" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", maxWidth: "1200px", margin: "0 auto", color: "white", gap: "20px", position: "relative", zIndex: 10 }}>
-          <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-              <Link id="store" href="/store" className="info-card" style={{ display: "flex", alignItems: "center", gap: "30px", textDecoration: "none", color: "white", fontWeight: 900 }}>
-                  <i className="fa-solid fa-cart-shopping"></i>
-                  <div className="info-text">
-                      <div className="if-large">STORE <span className="count" style={{ background: '#f59e0b' }}>SHOP</span></div>
-                      <div className="if-small">Browse Ranks & Items</div>
-                  </div>
-              </Link>
-              <div id="players" className="info-card" style={{ display: "flex", alignItems: "center", gap: "30px", color: "white", fontWeight: 900 }}>
-                  <i className="fa-regular fa-circle-play"></i>
-                  <div className="info-text">
-                      <div className="if-large">PLAYERS <span className="count">{playerCount !== null ? playerCount : "..."}</span></div>
-                      <div className="if-small">play.pokefun.in</div>
+      <style>{`
+        .hero-left-widgets {
+            position: absolute;
+            left: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 15px;
+            z-index: 20;
+        }
+        @media (min-width: 992px) {
+            .hero-left-widgets {
+                left: -280px;
+            }
+        }
+      `}</style>
+      <div className="p-body-inner" style={{ position: "relative", display: "flex", alignItems: "center", justifyContent: "center", minHeight: "150px", color: "white", zIndex: 10 }}>
+          <div className="hero-left-widgets">
+              <GlobalSaleBanner />
+              <div style={{ display: "flex", alignItems: "center", gap: "20px" }}>
+                  <Link id="store" href="/store" className="info-card" style={{ display: "flex", alignItems: "center", gap: "15px", textDecoration: "none", color: "white", fontWeight: 900 }}>
+                      <i className="fa-solid fa-cart-shopping"></i>
+                      <div className="info-text">
+                          <div className="if-large">STORE <span className="count" style={{ background: '#f59e0b', color: 'white' }}>SHOP</span></div>
+                          <div className="if-small">Browse Ranks & Items</div>
+                      </div>
+                  </Link>
+                  <div id="players" className="info-card" style={{ display: "flex", alignItems: "center", gap: "15px", color: "white", fontWeight: 900 }}>
+                      <div className="info-text" style={{ textAlign: "right" }}>
+                          <div className="if-large"><span className="count">{playerCount !== null ? playerCount : "..."}</span> PLAYERS</div>
+                          <div className="if-small">play.pokefun.in</div>
+                      </div>
+                      <i className="fa-regular fa-circle-play"></i>
                   </div>
               </div>
           </div>
-          <div id="logo" style={{ flexShrink: 0, margin: "0 20px" }}>
+
+          <div id="logo" style={{ zIndex: 5, position: "relative", display: "flex", justifyContent: "center" }}>
               <a href="/">
-                  <img className="animate__infinite animate__slower animate__animated animate__pulse" src="/images/pokefun_logo.jpg" alt="Pokefun" />
+                  <img className="animate__infinite animate__slower animate__animated animate__pulse" src="/images/pokefun_logo.jpg" alt="Pokefun" style={{ maxWidth: "300px", height: "auto" }} />
               </a>
               <div className="circle">
                   <div className="circle"></div>
               </div>
           </div>
-          <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "flex-end" }}>
-              <a id="discord" target="_blank" href="https://discord.gg/NtE8QBkmwR" className="info-card" style={{ display: "flex", alignItems: "center", gap: "30px", textDecoration: "none", color: "white", fontWeight: 900 }}>
+
+          <div style={{ position: "absolute", right: "0", display: "flex", alignItems: "center", zIndex: 20 }}>
+              <a id="discord" target="_blank" href="https://discord.gg/NtE8QBkmwR" className="info-card" style={{ display: "flex", alignItems: "center", gap: "20px", textDecoration: "none", color: "white", fontWeight: 900 }}>
                   <i className="fa-brands fa-discord"></i>
                   <div className="info-text">
                       <div className="if-large">DISCORD <span className="count">JOIN</span></div>
