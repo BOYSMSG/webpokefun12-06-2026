@@ -49,14 +49,18 @@ export default function AdminGymsPage() {
   };
 
   const handleAction = async (applicationId: string, actionStatus: 'APPROVED' | 'REJECTED') => {
-    if (!confirm(`Are you sure you want to ${actionStatus.toLowerCase()} this application?`)) return;
+    const actionName = actionStatus.toLowerCase();
+    const reason = prompt(`Enter a message/reason for ${actionName} this application (Optional):`);
+    if (reason === null) return; // User cancelled
+
+    if (!confirm(`Are you sure you want to ${actionName} this application?`)) return;
 
     setProcessing(prev => ({ ...prev, [applicationId]: true }));
     try {
       const res = await fetch('/api/gyms/applications', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ applicationId, status: actionStatus })
+        body: JSON.stringify({ applicationId, status: actionStatus, reason })
       });
       const data = await res.json();
       if (data.success) {

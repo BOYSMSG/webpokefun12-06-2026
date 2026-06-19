@@ -40,7 +40,7 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { applicationId, status } = await request.json(); // status: 'APPROVED' | 'REJECTED'
+    const { applicationId, status, reason } = await request.json(); // status: 'APPROVED' | 'REJECTED'
 
     if (!applicationId || !['APPROVED', 'REJECTED'].includes(status)) {
       return NextResponse.json({ success: false, error: 'Invalid data' }, { status: 400 });
@@ -71,6 +71,7 @@ export async function PUT(request: NextRequest) {
     const gym = await Gym.findById(application.gymId._id);
 
     let messageContent = '';
+    const customReasonText = reason ? `\n\n**Admin Message:** ${reason}` : '';
     
     if (status === 'APPROVED') {
       // Update gym status
@@ -86,9 +87,9 @@ export async function PUT(request: NextRequest) {
         { $set: { status: 'REJECTED', reviewedBy: 'SYSTEM (Auto-rejected)' } }
       );
 
-      messageContent = `Congratulations! Your application for **${gym?.name || 'the gym'}** has been **APPROVED** by Admin ${((session.user as any).username || session.user.name)}. You are now the official Gym Leader!`;
+      messageContent = `Congratulations! Your application for **${gym?.name || 'the gym'}** has been **APPROVED** by Admin ${((session.user as any).username || session.user.name)}. You are now the official Gym Leader!${customReasonText}`;
     } else {
-      messageContent = `Unfortunately, your application for **${gym?.name || 'the gym'}** has been **REJECTED** after review.`;
+      messageContent = `Unfortunately, your application for **${gym?.name || 'the gym'}** has been **REJECTED** after review.${customReasonText}`;
     }
 
     // Send DM to applicant
