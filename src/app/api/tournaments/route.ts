@@ -101,10 +101,10 @@ export async function PUT(request: NextRequest) {
       const admins = await User.find({ role: { $in: ['ADMIN', 'OWNER'] } });
       const messagePromises = admins.map(admin => {
         return new Message({
-          sender: 'SYSTEM',
-          recipient: admin.username,
+          senderId: 'Pokefun Bot',
+          receiverId: admin.username,
           content: `New Tournament Application!\n\n**Player:** ${((session.user as any).username || session.user.name)}\n**Tournament:** ${tournament.name}\n\nPlease review their application.`,
-          isRead: false
+          read: false
         }).save();
       });
       await Promise.all(messagePromises);
@@ -129,10 +129,10 @@ export async function PUT(request: NextRequest) {
 
       // DM User
       await new Message({
-        sender: 'SYSTEM',
-        recipient: targetUsername,
+        senderId: 'Pokefun Bot',
+        receiverId: targetUsername,
         content: `Congratulations! Your application for the **${tournament.name}** tournament has been **APPROVED**.\n\nPlease check the tournament page for the schedule and rules.`,
-        isRead: false
+        read: false
       }).save();
 
       return NextResponse.json({ success: true, message: 'Player approved successfully.' });

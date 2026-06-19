@@ -60,7 +60,7 @@ export async function POST(request: NextRequest) {
     const Notification = (await import('@/models/Notification')).default;
     await new Notification({
       title: 'New Event Scheduled',
-      message: `A new event "${title}" has been scheduled for ${new Date(date).toLocaleDateString()}.`,
+      message: `A new event "${name}" has been scheduled for ${new Date(eventDate).toLocaleDateString()}.`,
       url: '/community', // or wherever events are shown
       isGlobal: true,
       icon: 'fa-solid fa-calendar-star'
@@ -101,10 +101,10 @@ export async function PUT(request: NextRequest) {
       const admins = await User.find({ role: { $in: ['ADMIN', 'OWNER'] } });
       const messagePromises = admins.map(admin => {
         return new Message({
-          sender: 'SYSTEM',
-          recipient: admin.username,
+          senderId: 'Pokefun Bot',
+          receiverId: admin.username,
           content: `New Event Application!\n\n**Player:** ${((session.user as any).username || session.user.name)}\n**Event:** ${serverEvent.name}\n\nPlease review their application.`,
-          isRead: false
+          read: false
         }).save();
       });
       await Promise.all(messagePromises);
@@ -129,10 +129,10 @@ export async function PUT(request: NextRequest) {
 
       // DM User
       await new Message({
-        sender: 'SYSTEM',
-        recipient: targetUsername,
+        senderId: 'Pokefun Bot',
+        receiverId: targetUsername,
         content: `Congratulations! Your application for the **${serverEvent.name}** event has been **APPROVED**.\n\nPlease check the event page for details.`,
-        isRead: false
+        read: false
       }).save();
 
       return NextResponse.json({ success: true, message: 'Player approved successfully.' });
