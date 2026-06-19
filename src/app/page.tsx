@@ -3,6 +3,8 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 
+import SaleBanner from "@/components/SaleBanner";
+
 export default function HomePage() {
   const [playerCount, setPlayerCount] = useState<number | null>(null);
 
@@ -68,13 +70,12 @@ export default function HomePage() {
                   </div>
 
                   {/* SALE BANNER */}
-                  <Link href="/store" style={{ textDecoration: 'none' }}>
-                    <div className="animate__animated animate__tada" style={{ background: 'linear-gradient(135deg, #e74c3c 0%, #c0392b 100%)', borderRadius: '12px', padding: '15px 30px', margin: '0 auto 60px', maxWidth: '600px', textAlign: 'center', boxShadow: '0 8px 25px rgba(231, 76, 60, 0.5)', border: '2px solid #ff7979', cursor: 'pointer', transition: 'transform 0.2s' }} onMouseOver={e => e.currentTarget.style.transform = 'scale(1.05)'} onMouseOut={e => e.currentTarget.style.transform = 'scale(1)'}>
-                        <h3 style={{ margin: '0', fontSize: '1.8rem', fontWeight: 900, color: '#fff', textTransform: 'uppercase', letterSpacing: '1px' }}><i className="fa-solid fa-tags"></i> HUGE SALE ON POKEFUN STORE!</h3>
-                        <p style={{ margin: '5px 0 0', fontSize: '1.1rem', color: '#ffd32a', fontWeight: 'bold' }}>Summer Sale - Up to 20% OFF on all Ranks & Keys!</p>
-                        <p style={{ margin: '5px 0 0', fontSize: '0.9rem', color: '#fff', opacity: 0.8 }}>Click here to claim your discount now</p>
-                    </div>
-                  </Link>
+                  <SaleBanner 
+                    endDate="2026-06-30T23:59:59"
+                    title="Summer Sale"
+                    subtitle="Up to 20% OFF on all Ranks & Keys is now available for a limited time!"
+                    link="/store"
+                  />
 
                   {/* COMMUNITY PROMO */}
                   <div style={{ background: 'linear-gradient(135deg, #4c1d95 0%, #065f46 100%)', borderRadius: '20px', padding: '50px', textAlign: 'center', marginBottom: '80px', border: '1px solid rgba(255,255,255,0.2)', boxShadow: '0 15px 40px rgba(0,0,0,0.5)' }}>
