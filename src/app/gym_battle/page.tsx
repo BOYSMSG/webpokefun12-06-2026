@@ -182,7 +182,7 @@ export default function GymBattlePage() {
 
                 {selectedGym.rules && (
                   <div style={{ marginBottom: "20px", background: "rgba(245, 158, 11, 0.1)", border: "1px solid #f59e0b", borderRadius: "8px", padding: "15px" }}>
-                    <h4 style={{ color: "#f59e0b", margin: "0 0 10px 0" }}>Gym Rules</h4>
+                    <h4 style={{ color: "#f59e0b", margin: "0 0 10px 0" }}>Must Read</h4>
                     <p style={{ color: "#e5e7eb", fontSize: "0.9rem", whiteSpace: "pre-wrap", margin: "0 0 15px 0" }}>{selectedGym.rules}</p>
                     <label style={{ display: "flex", alignItems: "center", gap: "10px", cursor: "pointer" }}>
                       <input 

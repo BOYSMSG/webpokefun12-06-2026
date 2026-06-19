@@ -12,7 +12,11 @@ export default function AdminGymsPage() {
   const [gyms, setGyms] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [processing, setProcessing] = useState<{ [id: string]: boolean }>({});
+  const [processing, setProcessing] = useState<Record<string, boolean>>({});
+  const [editingRulesId, setEditingRulesId] = useState<string | null>(null);
+  const [editingRulesText, setEditingRulesText] = useState("");
+  const [actionPrompt, setActionPrompt] = useState<{ id: string, type: 'APPROVE' | 'REJECT' | 'REVOKE', callback: (reason: string) => void } | null>(null);
+  const [promptText, setPromptText] = useState("");
 
   const myRole = (session?.user as any)?.role;
   const isAdmin = myRole === 'OWNER' || myRole === 'ADMIN';
@@ -101,11 +105,13 @@ export default function AdminGymsPage() {
     setProcessing(prev => ({ ...prev, [gymId]: false }));
   };
 
-  const handleEditRules = async (gymId: string, currentRules: string) => {
-    const rules = prompt("Enter the rules for this gym (shown to challengers):", currentRules || "");
-    if (rules === null) return;
+  const handleSaveRules = async () => {
+    if (!editingRulesId) return;
+    const gymId = editingRulesId;
+    const rules = editingRulesText;
 
     setProcessing(prev => ({ ...prev, [gymId]: true }));
+    setEditingRulesId(null);
     try {
       const res = await fetch('/api/gyms/rules', {
         method: 'PUT',
@@ -130,6 +136,27 @@ export default function AdminGymsPage() {
 
   return (
     <div className="inner" style={{ paddingTop: '80px', paddingBottom: '60px', maxWidth: '1000px', margin: '0 auto' }}>
+      
+      {editingRulesId && (
+        <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', background: 'rgba(0,0,0,0.8)', zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div style={{ background: '#1c1f21', padding: '30px', borderRadius: '12px', width: '90%', maxWidth: '600px', border: '1px solid #333', boxShadow: '0 10px 40px rgba(0,0,0,0.5)' }}>
+            <h2 style={{ color: '#fff', marginTop: 0, borderBottom: '1px solid #333', paddingBottom: '10px' }}>Edit Must Read / Rules</h2>
+            <p style={{ color: 'gray', fontSize: '0.9rem', marginBottom: '20px' }}>These rules will be shown to challengers before they can apply. You can use multiple lines here.</p>
+            <textarea
+              value={editingRulesText}
+              onChange={(e) => setEditingRulesText(e.target.value)}
+              rows={10}
+              style={{ width: '100%', background: '#111', color: '#fff', border: '1px solid #444', padding: '15px', borderRadius: '8px', resize: 'vertical', fontSize: '1rem', fontFamily: 'inherit' }}
+              placeholder="Enter rules, requirements, and fee structure here..."
+            />
+            <div style={{ display: 'flex', gap: '15px', marginTop: '20px', justifyContent: 'flex-end' }}>
+              <button onClick={() => setEditingRulesId(null)} style={{ padding: '10px 20px', background: 'transparent', color: 'gray', border: 'none', cursor: 'pointer', fontSize: '1rem' }}>Cancel</button>
+              <button onClick={handleSaveRules} style={{ padding: '10px 20px', background: '#10b981', color: '#fff', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: 'bold', fontSize: '1rem' }}>Save Rules</button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <button onClick={() => router.push('/admin')} style={{ padding: '8px 15px', background: '#333', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer', marginBottom: '20px' }}>
         <i className="fa-solid fa-arrow-left"></i> Back to Dashboard
       </button>
@@ -153,7 +180,7 @@ export default function AdminGymsPage() {
                 
                 <div style={{ display: 'flex', gap: '10px' }}>
                   <button 
-                    onClick={() => handleEditRules(gym._id, gym.rules)}
+                    onClick={() => { setEditingRulesText(gym.rules || ""); setEditingRulesId(gym._id); }}
                     disabled={processing[gym._id]}
                     style={{ flex: 1, padding: '10px', background: 'transparent', color: '#10b981', border: '1px solid #10b981', borderRadius: '6px', cursor: processing[gym._id] ? 'not-allowed' : 'pointer', fontWeight: 'bold' }}
                   >
