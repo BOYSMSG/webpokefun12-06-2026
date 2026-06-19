@@ -62,10 +62,19 @@ export default function HomePage() {
 
               {/* ALL EPIC FEATURES */}
               <div className="inner" style={{ marginTop: "60px", marginBottom: "60px" }}>
-                  <div style={{ textAlign: "center", marginBottom: "60px", marginTop: "20px" }}>
+                  <div style={{ textAlign: "center", marginBottom: "40px", marginTop: "20px" }}>
                       <img src="/images/logo.png" alt="Pokefun Logo" className="animate__animated animate__pulse animate__infinite animate__slower" style={{ height: "150px", margin: "0 auto 20px", display: "block", filter: "drop-shadow(0 0 20px rgba(6, 182, 212, 0.6))" }} />
                       <h2 className="animate__animated animate__fadeInUp" style={{ fontSize: "5.4rem", fontFamily: "'Righteous', cursive", fontWeight: 800, color: "var(--accent-gold)", textShadow: "0 4px 15px rgba(245, 158, 11, 0.5)", textTransform: "uppercase", letterSpacing: "2px" }}>The Best Cobblemon Server & Community</h2>
                   </div>
+
+                  {/* SALE BANNER */}
+                  <Link href="/store" style={{ textDecoration: 'none' }}>
+                    <div className="animate__animated animate__tada" style={{ background: 'linear-gradient(135deg, #e74c3c 0%, #c0392b 100%)', borderRadius: '12px', padding: '15px 30px', margin: '0 auto 60px', maxWidth: '600px', textAlign: 'center', boxShadow: '0 8px 25px rgba(231, 76, 60, 0.5)', border: '2px solid #ff7979', cursor: 'pointer', transition: 'transform 0.2s' }} onMouseOver={e => e.currentTarget.style.transform = 'scale(1.05)'} onMouseOut={e => e.currentTarget.style.transform = 'scale(1)'}>
+                        <h3 style={{ margin: '0', fontSize: '1.8rem', fontWeight: 900, color: '#fff', textTransform: 'uppercase', letterSpacing: '1px' }}><i className="fa-solid fa-tags"></i> HUGE SALE ON POKEFUN STORE!</h3>
+                        <p style={{ margin: '5px 0 0', fontSize: '1.1rem', color: '#ffd32a', fontWeight: 'bold' }}>Summer Sale - Up to 20% OFF on all Ranks & Keys!</p>
+                        <p style={{ margin: '5px 0 0', fontSize: '0.9rem', color: '#fff', opacity: 0.8 }}>Click here to claim your discount now</p>
+                    </div>
+                  </Link>
 
                   {/* COMMUNITY PROMO */}
                   <div style={{ background: 'linear-gradient(135deg, #4c1d95 0%, #065f46 100%)', borderRadius: '20px', padding: '50px', textAlign: 'center', marginBottom: '80px', border: '1px solid rgba(255,255,255,0.2)', boxShadow: '0 15px 40px rgba(0,0,0,0.5)' }}>

@@ -362,7 +362,14 @@ export default function ShopClient({ initialCategories }: { initialCategories: a
                   style={{ maxHeight: '150px', objectFit: 'contain' }}
                 />
                 <div className="featured-price-sub">{categories[0].packages[0].name}</div>
-                <div className="featured-price">{categories[0].packages[0].total_price} {categories[0].packages[0].currency}</div>
+                <div className="featured-price">
+                  <span style={{ textDecoration: 'line-through', color: '#a3a3a3', fontSize: '0.85em', marginRight: '8px' }}>
+                    {(parseFloat(categories[0].packages[0].total_price) * 1.25).toFixed(2)} {categories[0].packages[0].currency}
+                  </span>
+                  <span style={{ color: '#e74c3c', fontWeight: 'bold' }}>
+                    {categories[0].packages[0].total_price} {categories[0].packages[0].currency}
+                  </span>
+                </div>
                 <button className="btn-cyan w-full" onClick={() => handleAddToCart(categories[0].packages[0])}>Add to Basket</button>
               </div>
             ) : (
@@ -428,6 +435,12 @@ export default function ShopClient({ initialCategories }: { initialCategories: a
             <div className="category-container store-home-container" style={{ padding: '40px', background: '#111', border: '1px solid #222', borderRadius: '12px', color: '#ccc' }}>
               <h2 style={{ color: 'white', fontSize: '3rem', marginBottom: '20px', textAlign: 'center', fontWeight: '800' }}>WELCOME TO THE OFFICIAL <br/><span style={{color: '#4bc8c8'}}>POKEFUN STORE</span></h2>
               
+              <div className="animate__animated animate__pulse animate__infinite animate__slower" style={{ background: 'linear-gradient(135deg, #e74c3c 0%, #c0392b 100%)', borderRadius: '12px', padding: '15px 30px', margin: '0 auto 30px', maxWidth: '600px', textAlign: 'center', boxShadow: '0 8px 25px rgba(231, 76, 60, 0.5)', border: '2px solid #ff7979' }}>
+                  <h3 style={{ margin: '0', fontSize: '1.8rem', fontWeight: 900, color: '#fff', textTransform: 'uppercase', letterSpacing: '1px' }}><i className="fa-solid fa-tags"></i> HUGE SALE ON POKEFUN STORE!</h3>
+                  <p style={{ margin: '5px 0 0', fontSize: '1.1rem', color: '#ffd32a', fontWeight: 'bold' }}>Summer Sale - Up to 20% OFF on all Ranks & Keys!</p>
+                  <p style={{ margin: '5px 0 0', fontSize: '0.9rem', color: '#fff', opacity: 0.8 }}>Discount has been applied to all packages</p>
+              </div>
+
               <p style={{ fontSize: '1.2rem', lineHeight: '1.6', marginBottom: '20px', textAlign: 'center' }}>
                 <strong>POKEFUN JAVA</strong> is a free-to-play 1st Public cracked Minecraft Server of <strong>Cobblemon 1.7.1 and many more</strong>. Purchase items here to enhance your Pokémon journey, unlock special perks, and show off a unique style on the server!
               </p>
@@ -499,7 +512,14 @@ export default function ShopClient({ initialCategories }: { initialCategories: a
                         
                         <div className="pkg-details">
                           <h3 className="pkg-name" onClick={() => { setSelectedPkg(pkg); setSelectedImage(pkg.image); setCopied(false); }}>{pkg.name}</h3>
-                          <div className="pkg-price">{pkg.total_price} {pkg.currency}</div>
+                          <div className="pkg-price">
+                            <span style={{ textDecoration: 'line-through', color: '#a3a3a3', fontSize: '0.85em', marginRight: '8px' }}>
+                              {(parseFloat(pkg.total_price) * 1.25).toFixed(2)} {pkg.currency}
+                            </span>
+                            <span style={{ color: '#e74c3c', fontWeight: 'bold' }}>
+                              {pkg.total_price} {pkg.currency}
+                            </span>
+                          </div>
                         </div>
                         
                         <div className="pkg-actions">
