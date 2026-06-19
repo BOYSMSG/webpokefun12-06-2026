@@ -33,8 +33,12 @@ export default function HomePage() {
     <>
       <div className="p-body-inner" style={{ display: "flex", alignItems: "center", justifyContent: "center", maxWidth: "1200px", margin: "0 auto", color: "white", gap: "60px", position: "relative", zIndex: 10 }}>
           <div style={{ flex: 1, display: "flex", alignItems: "center", gap: "20px", justifyContent: "flex-end" }}>
-              <Link href="/store" style={{ background: '#f59e0b', color: 'white', textDecoration: 'none', padding: '12px 24px', borderRadius: '30px', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '10px', boxShadow: '0 4px 15px rgba(245, 158, 11, 0.4)', transition: 'transform 0.2s', whiteSpace: 'nowrap' }} onMouseOver={e => e.currentTarget.style.transform = 'translateY(-2px)'} onMouseOut={e => e.currentTarget.style.transform = 'none'}>
-                  <i className="fa-solid fa-cart-shopping"></i> STORE
+              <Link id="store" href="/store" className="info-card" style={{ display: "flex", alignItems: "center", gap: "30px", textDecoration: "none", color: "white", fontWeight: 900 }}>
+                  <i className="fa-solid fa-cart-shopping"></i>
+                  <div className="info-text">
+                      <div className="if-large">STORE <span className="count" style={{ background: '#f59e0b' }}>SHOP</span></div>
+                      <div className="if-small">Browse Ranks & Items</div>
+                  </div>
               </Link>
               <div id="players" className="info-card" style={{ display: "flex", alignItems: "center", gap: "30px", color: "white", fontWeight: 900 }}>
                   <i className="fa-regular fa-circle-play"></i>
