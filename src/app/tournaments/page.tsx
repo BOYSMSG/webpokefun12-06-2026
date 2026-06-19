@@ -155,6 +155,19 @@ export default function TournamentsPage() {
           )}
         </div>
 
+        {t.status === 'COMPLETED' && t.winners && (t.winners.first || t.winners.second || t.winners.third) && (
+          <div style={{ marginTop: '20px', padding: '15px', background: 'rgba(255,215,0,0.1)', border: '1px solid #f1c40f', borderRadius: '10px' }}>
+            <h4 style={{ color: '#f1c40f', margin: '0 0 10px 0', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <i className="fa-solid fa-trophy"></i> Winners
+            </h4>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
+              {t.winners.first && <div><span style={{ color: '#ffd700', fontWeight: 'bold' }}>1st Place:</span> {t.winners.first}</div>}
+              {t.winners.second && <div><span style={{ color: '#c0c0c0', fontWeight: 'bold' }}>2nd Place:</span> {t.winners.second}</div>}
+              {t.winners.third && <div><span style={{ color: '#cd7f32', fontWeight: 'bold' }}>3rd Place:</span> {t.winners.third}</div>}
+            </div>
+          </div>
+        )}
+
         {/* Admin Section */}
         {isAdmin && t.status === 'UPCOMING' && t.applicants.length > 0 && (
           <div style={{ marginTop: "20px", borderTop: "1px solid #444", paddingTop: "20px" }}>

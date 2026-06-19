@@ -11,20 +11,37 @@ export default function AdminTournamentsPage() {
   const [tournaments, setTournaments] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-
-  const myRole = (session?.user as any)?.role;
-  const myPermissions = (session?.user as any)?.permissions || [];
-  const isAdmin = myRole === 'OWNER' || myRole === 'ADMIN' || myPermissions.includes('MANAGE_EVENTS_TOURNAMENTS');
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [winnerInputs, setWinnerInputs] = useState<Record<string, {first: string, second: string, third: string}>>({});
 
   useEffect(() => {
-    if (status === 'authenticated') {
-      if (!isAdmin) {
-        router.push('/');
-      } else {
-        fetchTournaments();
-      }
+    if (status === 'unauthenticated') {
+      router.push('/');
+    } else if (session) {
+      checkAdminAndFetchTournaments();
     }
-  }, [status, isAdmin, router]);
+  }, [session, status]);
+
+  const checkAdminAndFetchTournaments = async () => {
+    try {
+      const res = await fetch('/api/admin/users');
+      const data = await res.json();
+      if (data.success) {
+        const currentUser = data.users.find((u: any) => u.email === session?.user?.email);
+        const myRole = currentUser?.role || 'USER';
+        const myPerms = currentUser?.permissions || [];
+        if (myRole === 'ADMIN' || myRole === 'OWNER' || myPerms.includes('MANAGE_EVENTS_TOURNAMENTS')) {
+          setIsAdmin(true);
+          fetchTournaments();
+        } else {
+          router.push('/');
+        }
+      }
+    } catch (err) {
+      console.error(err);
+      router.push('/');
+    }
+  };
 
   const fetchTournaments = async () => {
     try {
@@ -32,13 +49,44 @@ export default function AdminTournamentsPage() {
       const data = await res.json();
       if (data.success) {
         setTournaments(data.tournaments);
+        
+        // Initialize winner inputs
+        const initialInputs: any = {};
+        data.tournaments.forEach((ev: any) => {
+          initialInputs[ev._id] = {
+            first: ev.winners?.first || '',
+            second: ev.winners?.second || '',
+            third: ev.winners?.third || ''
+          };
+        });
+        setWinnerInputs(initialInputs);
       } else {
         setError(data.error || 'Failed to load tournaments');
       }
     } catch (err) {
-      setError('An error occurred while fetching tournaments.');
+      setError('Failed to fetch tournaments');
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
+  };
+
+  const setWinners = async (id: string) => {
+    try {
+      const res = await fetch('/api/tournaments', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ tournamentId: id, action: 'SET_WINNERS', winners: winnerInputs[id] })
+      });
+      const data = await res.json();
+      if (data.success) {
+        alert('Winners updated successfully!');
+        fetchTournaments();
+      } else {
+        alert(data.error || 'Failed to update winners');
+      }
+    } catch (err) {
+      alert('Error updating winners');
+    }
   };
 
   const forceEndTournament = async (id: string) => {
@@ -118,8 +166,42 @@ export default function AdminTournamentsPage() {
 
                 <div style={{ background: 'rgba(0,0,0,0.3)', padding: '15px', borderRadius: '10px' }}>
                   <h3 style={{ fontSize: '1rem', color: '#a3a3a3', marginBottom: '10px' }}>Applicants ({t.applicants?.length || 0} / {t.maxPlayers})</h3>
-                  <div style={{ maxHeight: '100px', overflowY: 'auto', fontSize: '0.9rem', color: '#fff' }}>
+                  <div style={{ maxHeight: '100px', overflowY: 'auto', fontSize: '0.9rem', color: '#fff', marginBottom: '10px' }}>
                     {t.applicants && t.applicants.length > 0 ? t.applicants.join(', ') : 'No entries yet.'}
+                  </div>
+                  <h3 style={{ fontSize: '1rem', color: '#a3a3a3', marginBottom: '10px', marginTop: '10px' }}>Approved Players ({t.approvedPlayers?.length || 0})</h3>
+                  <div style={{ maxHeight: '100px', overflowY: 'auto', fontSize: '0.9rem', color: '#fff' }}>
+                    {t.approvedPlayers && t.approvedPlayers.length > 0 ? t.approvedPlayers.join(', ') : 'None yet.'}
+                  </div>
+                </div>
+
+                <div style={{ background: 'rgba(0,0,0,0.3)', padding: '15px', borderRadius: '10px' }}>
+                  <h3 style={{ fontSize: '1rem', color: '#a3a3a3', marginBottom: '10px' }}>Set Winners</h3>
+                  <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+                    <input 
+                      type="text" 
+                      placeholder="1st Place (Username)" 
+                      value={winnerInputs[t._id]?.first || ''}
+                      onChange={(e) => setWinnerInputs({...winnerInputs, [t._id]: {...winnerInputs[t._id], first: e.target.value}})}
+                      style={{ padding: '8px', borderRadius: '5px', border: '1px solid #555', background: '#222', color: 'white', flex: 1, minWidth: '150px' }}
+                    />
+                    <input 
+                      type="text" 
+                      placeholder="2nd Place (Username)" 
+                      value={winnerInputs[t._id]?.second || ''}
+                      onChange={(e) => setWinnerInputs({...winnerInputs, [t._id]: {...winnerInputs[t._id], second: e.target.value}})}
+                      style={{ padding: '8px', borderRadius: '5px', border: '1px solid #555', background: '#222', color: 'white', flex: 1, minWidth: '150px' }}
+                    />
+                    <input 
+                      type="text" 
+                      placeholder="3rd Place (Username)" 
+                      value={winnerInputs[t._id]?.third || ''}
+                      onChange={(e) => setWinnerInputs({...winnerInputs, [t._id]: {...winnerInputs[t._id], third: e.target.value}})}
+                      style={{ padding: '8px', borderRadius: '5px', border: '1px solid #555', background: '#222', color: 'white', flex: 1, minWidth: '150px' }}
+                    />
+                    <button onClick={() => setWinners(t._id)} style={{ padding: '8px 15px', background: '#2ecc71', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer', fontWeight: 'bold' }}>
+                      Save Winners
+                    </button>
                   </div>
                 </div>
 

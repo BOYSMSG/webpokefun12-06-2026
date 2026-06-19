@@ -159,6 +159,22 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json({ success: true, message: 'Event force ended successfully.' });
     }
 
+    if (action === 'SET_WINNERS') {
+      const User = (await import('@/models/User')).default;
+      const currentUser = await User.findOne({ username: ((session.user as any).username || session.user.name) });
+      const canManageEvents = currentUser && (['ADMIN', 'OWNER'].includes(currentUser.role) || currentUser.permissions?.includes('MANAGE_EVENTS_TOURNAMENTS'));
+
+      if (!canManageEvents) {
+         return NextResponse.json({ success: false, error: 'Only admins or authorized staff can set winners.' }, { status: 403 });
+      }
+
+      const { winners } = await request.json();
+      serverEvent.winners = winners;
+      await serverEvent.save();
+
+      return NextResponse.json({ success: true, message: 'Winners updated successfully.', event: serverEvent });
+    }
+
     return NextResponse.json({ success: false, error: 'Invalid action.' }, { status: 400 });
   } catch (error) {
     console.error('Error handling event action:', error);

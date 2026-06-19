@@ -13,6 +13,11 @@ export interface IEvent extends Document {
   createdAt: Date;
   eventDate: Date;
   status: 'UPCOMING' | 'ONGOING' | 'COMPLETED';
+  winners?: {
+    first?: string;
+    second?: string;
+    third?: string;
+  };
 }
 
 const EventSchema: Schema = new Schema({
@@ -26,7 +31,12 @@ const EventSchema: Schema = new Schema({
   createdBy: { type: String, required: true },
   createdAt: { type: Date, default: Date.now },
   eventDate: { type: Date, required: true },
-  status: { type: String, enum: ['UPCOMING', 'ONGOING', 'COMPLETED'], default: 'UPCOMING' }
+  status: { type: String, enum: ['UPCOMING', 'ONGOING', 'COMPLETED'], default: 'UPCOMING' },
+  winners: {
+    first: { type: String },
+    second: { type: String },
+    third: { type: String }
+  }
 });
 
 const ServerEvent: Model<IEvent> = mongoose.models.ServerEvent || mongoose.model<IEvent>('ServerEvent', EventSchema);

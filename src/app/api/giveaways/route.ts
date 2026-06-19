@@ -16,19 +16,34 @@ export async function GET(request: NextRequest) {
     
     for (const gw of expiredGiveaways) {
       gw.status = 'ENDED';
+      // Helper for true random shuffle (Fisher-Yates)
+      const shuffleArray = (array: any[]) => {
+        const arr = [...array];
+        for (let i = arr.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [arr[i], arr[j]] = [arr[j], arr[i]];
+        }
+        return arr;
+      };
+
       // Roll winners
       if (gw.participants.length > 0) {
-        if (gw.forceWinner && gw.participants.includes(gw.forceWinner)) {
-          gw.winners = [gw.forceWinner];
+        let forceWinnerMatch = null;
+        if (gw.forceWinner) {
+           forceWinnerMatch = gw.participants.find((p: string) => p.toLowerCase().trim() === gw.forceWinner.toLowerCase().trim());
+        }
+
+        if (forceWinnerMatch) {
+          gw.winners = [forceWinnerMatch];
           // Fill rest if needed
-          const others = gw.participants.filter(p => p !== gw.forceWinner).sort(() => 0.5 - Math.random());
+          const others = shuffleArray(gw.participants.filter((p: string) => p !== forceWinnerMatch));
           const needed = gw.winnersCount - 1;
           if (needed > 0) {
              gw.winners.push(...others.slice(0, needed));
           }
         } else {
           // Pure random
-          const shuffled = [...gw.participants].sort(() => 0.5 - Math.random());
+          const shuffled = shuffleArray(gw.participants);
           gw.winners = shuffled.slice(0, gw.winnersCount);
         }
 
