@@ -52,7 +52,7 @@ export async function POST(request: NextRequest) {
       options: options.map((opt: string) => ({ text: opt, votes: [] })),
       durationHours: parseInt(durationHours || 24),
       allowMultiple: !!allowMultiple,
-      createdBy: session.user.username,
+      createdBy: (session.user as any).username || session.user.name || session.user.email || 'Admin',
       expiresAt,
       isActive: true
     });

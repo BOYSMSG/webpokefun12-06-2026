@@ -43,7 +43,7 @@ export async function POST(request: NextRequest) {
 
     // Check if already applied and pending
     const existingApplication = await GymApplication.findOne({
-      applicantUsername: session.user.username,
+      applicantUsername: currentUser.username,
       gymId,
       status: 'PENDING'
     });
@@ -53,7 +53,7 @@ export async function POST(request: NextRequest) {
     }
 
     const newApplication = new GymApplication({
-      applicantUsername: session.user.username,
+      applicantUsername: currentUser.username,
       gymId,
       discordTag,
       minecraftIgn,
@@ -71,7 +71,7 @@ export async function POST(request: NextRequest) {
       return new Message({
         sender: 'SYSTEM', // System message
         recipient: admin.username,
-        content: `New Gym Application for **${gym.name}**!\n\n**Applicant:** ${session.user.username}\n**Minecraft IGN:** ${minecraftIgn}\n**Discord:** ${discordTag}\n**Timezone:** ${timezone}\n\n**Reason:** ${reason}\n\n**Experience:** ${experience}\n\n**Team:** ${teamDraft}\n\n[Action needed] Please review this application.`,
+        content: `New Gym Application for **${gym.name}**!\n\n**Applicant:** ${currentUser.username}\n**Minecraft IGN:** ${minecraftIgn}\n**Discord:** ${discordTag}\n**Timezone:** ${timezone}\n\n**Reason:** ${reason}\n\n**Experience:** ${experience}\n\n**Team:** ${teamDraft}\n\n[Action needed] Please review this application.`,
         isRead: false
       }).save();
     });
