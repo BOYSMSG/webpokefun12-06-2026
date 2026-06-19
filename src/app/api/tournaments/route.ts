@@ -153,7 +153,7 @@ export async function PUT(request: NextRequest) {
          return NextResponse.json({ success: false, error: 'Only admins or authorized staff can force end tournaments.' }, { status: 403 });
       }
 
-      tournament.status = 'ENDED';
+      tournament.status = 'COMPLETED';
       tournament.eventDate = new Date(); // update time to now
       await tournament.save();
 

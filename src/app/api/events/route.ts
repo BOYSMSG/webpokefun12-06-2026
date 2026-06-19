@@ -153,7 +153,7 @@ export async function PUT(request: NextRequest) {
          return NextResponse.json({ success: false, error: 'Only admins or authorized staff can force end events.' }, { status: 403 });
       }
 
-      serverEvent.status = 'ENDED';
+      serverEvent.status = 'COMPLETED';
       serverEvent.eventDate = new Date(); // update time to now
       await serverEvent.save();
 
