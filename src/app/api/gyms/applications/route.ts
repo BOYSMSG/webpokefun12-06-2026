@@ -65,7 +65,7 @@ export async function PUT(request: NextRequest) {
     }
 
     application.status = status;
-    application.reviewedBy = session.user.username;
+    application.reviewedBy = ((session.user as any).username || session.user.name);
     await application.save();
 
     const gym = await Gym.findById(application.gymId._id);
@@ -86,7 +86,7 @@ export async function PUT(request: NextRequest) {
         { $set: { status: 'REJECTED', reviewedBy: 'SYSTEM (Auto-rejected)' } }
       );
 
-      messageContent = `Congratulations! Your application for **${gym?.name || 'the gym'}** has been **APPROVED** by Admin ${session.user.username}. You are now the official Gym Leader!`;
+      messageContent = `Congratulations! Your application for **${gym?.name || 'the gym'}** has been **APPROVED** by Admin ${((session.user as any).username || session.user.name)}. You are now the official Gym Leader!`;
     } else {
       messageContent = `Unfortunately, your application for **${gym?.name || 'the gym'}** has been **REJECTED** after review.`;
     }

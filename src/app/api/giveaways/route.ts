@@ -40,7 +40,7 @@ export async function GET(request: NextRequest) {
     let isAdmin = false;
     if (session?.user?.username) {
         const User = (await import('@/models/User')).default;
-        const currentUser = await User.findOne({ username: session.user.username });
+        const currentUser = await User.findOne({ username: ((session.user as any).username || session.user.name) });
         if (currentUser && ['ADMIN', 'OWNER'].includes(currentUser.role)) {
             isAdmin = true;
         }
@@ -88,7 +88,7 @@ export async function POST(request: NextRequest) {
       description: description || '',
       imageUrl: imageUrl || undefined,
       winnersCount: parseInt(winnersCount),
-      createdBy: session.user.username,
+      createdBy: ((session.user as any).username || session.user.name),
       expiresAt,
       status: 'ACTIVE'
     });

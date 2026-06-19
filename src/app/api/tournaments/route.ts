@@ -49,7 +49,7 @@ export async function POST(request: NextRequest) {
       imageUrl: imageUrl || undefined,
       rules: rules || '',
       maxPlayers: parseInt(maxPlayers || 32),
-      createdBy: session.user.username,
+      createdBy: ((session.user as any).username || session.user.name),
       eventDate: new Date(eventDate),
       status: 'UPCOMING'
     });
@@ -80,10 +80,10 @@ export async function PUT(request: NextRequest) {
     }
 
     if (action === 'APPLY') {
-      if (tournament.applicants.includes(session.user.username) || tournament.approvedPlayers.includes(session.user.username)) {
+      if (tournament.applicants.includes(((session.user as any).username || session.user.name)) || tournament.approvedPlayers.includes(((session.user as any).username || session.user.name))) {
         return NextResponse.json({ success: false, error: 'You have already applied.' }, { status: 400 });
       }
-      tournament.applicants.push(session.user.username);
+      tournament.applicants.push(((session.user as any).username || session.user.name));
       await tournament.save();
 
       // DM Admins
@@ -93,7 +93,7 @@ export async function PUT(request: NextRequest) {
         return new Message({
           sender: 'SYSTEM',
           recipient: admin.username,
-          content: `New Tournament Application!\n\n**Player:** ${session.user.username}\n**Tournament:** ${tournament.name}\n\nPlease review their application.`,
+          content: `New Tournament Application!\n\n**Player:** ${((session.user as any).username || session.user.name)}\n**Tournament:** ${tournament.name}\n\nPlease review their application.`,
           isRead: false
         }).save();
       });
@@ -104,7 +104,7 @@ export async function PUT(request: NextRequest) {
 
     if (action === 'APPROVE') {
       const User = (await import('@/models/User')).default;
-      const currentUser = await User.findOne({ username: session.user.username });
+      const currentUser = await User.findOne({ username: ((session.user as any).username || session.user.name) });
       if (!currentUser || !['ADMIN', 'OWNER'].includes(currentUser.role)) {
          return NextResponse.json({ success: false, error: 'Only admins can approve applications.' }, { status: 403 });
       }
