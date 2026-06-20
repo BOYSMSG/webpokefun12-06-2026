@@ -127,10 +127,26 @@ export const authOptions: NextAuthOptions = {
     },
     async jwt({ token, user }) {
       if (user) {
-        token.role = (user as any).role;
-        token.permissions = (user as any).permissions;
-        token.username = (user as any).username;
-        token.picture = user.image; // Override JWT picture with our prioritized image
+        try {
+          const dbConnect = (await import('@/lib/mongoose')).default;
+          const User = (await import('@/models/User')).default;
+          await dbConnect();
+          const dbUser = await User.findOne({ email: user.email });
+          
+          if (dbUser) {
+            token.role = dbUser.role;
+            token.permissions = dbUser.permissions || [];
+            token.username = dbUser.username;
+            token.picture = dbUser.image || user.image;
+          } else {
+            token.role = "USER";
+            token.permissions = [];
+            token.picture = user.image;
+          }
+        } catch (error) {
+          token.role = "USER";
+          token.permissions = [];
+        }
       }
       return token;
     },
