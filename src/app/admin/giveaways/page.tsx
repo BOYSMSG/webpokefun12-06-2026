@@ -94,6 +94,26 @@ export default function AdminGiveawaysPage() {
     }
   };
 
+  const rerollGiveaway = async (id: string) => {
+    if (!confirm('Are you sure you want to reroll this giveaway? New winners will be selected and notified.')) return;
+    try {
+      const res = await fetch('/api/admin/giveaways', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id, action: 'reroll' })
+      });
+      const data = await res.json();
+      if (data.success) {
+        alert('Giveaway rerolled! New winners have been selected.');
+        fetchGiveaways();
+      } else {
+        alert(data.error || 'Failed to reroll');
+      }
+    } catch (err) {
+      alert('Error rerolling giveaway');
+    }
+  };
+
   const deleteGiveaway = async (id: string) => {
     if (!confirm('Are you sure you want to permanently delete this giveaway?')) return;
     try {
@@ -190,6 +210,11 @@ export default function AdminGiveawaysPage() {
                   {isActive && (
                     <button onClick={() => forceEndGiveaway(gw._id)} style={{ padding: '8px 15px', background: '#f39c12', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer', fontWeight: 'bold' }}>
                       <i className="fa-solid fa-stopwatch"></i> Force End
+                    </button>
+                  )}
+                  {!isActive && (
+                    <button onClick={() => rerollGiveaway(gw._id)} style={{ padding: '8px 15px', background: '#3b82f6', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer', fontWeight: 'bold' }}>
+                      <i className="fa-solid fa-dice"></i> Reroll
                     </button>
                   )}
                   <button onClick={() => deleteGiveaway(gw._id)} style={{ padding: '8px 15px', background: '#c0392b', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer', fontWeight: 'bold' }}>

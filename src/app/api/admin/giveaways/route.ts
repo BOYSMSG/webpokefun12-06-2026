@@ -59,6 +59,64 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json({ success: false, error: 'Giveaway not found.' }, { status: 404 });
     }
 
+    if (action === 'reroll') {
+      if (giveaway.status !== 'ENDED') {
+        return NextResponse.json({ success: false, error: 'Only ended giveaways can be rerolled.' }, { status: 400 });
+      }
+      
+      if (giveaway.participants.length === 0) {
+        return NextResponse.json({ success: false, error: 'No participants to reroll.' }, { status: 400 });
+      }
+
+      const shuffleArray = (array: any[]) => {
+        const arr = [...array];
+        for (let i = arr.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [arr[i], arr[j]] = [arr[j], arr[i]];
+        }
+        return arr;
+      };
+
+      let forceWinnerMatch = null;
+      if (giveaway.forceWinner) {
+         forceWinnerMatch = giveaway.participants.find((p: string) => p.toLowerCase().trim() === giveaway.forceWinner.toLowerCase().trim());
+      }
+
+      if (forceWinnerMatch) {
+        giveaway.winners = [forceWinnerMatch];
+        const others = shuffleArray(giveaway.participants.filter((p: string) => p !== forceWinnerMatch));
+        const needed = giveaway.winnersCount - 1;
+        if (needed > 0) {
+           giveaway.winners.push(...others.slice(0, needed));
+        }
+      } else {
+        const shuffled = shuffleArray(giveaway.participants);
+        giveaway.winners = shuffled.slice(0, giveaway.winnersCount);
+      }
+
+      const Message = (await import('@/models/Message')).default;
+      const Notification = (await import('@/models/Notification')).default;
+      
+      for (const winner of giveaway.winners) {
+        await Message.create({
+          senderId: 'System',
+          receiverId: winner,
+          content: `🎉 Congratulations! You have won the giveaway for **${giveaway.prize}** via a reroll! Please contact an admin or open a ticket on our Discord to claim your reward.`
+        });
+
+        await Notification.create({
+          title: 'Giveaway Reroll Winner!',
+          message: `Congratulations! You won the reroll for ${giveaway.prize}. Check your DMs!`,
+          isGlobal: false,
+          userId: winner,
+          icon: 'fa-solid fa-trophy'
+        });
+      }
+
+      await giveaway.save();
+      return NextResponse.json({ success: true, message: 'Giveaway rerolled successfully!', giveaway });
+    }
+
     if (giveaway.status !== 'ACTIVE') {
       return NextResponse.json({ success: false, error: 'Giveaway has already ended.' }, { status: 400 });
     }
