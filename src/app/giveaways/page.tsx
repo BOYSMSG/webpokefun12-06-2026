@@ -243,13 +243,8 @@ export default function GiveawaysPage() {
                   <input required type="number" min="1" value={winnersCount} onChange={e => setWinnersCount(e.target.value)} style={{ width: "100%", padding: "10px", borderRadius: "6px", background: "#111", border: "1px solid #333", color: "#fff" }} />
                 </div>
                 <div>
-                  <label style={{ display: "block", color: "#a3a3a3", marginBottom: "5px", fontSize: "0.9rem" }}>Duration *</label>
-                  <select value={durationHours} onChange={e => setDurationHours(e.target.value)} style={{ width: "100%", padding: "10px", borderRadius: "6px", background: "#111", border: "1px solid #333", color: "#fff" }}>
-                    <option value="1">1 hour</option>
-                    <option value="24">24 hours</option>
-                    <option value="72">3 days</option>
-                    <option value="168">1 week</option>
-                  </select>
+                  <label style={{ display: "block", color: "#a3a3a3", marginBottom: "5px", fontSize: "0.9rem" }}>Duration (Hours) *</label>
+                  <input required type="number" min="1" value={durationHours} onChange={e => setDurationHours(Number(e.target.value))} style={{ width: "100%", padding: "10px", borderRadius: "6px", background: "#111", border: "1px solid #333", color: "#fff" }} />
                 </div>
               </div>
 

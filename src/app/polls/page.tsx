@@ -368,13 +368,8 @@ export default function PollsPage() {
               </div>
 
               <div style={{ marginBottom: "20px" }}>
-                <label style={{ display: "block", color: "#b5bac1", marginBottom: "8px", fontSize: "0.85rem", fontWeight: "bold" }}>Duration</label>
-                <select value={durationHours} onChange={e => setDurationHours(e.target.value)} style={{ width: "100%", padding: "12px", borderRadius: "4px", background: "#1e1f22", border: "none", color: "#dbdee1", outline: "none" }}>
-                  <option value="1">1 hour</option>
-                  <option value="24">24 hours</option>
-                  <option value="72">3 days</option>
-                  <option value="168">1 week</option>
-                </select>
+                <label style={{ display: "block", color: "#b5bac1", marginBottom: "8px", fontSize: "0.85rem", fontWeight: "bold" }}>Duration (Hours)</label>
+                <input required type="number" min="1" value={durationHours} onChange={e => setDurationHours(e.target.value)} style={{ width: "100%", padding: "12px", borderRadius: "4px", background: "#1e1f22", border: "none", color: "#dbdee1", outline: "none" }} />
               </div>
 
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
