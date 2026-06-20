@@ -16,7 +16,8 @@ export default function AdminGiveawaysPage() {
   const [saving, setSaving] = useState<{ [id: string]: boolean }>({});
 
   const myRole = (session?.user as any)?.role;
-  const isAdmin = myRole === 'OWNER' || myRole === 'ADMIN';
+  const myPermissions = (session?.user as any)?.permissions || [];
+  const isAdmin = myRole === 'OWNER' || myRole === 'ADMIN' || myPermissions.includes('MANAGE_GIVEAWAYS_POLLS');
 
   useEffect(() => {
     if (status === 'authenticated') {

@@ -16,8 +16,12 @@ export default function AdminMessagesPage() {
   const [searchInput, setSearchInput] = useState('');
   const [activeConversationId, setActiveConversationId] = useState<string | null>(null);
 
+  const myRole = (session?.user as any)?.role;
+  const myPermissions = (session?.user as any)?.permissions || [];
+  const canReadDMs = myRole === 'OWNER' || myRole === 'ADMIN' || myPermissions.includes('READ_DMS');
+
   useEffect(() => {
-    if (status === 'unauthenticated' || (status === 'authenticated' && (session?.user as any)?.role !== 'ADMIN')) {
+    if (status === 'unauthenticated' || (status === 'authenticated' && !canReadDMs)) {
       router.push('/admin');
       return;
     }

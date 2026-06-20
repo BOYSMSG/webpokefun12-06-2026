@@ -48,10 +48,12 @@ export default function PollsPage() {
 
   useEffect(() => {
     fetchPolls();
-    // In a real app, verify admin status securely.
-    // For this UI, we check if they have an admin session.
-    if (session?.user?.role === 'ADMIN' || session?.user?.role === 'OWNER') {
-       setIsAdmin(true);
+    if (session?.user) {
+      const myRole = (session.user as any).role;
+      const myPermissions = (session.user as any).permissions || [];
+      if (myRole === 'ADMIN' || myRole === 'OWNER' || myPermissions.includes('MANAGE_GIVEAWAYS_POLLS')) {
+         setIsAdmin(true);
+      }
     }
   }, [session]);
 

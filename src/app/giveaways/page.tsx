@@ -61,7 +61,9 @@ export default function GiveawaysPage() {
   useEffect(() => {
     fetchGiveaways();
     if (session?.user) {
-      setIsAdmin(['OWNER', 'ADMIN'].includes((session.user as any).role));
+      const myRole = (session.user as any).role;
+      const myPermissions = (session.user as any).permissions || [];
+      setIsAdmin(['OWNER', 'ADMIN'].includes(myRole) || myPermissions.includes('MANAGE_GIVEAWAYS_POLLS'));
     }
   }, [session]);
 

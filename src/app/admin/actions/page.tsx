@@ -11,8 +11,12 @@ export default function AdminActionsPage() {
   const [users, setUsers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const myRole = (session?.user as any)?.role;
+  const myPermissions = (session?.user as any)?.permissions || [];
+  const canBanUsers = myRole === 'OWNER' || myRole === 'ADMIN' || myPermissions.includes('BAN_USERS');
+
   useEffect(() => {
-    if (status === 'unauthenticated' || !['ADMIN', 'STAFF'].includes((session?.user as any)?.role)) {
+    if (status === 'unauthenticated' || (status === 'authenticated' && !canBanUsers)) {
       router.push('/admin');
       return;
     }
