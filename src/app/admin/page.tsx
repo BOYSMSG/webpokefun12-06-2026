@@ -17,7 +17,7 @@ export default function AdminPage() {
   const myRole = (session?.user as any)?.role;
   const myPermissions = (session?.user as any)?.permissions || [];
   
-  const isPrivileged = myRole === 'OWNER' || myRole === 'ADMIN' || myRole === 'SUB_ADMIN' || myRole === 'STAFF';
+  const isPrivileged = myRole === 'OWNER' || myRole === 'ADMIN' || myRole === 'SUB_ADMIN' || myRole === 'STAFF' || myPermissions.length > 0;
   const canManageRoles = myRole === 'OWNER' || myRole === 'ADMIN' || myPermissions.includes('MANAGE_ROLES');
   const canBanUsers = myRole === 'OWNER' || myRole === 'ADMIN' || myPermissions.includes('BAN_USERS');
   const canReadDMs = myRole === 'OWNER' || myRole === 'ADMIN' || myPermissions.includes('READ_DMS');

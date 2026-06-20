@@ -482,6 +482,40 @@ export default function ShopClient({ initialCategories }: { initialCategories: a
                 Purchases are credited to the player name entered at checkout.
               </div>
             
+              {categories.length > 0 && categories[0].packages && categories[0].packages.length > 0 && (
+                <>
+                  <h3 style={{ color: 'white', fontSize: '2.2rem', marginTop: '40px', marginBottom: '20px', borderBottom: '2px solid #333', paddingBottom: '10px' }}>🔥 FEATURED ITEM 🔥</h3>
+                  <div className="package-grid" style={{ padding: 0, border: 'none', background: 'transparent', marginBottom: '30px' }}>
+                    <div className="package-card" style={{ maxWidth: '400px', margin: '0 auto', gridColumn: '1 / -1' }}>
+                      <div className="pkg-image-wrapper" onClick={() => { setSelectedPkg(categories[0].packages[0]); setSelectedImage(categories[0].packages[0].image); setCopied(false); }}>
+                        <img src={categories[0].packages[0].image || "https://i.imgur.com/Kz8V5wN.png"} alt={categories[0].packages[0].name} className="pkg-image" />
+                      </div>
+                      <div className="pkg-details">
+                        <h3 className="pkg-name" onClick={() => { setSelectedPkg(categories[0].packages[0]); setSelectedImage(categories[0].packages[0].image); setCopied(false); }}>{categories[0].packages[0].name}</h3>
+                        <div className="pkg-price">
+                          {categories[0].packages[0].discount > 0 && (
+                            <span style={{ textDecoration: 'line-through', color: '#a3a3a3', fontSize: '0.85em', marginRight: '8px' }}>
+                              {(parseFloat(categories[0].packages[0].base_price) + parseFloat(categories[0].packages[0].discount)).toFixed(2)} {categories[0].packages[0].currency}
+                            </span>
+                          )}
+                          <span style={{ color: categories[0].packages[0].discount > 0 ? '#e74c3c' : 'white', fontWeight: 'bold' }}>
+                            {categories[0].packages[0].total_price} {categories[0].packages[0].currency}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="pkg-actions">
+                        <button className="btn-buy" onClick={() => handleAddToCart(categories[0].packages[0])} disabled={loadingPkg === categories[0].packages[0].id}>
+                          {loadingPkg === categories[0].packages[0].id ? <i className="fa-solid fa-spinner fa-spin"></i> : "Add to Basket"}
+                        </button>
+                        <button className="btn-info" onClick={() => setSelectedPkg(categories[0].packages[0])}>
+                          <i className="fa-solid fa-circle-info"></i>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </>
+              )}
+
               <h3 style={{ color: 'white', fontSize: '2.2rem', marginTop: '40px', marginBottom: '20px', borderBottom: '2px solid #333', paddingBottom: '10px' }}>⭐ EPIC SERVER FEATURES ⭐</h3>
               <p style={{ fontSize: '1.2rem', marginBottom: '15px' }}>Dive into the most feature-rich Cobblemon experience!</p>
               <ul style={{ fontSize: '1.2rem', lineHeight: '1.8', marginBottom: '30px', listStyle: 'none', padding: 0 }}>
