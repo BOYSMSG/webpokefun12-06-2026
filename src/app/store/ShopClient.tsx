@@ -205,6 +205,20 @@ export default function ShopClient({ initialCategories }: { initialCategories: a
 
   const activeCategory = categories.find(c => c.id === activeCategoryId);
 
+  const featuredPackage = React.useMemo(() => {
+    if (!categories || categories.length === 0) return null;
+    if (storeConfig && storeConfig.featuredPackageId) {
+      for (const cat of categories) {
+        if (cat.packages) {
+          const found = cat.packages.find((p: any) => p.id.toString() === storeConfig.featuredPackageId);
+          if (found) return found;
+        }
+      }
+    }
+    // Fallback to first
+    return categories[0].packages?.[0] || null;
+  }, [categories, storeConfig]);
+
   return (
     <div className="cobblemon-shop-wrapper">
       
@@ -377,26 +391,26 @@ export default function ShopClient({ initialCategories }: { initialCategories: a
           {/* Featured Package Module */}
           <div className="sidebar-box module-box featured-box">
             <h3 className="module-title">Featured Package</h3>
-            {categories.length > 0 && categories[0].packages && categories[0].packages.length > 0 ? (
+            {featuredPackage ? (
               <div className="featured-item">
                 <img 
-                  src={categories[0].packages[0].image || "https://i.imgur.com/Kz8V5wN.png"} 
-                  alt={categories[0].packages[0].name} 
+                  src={featuredPackage.image || "https://i.imgur.com/Kz8V5wN.png"} 
+                  alt={featuredPackage.name} 
                   className="featured-img" 
                   style={{ maxHeight: '150px', objectFit: 'contain' }}
                 />
-                <div className="featured-price-sub">{categories[0].packages[0].name}</div>
+                <div className="featured-price-sub">{featuredPackage.name}</div>
                 <div className="featured-price">
-                  {categories[0].packages[0].discount > 0 && (
+                  {featuredPackage.discount > 0 && (
                     <span style={{ textDecoration: 'line-through', color: '#a3a3a3', fontSize: '0.85em', marginRight: '8px' }}>
-                      {(parseFloat(categories[0].packages[0].base_price) + parseFloat(categories[0].packages[0].discount)).toFixed(2)} {categories[0].packages[0].currency}
+                      {(parseFloat(featuredPackage.base_price) + parseFloat(featuredPackage.discount)).toFixed(2)} {featuredPackage.currency}
                     </span>
                   )}
-                  <span style={{ color: categories[0].packages[0].discount > 0 ? '#e74c3c' : 'white', fontWeight: 'bold' }}>
-                    {categories[0].packages[0].total_price} {categories[0].packages[0].currency}
+                  <span style={{ color: featuredPackage.discount > 0 ? '#e74c3c' : 'white', fontWeight: 'bold' }}>
+                    {featuredPackage.total_price} {featuredPackage.currency}
                   </span>
                 </div>
-                <button className="btn-cyan w-full" onClick={() => handleAddToCart(categories[0].packages[0])}>Add to Basket</button>
+                <button className="btn-cyan w-full" onClick={() => handleAddToCart(featuredPackage)}>Add to Basket</button>
               </div>
             ) : (
               <p className="module-empty-text">Loading...</p>
@@ -482,32 +496,32 @@ export default function ShopClient({ initialCategories }: { initialCategories: a
                 Purchases are credited to the player name entered at checkout.
               </div>
             
-              {categories.length > 0 && categories[0].packages && categories[0].packages.length > 0 && (
+              {featuredPackage && (
                 <>
                   <h3 style={{ color: 'white', fontSize: '2.2rem', marginTop: '40px', marginBottom: '20px', borderBottom: '2px solid #333', paddingBottom: '10px' }}>🔥 FEATURED ITEM 🔥</h3>
                   <div className="package-grid" style={{ padding: 0, border: 'none', background: 'transparent', marginBottom: '30px' }}>
                     <div className="package-card" style={{ maxWidth: '400px', margin: '0 auto', gridColumn: '1 / -1' }}>
-                      <div className="pkg-image-wrapper" onClick={() => { setSelectedPkg(categories[0].packages[0]); setSelectedImage(categories[0].packages[0].image); setCopied(false); }}>
-                        <img src={categories[0].packages[0].image || "https://i.imgur.com/Kz8V5wN.png"} alt={categories[0].packages[0].name} className="pkg-image" />
+                      <div className="pkg-image-wrapper" onClick={() => { setSelectedPkg(featuredPackage); setSelectedImage(featuredPackage.image); setCopied(false); }}>
+                        <img src={featuredPackage.image || "https://i.imgur.com/Kz8V5wN.png"} alt={featuredPackage.name} className="pkg-image" />
                       </div>
                       <div className="pkg-details">
-                        <h3 className="pkg-name" onClick={() => { setSelectedPkg(categories[0].packages[0]); setSelectedImage(categories[0].packages[0].image); setCopied(false); }}>{categories[0].packages[0].name}</h3>
+                        <h3 className="pkg-name" onClick={() => { setSelectedPkg(featuredPackage); setSelectedImage(featuredPackage.image); setCopied(false); }}>{featuredPackage.name}</h3>
                         <div className="pkg-price">
-                          {categories[0].packages[0].discount > 0 && (
+                          {featuredPackage.discount > 0 && (
                             <span style={{ textDecoration: 'line-through', color: '#a3a3a3', fontSize: '0.85em', marginRight: '8px' }}>
-                              {(parseFloat(categories[0].packages[0].base_price) + parseFloat(categories[0].packages[0].discount)).toFixed(2)} {categories[0].packages[0].currency}
+                              {(parseFloat(featuredPackage.base_price) + parseFloat(featuredPackage.discount)).toFixed(2)} {featuredPackage.currency}
                             </span>
                           )}
-                          <span style={{ color: categories[0].packages[0].discount > 0 ? '#e74c3c' : 'white', fontWeight: 'bold' }}>
-                            {categories[0].packages[0].total_price} {categories[0].packages[0].currency}
+                          <span style={{ color: featuredPackage.discount > 0 ? '#e74c3c' : 'white', fontWeight: 'bold' }}>
+                            {featuredPackage.total_price} {featuredPackage.currency}
                           </span>
                         </div>
                       </div>
                       <div className="pkg-actions">
-                        <button className="btn-buy" onClick={() => handleAddToCart(categories[0].packages[0])} disabled={loadingPkg === categories[0].packages[0].id}>
-                          {loadingPkg === categories[0].packages[0].id ? <i className="fa-solid fa-spinner fa-spin"></i> : "Add to Basket"}
+                        <button className="btn-buy" onClick={() => handleAddToCart(featuredPackage)} disabled={loadingPkg === featuredPackage.id}>
+                          {loadingPkg === featuredPackage.id ? <i className="fa-solid fa-spinner fa-spin"></i> : "Add to Basket"}
                         </button>
-                        <button className="btn-info" onClick={() => setSelectedPkg(categories[0].packages[0])}>
+                        <button className="btn-info" onClick={() => setSelectedPkg(featuredPackage)}>
                           <i className="fa-solid fa-circle-info"></i>
                         </button>
                       </div>

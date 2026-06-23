@@ -11,13 +11,17 @@ export default function StoreConfigPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState('');
+  const [categories, setCategories] = useState<any[]>([]);
+  const [recentPayments, setRecentPayments] = useState<any[]>([]);
+  const [topCustomer, setTopCustomer] = useState<any>(null);
   
   const [config, setConfig] = useState({
     saleActive: false,
     saleEndDate: '',
     saleTitle: '',
     saleSubtitle: '',
-    discountPercentage: 20
+    discountPercentage: 20,
+    featuredPackageId: ''
   });
 
   const myRole = (session?.user as any)?.role;
@@ -38,7 +42,8 @@ export default function StoreConfigPage() {
             const dateStr = new Date(data.config.saleEndDate).toISOString().slice(0, 16);
             setConfig({
               ...data.config,
-              saleEndDate: dateStr
+              saleEndDate: dateStr,
+              featuredPackageId: data.config.featuredPackageId || ''
             });
           }
           setLoading(false);
@@ -47,6 +52,27 @@ export default function StoreConfigPage() {
           console.error(err);
           setLoading(false);
         });
+
+      // Fetch Tebex Categories to select a featured package
+      fetch('/api/tebex/categories')
+        .then(res => res.json())
+        .then(data => {
+          if (data && data.data) {
+            setCategories(data.data);
+          }
+        })
+        .catch(err => console.error(err));
+
+      // Fetch Recent Payments & Top Customer
+      fetch('/api/tebex/recent-payments')
+        .then(res => res.json())
+        .then(data => {
+          if (data && data.recent) {
+            setRecentPayments(data.recent);
+            setTopCustomer(data.top);
+          }
+        })
+        .catch(err => console.error(err));
     }
   }, [status, isAdmin, router]);
 
@@ -155,10 +181,75 @@ export default function StoreConfigPage() {
           />
         </div>
 
+        <div style={{ marginBottom: '30px' }}>
+          <label style={{ display: 'block', marginBottom: '8px', color: 'gray' }}>Featured Store Package (Shows on sidebar)</label>
+          <select 
+            value={config.featuredPackageId}
+            onChange={e => setConfig({...config, featuredPackageId: e.target.value})}
+            style={{ width: '100%', padding: '12px', borderRadius: '8px', background: 'rgba(0,0,0,0.3)', border: '1px solid #444', color: 'white' }}
+          >
+            <option value="">-- Let system choose --</option>
+            {categories.map(cat => (
+              <optgroup key={cat.id} label={cat.name}>
+                {cat.packages?.map((pkg: any) => (
+                  <option key={pkg.id} value={pkg.id.toString()}>{pkg.name}</option>
+                ))}
+              </optgroup>
+            ))}
+          </select>
+        </div>
+
         <button type="submit" disabled={saving} style={{ width: '100%', padding: '15px', background: '#facc15', color: 'black', fontWeight: 'bold', fontSize: '1.1rem', border: 'none', borderRadius: '8px', cursor: 'pointer' }}>
           {saving ? 'Saving...' : 'Save Configuration'}
         </button>
       </form>
+
+      {/* Stats Section */}
+      <div style={{ marginTop: '50px', display: 'flex', gap: '30px', flexWrap: 'wrap' }}>
+        
+        {/* Top Customer */}
+        <div style={{ flex: '1 1 300px', background: 'rgba(255,255,255,0.05)', padding: '20px', borderRadius: '16px', border: '1px solid #444' }}>
+          <h2 style={{ fontSize: '1.5rem', color: '#facc15', marginBottom: '15px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <i className="fa-solid fa-crown"></i> Top Customer
+          </h2>
+          {topCustomer ? (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+              <img src={`https://mc-heads.net/avatar/${topCustomer.name || 'steve'}/50`} alt="Avatar" style={{ borderRadius: '8px' }} />
+              <div>
+                <div style={{ fontSize: '1.2rem', fontWeight: 'bold', color: 'white' }}>{topCustomer.name}</div>
+                <div style={{ color: 'gray' }}>Most Support</div>
+              </div>
+            </div>
+          ) : (
+            <p style={{ color: 'gray' }}>No data available.</p>
+          )}
+        </div>
+
+        {/* Recent Payments */}
+        <div style={{ flex: '1 1 300px', background: 'rgba(255,255,255,0.05)', padding: '20px', borderRadius: '16px', border: '1px solid #444' }}>
+          <h2 style={{ fontSize: '1.5rem', color: '#10b981', marginBottom: '15px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <i className="fa-solid fa-receipt"></i> Recent Payments
+          </h2>
+          {recentPayments.length > 0 ? (
+            <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+              {recentPayments.map((p, idx) => (
+                <li key={idx} style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 0', borderBottom: idx < recentPayments.length - 1 ? '1px solid #333' : 'none' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', color: 'white' }}>
+                    <img src={`https://mc-heads.net/avatar/${p.player?.name || 'steve'}/30`} alt="Avatar" style={{ borderRadius: '4px' }} />
+                    {p.player?.name || 'Unknown'}
+                  </div>
+                  <div style={{ color: '#10b981', fontWeight: 'bold' }}>
+                    {p.amount} {p.currency}
+                  </div>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p style={{ color: 'gray' }}>No recent payments.</p>
+          )}
+        </div>
+
+      </div>
     </div>
   );
 }

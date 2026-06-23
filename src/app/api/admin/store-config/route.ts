@@ -28,6 +28,7 @@ export async function POST(request: NextRequest) {
       config.saleTitle = body.saleTitle;
       config.saleSubtitle = body.saleSubtitle;
       config.discountPercentage = body.discountPercentage;
+      config.featuredPackageId = body.featuredPackageId || '';
     }
 
     await config.save();
