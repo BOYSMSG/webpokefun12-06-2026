@@ -189,10 +189,10 @@ export default function StoreConfigPage() {
             style={{ width: '100%', padding: '12px', borderRadius: '8px', background: 'rgba(0,0,0,0.3)', border: '1px solid #444', color: 'white' }}
           >
             <option value="">-- Let system choose --</option>
-            {categories && categories.length > 0 && categories.map(cat => (
-              <optgroup key={cat.id || Math.random()} label={cat.name || 'Category'}>
-                {cat.packages && cat.packages.length > 0 && cat.packages.map((pkg: any) => (
-                  <option key={pkg.id || Math.random()} value={pkg.id?.toString() || ''}>{pkg.name}</option>
+            {Array.isArray(categories) && categories.map((cat: any) => (
+              <optgroup key={cat?.id || Math.random()} label={cat?.name || 'Category'}>
+                {Array.isArray(cat?.packages) && cat.packages.map((pkg: any) => (
+                  <option key={pkg?.id || Math.random()} value={pkg?.id?.toString() || ''}>{pkg?.name || 'Unnamed Package'}</option>
                 ))}
               </optgroup>
             ))}
@@ -212,11 +212,11 @@ export default function StoreConfigPage() {
           <h2 style={{ fontSize: '1.5rem', color: '#facc15', marginBottom: '15px', display: 'flex', alignItems: 'center', gap: '10px' }}>
             <i className="fa-solid fa-crown"></i> Top Customer
           </h2>
-          {topCustomer && topCustomer.player ? (
+          {topCustomer?.player ? (
             <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
               <img src={`https://mc-heads.net/avatar/${topCustomer.player.name || 'steve'}/50`} alt="Avatar" style={{ borderRadius: '8px' }} />
               <div>
-                <div style={{ fontSize: '1.2rem', fontWeight: 'bold', color: 'white' }}>{topCustomer.player.name}</div>
+                <div style={{ fontSize: '1.2rem', fontWeight: 'bold', color: 'white' }}>{topCustomer.player.name || 'Unknown Player'}</div>
                 <div style={{ color: 'gray' }}>Most Support</div>
               </div>
             </div>
@@ -230,16 +230,16 @@ export default function StoreConfigPage() {
           <h2 style={{ fontSize: '1.5rem', color: '#10b981', marginBottom: '15px', display: 'flex', alignItems: 'center', gap: '10px' }}>
             <i className="fa-solid fa-receipt"></i> Recent Payments
           </h2>
-          {recentPayments && recentPayments.length > 0 ? (
+          {Array.isArray(recentPayments) && recentPayments.length > 0 ? (
             <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
-              {recentPayments.map((p, idx) => (
+              {recentPayments.map((p: any, idx: number) => (
                 <li key={idx} style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 0', borderBottom: idx < recentPayments.length - 1 ? '1px solid #333' : 'none' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '10px', color: 'white' }}>
-                    <img src={`https://mc-heads.net/avatar/${p.player?.name || 'steve'}/30`} alt="Avatar" style={{ borderRadius: '4px' }} />
-                    {p.player?.name || 'Unknown'}
+                    <img src={`https://mc-heads.net/avatar/${p?.player?.name || 'steve'}/30`} alt="Avatar" style={{ borderRadius: '4px' }} />
+                    {p?.player?.name || 'Unknown'}
                   </div>
                   <div style={{ color: '#10b981', fontWeight: 'bold' }}>
-                    {p.amount} {p.currency}
+                    {p?.amount || 0} {p?.currency?.iso_4217 || (typeof p?.currency === 'string' ? p.currency : 'USD')}
                   </div>
                 </li>
               ))}
