@@ -9,7 +9,7 @@ export default function GlobalSidebar() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   // Hide the global sidebar on the store page, it has its own layout
-  if (pathname && pathname.startsWith('/store')) {
+  if (pathname && (pathname.startsWith('/store') || pathname.startsWith('https://store.pokefun.in'))) {
     return null;
   }
 
@@ -23,7 +23,7 @@ export default function GlobalSidebar() {
     { title: "Modpacks", path: "/modpacks" },
     { title: "Showcase", path: "/showcase" },
     { title: "Vote", path: "/vote" },
-    { title: "Store", path: "/store" },
+    { title: "Store", path: "https://store.pokefun.in" },
   ];
 
   const infoLinks = [

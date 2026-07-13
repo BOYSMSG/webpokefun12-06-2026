@@ -52,7 +52,7 @@ export default function HomePage() {
           <div className="hero-left-widgets">
               <GlobalSaleBanner />
               <div style={{ display: "flex", alignItems: "center", gap: "20px" }}>
-                  <Link id="store" href="/store" className="info-card" style={{ display: "flex", alignItems: "center", gap: "15px", textDecoration: "none", color: "white", fontWeight: 900 }}>
+                  <Link id="store" href="https://store.pokefun.in" className="info-card" style={{ display: "flex", alignItems: "center", gap: "15px", textDecoration: "none", color: "white", fontWeight: 900 }}>
                       <i className="fa-solid fa-cart-shopping"></i>
                       <div className="info-text">
                           <div className="if-large">STORE <span className="count" style={{ background: '#f59e0b', color: 'white' }}>SHOP</span></div>

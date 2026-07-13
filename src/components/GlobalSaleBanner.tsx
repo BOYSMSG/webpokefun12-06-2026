@@ -46,7 +46,7 @@ export default function GlobalSaleBanner() {
   if (!storeConfig) return null;
 
   return (
-    <Link href="/store" className="info-card" style={{ display: "flex", alignItems: "center", gap: "15px", textDecoration: "none", color: "white", fontWeight: 900, marginBottom: "15px" }}>
+    <Link href="https://store.pokefun.in" className="info-card" style={{ display: "flex", alignItems: "center", gap: "15px", textDecoration: "none", color: "white", fontWeight: 900, marginBottom: "15px" }}>
         <i className="fa-solid fa-bolt"></i>
         <div className="info-text" style={{ textAlign: "left" }}>
             <div className="if-large" style={{ textTransform: "uppercase" }}>

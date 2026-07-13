@@ -186,7 +186,7 @@ export default async function RootLayout({
                       <a href="/modpacks">Modpacks</a>
                       <a href="/rules">Rules</a>
                       <a href="/vote">Vote</a>
-                      <a href="/store" style={{ color: '#fbbf24', fontWeight: 'bold', textShadow: '0 0 10px rgba(251,191,36,0.5)' }}>
+                      <a href="https://store.pokefun.in" style={{ color: '#fbbf24', fontWeight: 'bold', textShadow: '0 0 10px rgba(251,191,36,0.5)' }}>
                           <i className="fa-solid fa-cart-shopping"></i> Store
                       </a>
                       <a href="/showcase">Showcase</a>
@@ -219,7 +219,7 @@ export default async function RootLayout({
                               <li><a href="/modpacks">Modpacks</a></li>
                               <li><a href="/rules">Rules</a></li>
                               <li><a href="/vote">Vote</a></li>
-                              <li><a href="/store">Store</a></li>
+                              <li><a href="https://store.pokefun.in">Store</a></li>
                               <li><a href="/showcase">Showcase</a></li>
                               <li><a href="/team">Team</a></li>
                               <li><a href="/changelogs">Changelogs</a></li>
