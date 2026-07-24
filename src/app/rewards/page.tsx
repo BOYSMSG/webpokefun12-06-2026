@@ -3,7 +3,6 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
-import GlobalSidebar from "@/components/GlobalSidebar";
 
 export default function RewardsDashboard() {
   const { data: session } = useSession();
@@ -28,13 +27,10 @@ export default function RewardsDashboard() {
     { title: "Limited Items", desc: "Exclusive Pokemon & Ranks", icon: "fa-solid fa-fire", link: "/rewards/shop?category=Limited", color: "#8b5cf6" }, // Purple
     { title: "History", desc: "View your transactions", icon: "fa-solid fa-clock-rotate-left", link: "/rewards/history", color: "#10b981" }, // Green
     { title: "Guide", desc: "How to earn points", icon: "fa-solid fa-book-open", link: "/rewards/guide", color: "#3b82f6" }, // Blue
-    { title: "Admin Panel", desc: "Manage rewards economy", icon: "fa-solid fa-hammer", link: "/admin/rewards", color: "#ec4899", adminOnly: true }, // Pink
   ];
 
   return (
     <div style={{ display: "flex", minHeight: "100vh", backgroundColor: "#0f172a" }}>
-      <GlobalSidebar />
-
       <main style={{ flex: 1, padding: "2rem", overflowY: "auto", position: "relative" }}>
         
         {/* Top Header with Points */}
@@ -77,12 +73,6 @@ export default function RewardsDashboard() {
           marginTop: "2rem"
         }}>
           {cards.map((card, idx) => {
-            // Hide admin card for normal users
-            if (card.adminOnly) {
-              const isAdmin = session?.user?.role === 'ADMIN' || session?.user?.role === 'OWNER';
-              if (!isAdmin) return null;
-            }
-
             return (
               <Link href={card.link} key={idx} style={{ textDecoration: "none" }}>
                 <div style={{

@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
-import GlobalSidebar from "@/components/GlobalSidebar";
 
 export default function RewardShopPage() {
   const { data: session } = useSession();
@@ -52,8 +51,6 @@ export default function RewardShopPage() {
 
   return (
     <div style={{ display: "flex", minHeight: "100vh", backgroundColor: "#0f172a" }}>
-      <GlobalSidebar />
-
       <main style={{ flex: 1, padding: "2rem", overflowY: "auto" }}>
         
         {/* Header */}

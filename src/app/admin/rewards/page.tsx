@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
-import GlobalSidebar from "@/components/GlobalSidebar";
 
 export default function RewardsAdmin() {
   const { data: session } = useSession();
@@ -64,7 +63,6 @@ export default function RewardsAdmin() {
 
   return (
     <div style={{ display: "flex", minHeight: "100vh", backgroundColor: "#0f172a" }}>
-      <GlobalSidebar />
       <main style={{ flex: 1, padding: "2rem", overflowY: "auto" }}>
         
         <h1 style={{ color: "white", fontSize: "2.5rem", marginBottom: "2rem" }}>Rewards Admin Panel</h1>
