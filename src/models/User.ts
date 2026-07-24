@@ -23,6 +23,11 @@ export interface IUser extends Document {
   lastActive?: Date;
   isBanned?: boolean;
   isRankHolder?: boolean;
+  rewardPoints: number;
+  lifetimeEarned: number;
+  lifetimeSpent: number;
+  rewardLevel: number;
+  rewardRank: string;
   createdAt: Date;
 }
 
@@ -49,6 +54,11 @@ const UserSchema: Schema = new Schema({
   lastActive: { type: Date, default: Date.now },
   isBanned: { type: Boolean, default: false },
   isRankHolder: { type: Boolean, default: false },
+  rewardPoints: { type: Number, default: 0 },
+  lifetimeEarned: { type: Number, default: 0 },
+  lifetimeSpent: { type: Number, default: 0 },
+  rewardLevel: { type: Number, default: 1 },
+  rewardRank: { type: String, default: 'Beginner' },
   createdAt: { type: Date, default: Date.now }
 });
 

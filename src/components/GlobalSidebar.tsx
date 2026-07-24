@@ -23,6 +23,7 @@ export default function GlobalSidebar() {
     { title: "Modpacks", path: "/modpacks" },
     { title: "Showcase", path: "/showcase" },
     { title: "Vote", path: "/vote" },
+    { title: "Rewards", path: "/rewards" },
     { title: "Store", path: "https://store.pokefun.in" },
   ];
 

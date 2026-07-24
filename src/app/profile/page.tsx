@@ -113,6 +113,21 @@ export default function ProfilePage() {
             <span><strong style={{ color: 'white' }}>{profile.following?.length || 0}</strong> Following</span>
           </div>
 
+          {/* Reward Stats */}
+          <div style={{ display: 'flex', gap: '15px', marginBottom: '20px', flexWrap: 'wrap' }}>
+            <div style={{ background: 'linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(217, 119, 6, 0.4))', padding: '10px 20px', borderRadius: '10px', border: '1px solid #f59e0b', color: 'white', display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <i className="fa-solid fa-gem" style={{ color: '#f59e0b', fontSize: '1.5rem' }}></i>
+              <div>
+                <div style={{ fontSize: '0.8rem', color: '#fcd34d' }}>Reward Points</div>
+                <div style={{ fontSize: '1.2rem', fontWeight: 'bold' }}>{profile.rewardPoints || 0}</div>
+              </div>
+            </div>
+            <div style={{ background: 'rgba(255,255,255,0.05)', padding: '10px 20px', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.1)', color: 'white' }}>
+              <div style={{ fontSize: '0.8rem', color: 'gray' }}>Reward Rank</div>
+              <div style={{ fontSize: '1.2rem', fontWeight: 'bold' }}>{profile.rewardRank || "Beginner"}</div>
+            </div>
+          </div>
+
           {/* Connections Display */}
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
             {profile.connections?.minecraft && (
