@@ -175,6 +175,15 @@ export default function AdminPage() {
           </div>
         )}
 
+        {(myRole === 'OWNER' || myRole === 'ADMIN') && (
+          <div style={{ background: 'rgba(255,255,255,0.05)', padding: '30px', borderRadius: '16px', border: '1px solid #444' }}>
+            <i className="fa-solid fa-gem" style={{ fontSize: '2rem', color: '#ec4899', marginBottom: '15px' }}></i>
+            <h2 style={{ color: '#ec4899' }}>Rewards Economy</h2>
+            <p style={{ color: 'gray', marginBottom: '15px' }}>Manage reward products, pricing, stock, and view the global rewards economy.</p>
+            <button onClick={() => router.push('/admin/rewards')} style={{ padding: '8px 15px', background: '#ec4899', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer', fontWeight: 'bold' }}>Manage Rewards</button>
+          </div>
+        )}
+
         {canManageRoles && (
           <div style={{ background: 'rgba(255,255,255,0.05)', padding: '30px', borderRadius: '16px', border: '1px solid #444' }}>
             <i className="fa-solid fa-cloud-arrow-up" style={{ fontSize: '2rem', color: '#8b5cf6', marginBottom: '15px' }}></i>
