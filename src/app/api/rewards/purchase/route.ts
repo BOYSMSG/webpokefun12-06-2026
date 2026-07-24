@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
-import connectMongo from '@/lib/mongodb';
+import connectMongo from '@/lib/mongoose';
 import User from '@/models/User';
 import RewardProduct from '@/models/RewardProduct';
 import DeliveryQueue from '@/models/DeliveryQueue';

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import mongoose from 'mongoose';
-import connectMongo from '@/lib/mongodb';
+import connectMongo from '@/lib/mongoose';
 import DeliveryQueue from '@/models/DeliveryQueue';
 
 const SERVER_SECRET = process.env.PFCONNECT_SECRET || "default_pokefun_secret_123!"; // Make sure to define this in .env

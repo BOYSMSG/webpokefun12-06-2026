@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import connectMongo from '@/lib/mongodb';
+import connectMongo from '@/lib/mongoose';
 import RewardProduct from '@/models/RewardProduct';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';

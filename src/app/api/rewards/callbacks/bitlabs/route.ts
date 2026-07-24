@@ -1,39 +1,42 @@
 import { NextRequest, NextResponse } from 'next/server';
 import crypto from 'crypto';
-import connectMongo from '@/lib/mongodb';
+import connectMongo from '@/lib/mongoose';
 import User from '@/models/User';
 import RewardTransaction from '@/models/RewardTransaction';
 
 // The Secret Key provided by the user for BitLabs
 const BITLABS_SECRET_KEY = "HDG13puN8Ya1dhX7qjzsCIrLzSvcpMIE";
 
-export async function POST(req: NextRequest) {
+export async function GET(req: NextRequest) {
   try {
-    const signature = req.headers.get('x-bitlabs-signature');
-    const rawBody = await req.text(); // Get raw body as string for HMAC verification
+    const url = req.url;
     
-    if (!signature) {
-      return NextResponse.json({ error: 'Missing signature' }, { status: 400 });
+    // Check if hash exists
+    if (!url.includes('&hash=')) {
+      return NextResponse.json({ error: 'Missing hash' }, { status: 400 });
     }
 
-    // Verify HMAC SHA-1 signature
-    const expectedSignature = crypto.createHmac('sha1', BITLABS_SECRET_KEY)
-                                    .update(rawBody)
-                                    .digest('hex');
+    // Split the URL to separate the original data from the hash
+    const splitUrl = url.split('&hash=');
+    const urlWithoutHash = splitUrl[0];
+    const providedHash = splitUrl[1];
+
+    // Create the HMAC using SHA1 and secret key
+    const expectedHash = crypto.createHmac('sha1', BITLABS_SECRET_KEY)
+                               .update(urlWithoutHash)
+                               .digest('hex');
                                     
-    if (signature !== expectedSignature) {
+    if (providedHash !== expectedHash) {
       console.error("BitLabs Callback: Invalid signature!");
       return NextResponse.json({ error: 'Invalid signature' }, { status: 401 });
     }
 
-    // Parse verified payload
-    const payload = JSON.parse(rawBody);
+    const searchParams = req.nextUrl.searchParams;
+    const uid = searchParams.get('uid');
+    const val = searchParams.get('val');
+    const tx = searchParams.get('tx');
     
-    // Payload structure for BitLabs postback:
-    // { "uid": "user_email_or_id", "reward": 500, "tx_id": "...", "type": "COMPLETE" }
-    const { uid, reward, tx_id, type } = payload;
-    
-    if (!uid || !reward) {
+    if (!uid || !val || !tx) {
       return NextResponse.json({ error: 'Invalid payload data' }, { status: 400 });
     }
 
@@ -49,17 +52,17 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
-    const pointsToGive = parseInt(reward, 10);
+    const pointsToGive = parseInt(val, 10);
     
     // Prevent duplicate processing using transaction ID
-    const existingTx = await RewardTransaction.findOne({ 'metadata.tx_id': tx_id });
+    const existingTx = await RewardTransaction.findOne({ 'metadata.tx_id': tx });
     if (existingTx) {
       return NextResponse.json({ status: 'OK', message: 'Already processed' }, { status: 200 });
     }
 
     // Update User Points
-    user.rewardPoints += pointsToGive;
-    user.lifetimeEarned += pointsToGive;
+    user.rewardPoints = (user.rewardPoints || 0) + pointsToGive;
+    user.lifetimeEarned = (user.lifetimeEarned || 0) + pointsToGive;
     await user.save();
 
     // Log Transaction
@@ -68,8 +71,8 @@ export async function POST(req: NextRequest) {
       amount: pointsToGive,
       type: 'EARN',
       provider: 'BitLabs',
-      description: `Completed BitLabs Offer (${type || 'Survey'})`,
-      metadata: { tx_id, rawPayload: payload }
+      description: 'Completed BitLabs Offer',
+      metadata: { tx_id: tx, url }
     });
 
     return NextResponse.json({ status: 'OK' }, { status: 200 });
