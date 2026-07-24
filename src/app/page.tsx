@@ -11,6 +11,18 @@ export default function HomePage() {
   useEffect(() => {
     const fetchPlayerCount = async () => {
       try {
+        // Try the internal scraper API first (since Cloudflare blocks external pingers)
+        const res = await fetch("/api/player-count");
+        const data = await res.json();
+        if (data && data.online) {
+          setPlayerCount(data.players);
+          return;
+        }
+      } catch (e) {
+        console.error("Internal player count API failed:", e);
+      }
+
+      try {
         const res = await fetch("https://api.mcstatus.io/v2/status/java/play.pokefun.in");
         const data = await res.json();
         if (data && data.online) {
@@ -21,18 +33,7 @@ export default function HomePage() {
         console.error("mcstatus.io failed:", e);
       }
 
-      try {
-        const res = await fetch("https://api.mcsrvstat.us/3/play.pokefun.in");
-        const data = await res.json();
-        if (data && data.online) {
-          setPlayerCount(data.players.online);
-          return;
-        }
-      } catch (e) {
-        console.error("mcsrvstat.us failed:", e);
-      }
-
-      setPlayerCount(0); // If both fail or server is offline
+      setPlayerCount(0); // Fallback
     };
     
     fetchPlayerCount();
