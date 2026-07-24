@@ -9,16 +9,33 @@ export default function HomePage() {
   const [storeConfig, setStoreConfig] = useState<any>(null);
 
   useEffect(() => {
-    fetch("https://api.mcsrvstat.us/3/play.pokefun.in")
-      .then(res => res.json())
-      .then(data => {
-        if (data.online) {
+    const fetchPlayerCount = async () => {
+      try {
+        const res = await fetch("https://api.mcstatus.io/v2/status/java/play.pokefun.in");
+        const data = await res.json();
+        if (data && data.online) {
           setPlayerCount(data.players.online);
-        } else {
-          setPlayerCount(0);
+          return;
         }
-      })
-      .catch(() => setPlayerCount(0));
+      } catch (e) {
+        console.error("mcstatus.io failed:", e);
+      }
+
+      try {
+        const res = await fetch("https://api.mcsrvstat.us/3/play.pokefun.in");
+        const data = await res.json();
+        if (data && data.online) {
+          setPlayerCount(data.players.online);
+          return;
+        }
+      } catch (e) {
+        console.error("mcsrvstat.us failed:", e);
+      }
+
+      setPlayerCount(0); // If both fail or server is offline
+    };
+    
+    fetchPlayerCount();
 
     fetch('/api/store-config')
       .then(res => res.json())
