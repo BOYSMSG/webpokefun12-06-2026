@@ -28,6 +28,7 @@ export interface IUser extends Document {
   lifetimeSpent: number;
   rewardLevel: number;
   rewardRank: string;
+  lastCheckIn?: Date;
   createdAt: Date;
 }
 
@@ -58,7 +59,8 @@ const UserSchema: Schema = new Schema({
   lifetimeEarned: { type: Number, default: 0 },
   lifetimeSpent: { type: Number, default: 0 },
   rewardLevel: { type: Number, default: 1 },
-  rewardRank: { type: String, default: 'Beginner' },
+  rewardRank: { type: String, default: 'Bronze' },
+  lastCheckIn: { type: Date },
   createdAt: { type: Date, default: Date.now }
 });
 

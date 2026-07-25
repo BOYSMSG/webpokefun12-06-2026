@@ -7,6 +7,7 @@ import { useSession } from "next-auth/react";
 export default function RewardsDashboard() {
   const { data: session } = useSession();
   const [points, setPoints] = useState(0);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     // In a real scenario, we would fetch the user's points from an API here
@@ -20,6 +21,24 @@ export default function RewardsDashboard() {
         });
     }
   }, [session]);
+
+  const handleDailyCheckIn = async () => {
+    if (!session?.user) return alert("Please login first!");
+    setLoading(true);
+    try {
+      const res = await fetch("/api/rewards/daily-checkin", { method: "POST" });
+      const data = await res.json();
+      if (data.success) {
+        alert(data.message);
+        setPoints(data.newPoints);
+      } else {
+        alert(data.error);
+      }
+    } catch (error) {
+      alert("Failed to claim daily bonus.");
+    }
+    setLoading(false);
+  };
 
   const cards = [
     { title: "Earn Rewards", desc: "Complete surveys & offers", icon: "fa-solid fa-coins", link: "/rewards/earn", color: "#f59e0b" }, // Orange
@@ -44,24 +63,50 @@ export default function RewardsDashboard() {
           justifyContent: "space-between",
           alignItems: "center",
           marginBottom: "2rem",
-          boxShadow: "0 8px 32px rgba(0,0,0,0.3)"
+          boxShadow: "0 8px 32px rgba(0,0,0,0.3)",
+          flexWrap: "wrap",
+          gap: "20px"
         }}>
           <div>
             <h1 style={{ margin: 0, color: "white", fontSize: "2rem", fontWeight: "bold" }}>Pokefun Rewards</h1>
             <p style={{ margin: 0, color: "#94a3b8", marginTop: "5px" }}>Earn points and unlock exclusive rewards!</p>
           </div>
           
-          <div style={{
-            background: "linear-gradient(135deg, #f59e0b 0%, #d97706 100%)",
-            padding: "10px 25px",
-            borderRadius: "50px",
-            display: "flex",
-            alignItems: "center",
-            gap: "10px",
-            boxShadow: "0 4px 15px rgba(245, 158, 11, 0.4)"
-          }}>
-            <i className="fa-solid fa-gem" style={{ color: "white", fontSize: "1.2rem" }}></i>
-            <span style={{ color: "white", fontSize: "1.5rem", fontWeight: "bold" }}>{points} Points</span>
+          <div style={{ display: "flex", alignItems: "center", gap: "20px" }}>
+            <button 
+              onClick={handleDailyCheckIn}
+              disabled={loading}
+              style={{
+                background: "linear-gradient(135deg, #10b981 0%, #059669 100%)",
+                padding: "10px 20px",
+                borderRadius: "50px",
+                border: "none",
+                color: "white",
+                fontWeight: "bold",
+                cursor: "pointer",
+                boxShadow: "0 4px 15px rgba(16, 185, 129, 0.3)",
+                display: "flex",
+                alignItems: "center",
+                gap: "8px",
+                opacity: loading ? 0.7 : 1
+              }}
+            >
+              <i className="fa-solid fa-calendar-check"></i> 
+              {loading ? "Claiming..." : "Daily Check-in (+50)"}
+            </button>
+
+            <div style={{
+              background: "linear-gradient(135deg, #f59e0b 0%, #d97706 100%)",
+              padding: "10px 25px",
+              borderRadius: "50px",
+              display: "flex",
+              alignItems: "center",
+              gap: "10px",
+              boxShadow: "0 4px 15px rgba(245, 158, 11, 0.3)"
+            }}>
+              <i className="fa-solid fa-gem" style={{ color: "white", fontSize: "1.2rem" }}></i>
+              <span style={{ color: "white", fontSize: "1.5rem", fontWeight: "bold" }}>{points} Points</span>
+            </div>
           </div>
         </div>
 
