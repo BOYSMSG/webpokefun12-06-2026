@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { connectMongo } from "@/lib/mongodb";
+import dbConnect from "@/lib/mongoose";
 import GlobalConfig from "@/models/GlobalConfig";
 import crypto from "crypto";
 
@@ -12,7 +12,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
     }
 
-    await connectMongo();
+    await dbConnect();
     const config = await GlobalConfig.findOne();
     const serverSecret = config?.modSecret || process.env.PFCONNECT_SECRET || "default_pokefun_secret_123!";
 

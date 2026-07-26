@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { connectMongo } from "@/lib/mongodb";
-import PendingDelivery from "@/models/PendingDelivery";
+import dbConnect from "@/lib/mongoose";
+import DeliveryQueue from "@/models/DeliveryQueue";
 
 export const dynamic = "force-dynamic";
 
@@ -12,20 +12,20 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: "Missing token" }, { status: 401 });
     }
 
-    await connectMongo();
+    await dbConnect();
     
     // Fetch all pending deliveries
-    const deliveries = await PendingDelivery.find({ status: "PENDING" });
+    const deliveries = await DeliveryQueue.find({ status: "PENDING" });
     
     // Map them to the format the mod expects (com.pokefun.connect.model.DeliveryRequest)
     const formattedDeliveries = deliveries.map(delivery => ({
       deliveryId: delivery._id.toString(),
-      playerUUID: delivery.playerUUID,
-      playerName: delivery.minecraftName || "Unknown",
-      rewardId: delivery.rewardId.toString(),
-      rewardType: delivery.rewardType || "COMMAND",
+      playerUUID: delivery.userId || "00000000-0000-0000-0000-000000000000",
+      playerName: delivery.minecraftUsername || "Unknown",
+      rewardId: delivery.productId.toString(),
+      rewardType: "COMMAND",
       commands: delivery.commands || [],
-      metadata: delivery.metadata || {},
+      metadata: {},
       status: "PENDING",
       priority: 1
     }));
@@ -33,7 +33,7 @@ export async function GET(req: NextRequest) {
     // Mark them as processing so they aren't fetched again immediately
     if (deliveries.length > 0) {
       const ids = deliveries.map(d => d._id);
-      await PendingDelivery.updateMany(
+      await DeliveryQueue.updateMany(
         { _id: { $in: ids } },
         { $set: { status: "PROCESSING" } }
       );
