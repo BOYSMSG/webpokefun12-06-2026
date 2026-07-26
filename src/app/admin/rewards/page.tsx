@@ -431,7 +431,7 @@ export default function RewardsAdmin() {
             </p>
             
             <div style={{ background: "#0f172a", padding: "15px", borderRadius: "8px", border: "1px solid #334155", fontFamily: "monospace", color: "#a5b4fc", marginBottom: "20px" }}>
-              <div><strong style={{ color: "#f472b6" }}>api.endpoint</strong>=<span>https://pokefun.fun</span></div>
+              <div><strong style={{ color: "#f472b6" }}>api.endpoint</strong>=<span>https://pokefun.in</span></div>
             </div>
 
             <form onSubmit={handleSaveSecret} style={{ display: "flex", flexDirection: "column", gap: "10px", marginBottom: "20px" }}>
