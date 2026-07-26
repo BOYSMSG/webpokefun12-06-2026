@@ -5,6 +5,7 @@ export interface IDeliveryQueue extends Document {
   minecraftUsername: string;
   productId: string;
   productName: string;
+  pointsSpent: number;
   commands: string[]; // Exact parsed commands to run (e.g. replacing {player} with minecraftUsername)
   status: 'PENDING' | 'PROCESSING' | 'DELIVERED' | 'FAILED' | 'CANCELLED';
   retryCount: number;
@@ -19,6 +20,7 @@ const DeliveryQueueSchema: Schema = new Schema({
   minecraftUsername: { type: String, required: true },
   productId: { type: String, required: true },
   productName: { type: String, required: true },
+  pointsSpent: { type: Number, default: 0 },
   commands: [{ type: String, required: true }],
   status: {
     type: String,

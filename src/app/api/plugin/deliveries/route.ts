@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import mongoose from 'mongoose';
 import connectMongo from '@/lib/mongoose';
 import DeliveryQueue from '@/models/DeliveryQueue';
+import User from '@/models/User';
+import RewardTransaction from '@/models/RewardTransaction';
 
 const SERVER_SECRET = process.env.PFCONNECT_SECRET || "default_pokefun_secret_123!"; // Make sure to define this in .env
 
@@ -59,24 +61,42 @@ export async function POST(req: NextRequest) {
     if (!results || !Array.isArray(results)) {
       return NextResponse.json({ error: 'Invalid payload' }, { status: 400 });
     }
-    
-    // Process results in bulk
-    const bulkOps = results.map((result: any) => ({
-      updateOne: {
-        filter: { _id: result.id },
-        update: { 
-          $set: { 
-            status: result.status, 
-            errorLog: result.errorLog || '',
-            updatedAt: new Date()
-          },
-          $inc: { retryCount: result.status === 'FAILED' ? 1 : 0 }
+    // Process results sequentially to handle refunds
+    for (const result of results) {
+      if (!result.id) continue;
+      
+      const delivery = await DeliveryQueue.findById(result.id);
+      if (!delivery) continue;
+
+      // If it's failing now, and wasn't already failed/cancelled, refund the points
+      if (result.status === 'FAILED' && !['FAILED', 'CANCELLED'].includes(delivery.status)) {
+        if (delivery.pointsSpent && delivery.pointsSpent > 0) {
+          const user = await User.findById(delivery.userId);
+          if (user) {
+            user.rewardPoints = (user.rewardPoints || 0) + delivery.pointsSpent;
+            await user.save();
+            
+            // Log Refund
+            await RewardTransaction.create({
+              userId: user._id,
+              amount: delivery.pointsSpent,
+              type: 'REFUND',
+              provider: 'System',
+              description: `Refund for failed delivery: ${delivery.productName}`
+            });
+          }
         }
       }
-    }));
-    
-    if (bulkOps.length > 0) {
-      await DeliveryQueue.bulkWrite(bulkOps);
+
+      // Update Delivery Record
+      delivery.status = result.status;
+      if (result.errorLog) delivery.errorLog = result.errorLog;
+      delivery.updatedAt = new Date();
+      if (result.status === 'FAILED') {
+        delivery.retryCount = (delivery.retryCount || 0) + 1;
+      }
+      
+      await delivery.save();
     }
     
     return NextResponse.json({ success: true }, { status: 200 });

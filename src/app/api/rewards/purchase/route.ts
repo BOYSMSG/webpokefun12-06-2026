@@ -34,7 +34,7 @@ export async function POST(req: NextRequest) {
       }
       
       if (!user.connections?.minecraft) {
-        throw new Error("You must link your Minecraft account in Profile first!");
+        throw new Error("Please go to your profile and add your Minecraft in-game name first!");
       }
 
       // Find Product
@@ -91,6 +91,7 @@ export async function POST(req: NextRequest) {
           minecraftUsername: mcUsername,
           productId: product._id,
           productName: product.name,
+          pointsSpent: finalPrice,
           commands: parsedCommands,
           status: 'PENDING'
         }], { session: dbSession });

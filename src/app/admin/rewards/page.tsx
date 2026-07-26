@@ -390,6 +390,25 @@ export default function RewardsAdmin() {
                 {savingConfig ? "Saving..." : "Save Settings"}
               </button>
             </form>
+
+            <hr style={{ border: "none", borderTop: "1px solid rgba(255,255,255,0.1)", margin: "30px 0" }} />
+
+            <h3 style={{ color: "#10b981", marginBottom: "15px" }}><i className="fa-solid fa-server"></i> Minecraft Mod Setup (Pokefun Connect)</h3>
+            <p style={{ color: "gray", fontSize: "0.9rem", marginBottom: "15px", lineHeight: "1.6" }}>
+              To connect your Minecraft server so players automatically receive items when they buy from the shop, install the <strong>pokefun-connect</strong> mod on your server. Then open its <code>config.yml</code> file and paste the following values:
+            </p>
+            
+            <div style={{ background: "#0f172a", padding: "15px", borderRadius: "8px", border: "1px solid #334155", fontFamily: "monospace", color: "#a5b4fc", marginBottom: "20px" }}>
+              <div><strong style={{ color: "#f472b6" }}>api.endpoint</strong>=<span>https://pokefun.fun</span></div>
+              <div style={{ marginTop: "10px" }}><strong style={{ color: "#f472b6" }}>security.secret.key</strong>=<span>default_pokefun_secret_123!</span></div>
+            </div>
+
+            <p style={{ color: "gray", fontSize: "0.9rem", lineHeight: "1.6" }}>
+              <strong>How to give items?</strong><br/>
+              When creating a product in the "Manage Products" tab, write the exact console command you want the server to run. Use <code>{'{player}'}</code> wherever the player's name should go.<br/>
+              <em>Example: <code>give {'{player}'} diamond 1</code></em>
+            </p>
+
           </div>
         )}
 
