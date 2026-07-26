@@ -10,15 +10,21 @@ export default function RewardShopPage() {
   const [loading, setLoading] = useState(true);
   const [category, setCategory] = useState("All");
 
-  const categories = [
-    "All", "Exclusive", "Limited", "Keys", "Coins", "Pokemon", 
-    "Ranks", "Cosmetics", "Titles", "Bundles"
-  ];
+  const [categories, setCategories] = useState<string[]>(["All"]);
 
   useEffect(() => {
+    // Fetch Global Config for categories
+    fetch("/api/rewards/config")
+      .then(res => res.json())
+      .then(data => {
+        if (data.config && data.config.rewardCategories) {
+          setCategories(["All", ...data.config.rewardCategories]);
+        }
+      });
+
     // Fetch User Points
     if (session?.user) {
-      fetch("/api/users/profile?email=" + encodeURIComponent(session.user.email || ""))
+      fetch("/api/profile?email=" + encodeURIComponent(session.user.email || ""))
         .then(res => res.json())
         .then(data => {
           if (data && data.user) setPoints(data.user.rewardPoints || 0);

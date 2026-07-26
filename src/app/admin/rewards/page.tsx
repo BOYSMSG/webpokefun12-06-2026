@@ -15,6 +15,12 @@ export default function RewardsAdmin() {
   const [history, setHistory] = useState<any[]>([]);
   const [loadingHistory, setLoadingHistory] = useState(true);
 
+  // Config State
+  const [dailyCheckInAmount, setDailyCheckInAmount] = useState(50);
+  const [rewardCategories, setRewardCategories] = useState("Items, Pokemons, Exclusive Offers");
+  const [savingConfig, setSavingConfig] = useState(false);
+  const [categoriesList, setCategoriesList] = useState<string[]>(["Items", "Pokemons", "Exclusive Offers"]);
+
   // Form State - Product
   const [editingId, setEditingId] = useState<string | null>(null);
   const [name, setName] = useState("");
@@ -37,7 +43,18 @@ export default function RewardsAdmin() {
   useEffect(() => {
     fetchProducts();
     fetchHistory();
+    fetchConfig();
   }, []);
+
+  const fetchConfig = async () => {
+    const res = await fetch("/api/rewards/config");
+    const data = await res.json();
+    if (data.config) {
+      setDailyCheckInAmount(data.config.dailyCheckInAmount || 50);
+      setCategoriesList(data.config.rewardCategories || ["Items", "Pokemons", "Exclusive Offers"]);
+      setRewardCategories((data.config.rewardCategories || ["Items", "Pokemons", "Exclusive Offers"]).join(", "));
+    }
+  };
 
   const fetchProducts = async () => {
     setLoadingProducts(true);
@@ -165,6 +182,29 @@ export default function RewardsAdmin() {
     }
   };
 
+  const handleSaveConfig = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSavingConfig(true);
+    
+    const catsArray = rewardCategories.split(',').map(c => c.trim()).filter(c => c !== "");
+    
+    const res = await fetch("/api/rewards/config", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ dailyCheckInAmount, rewardCategories: catsArray })
+    });
+    
+    const data = await res.json();
+    setSavingConfig(false);
+    
+    if (data.success) {
+      alert("Settings saved successfully!");
+      setCategoriesList(catsArray);
+    } else {
+      alert("Error: " + data.error);
+    }
+  };
+
   const TabButton = ({ id, label, icon }: { id: string, label: string, icon: string }) => (
     <button 
       onClick={() => setActiveTab(id)}
@@ -191,10 +231,11 @@ export default function RewardsAdmin() {
         
         <h1 style={{ color: "white", fontSize: "2.5rem", marginBottom: "1rem" }}>Rewards Economy Panel</h1>
         
-        <div style={{ display: "flex", gap: "10px", marginBottom: "2rem" }}>
+        <div style={{ display: "flex", gap: "10px", marginBottom: "2rem", flexWrap: "wrap" }}>
           <TabButton id="products" label="Manage Products" icon="fa-solid fa-box" />
           <TabButton id="history" label="Global History" icon="fa-solid fa-globe" />
           <TabButton id="points" label="Give Points" icon="fa-solid fa-hand-holding-dollar" />
+          <TabButton id="settings" label="Settings" icon="fa-solid fa-gear" />
         </div>
 
         {activeTab === "products" && (
@@ -213,7 +254,7 @@ export default function RewardsAdmin() {
                 <textarea placeholder="Description" value={desc} onChange={e => setDesc(e.target.value)} required style={{ padding: "10px", borderRadius: "5px", border: "1px solid #334155", background: "#1e293b", color: "white", minHeight: "80px" }} />
                 
                 <select value={category} onChange={e => setCategory(e.target.value)} style={{ padding: "10px", borderRadius: "5px", border: "1px solid #334155", background: "#1e293b", color: "white" }}>
-                  {["Keys", "Coins", "Pokemon", "Ranks", "Cosmetics", "Titles", "Limited Items", "Exclusive Items", "Bundles", "Special Offers"].map(c => <option key={c} value={c}>{c}</option>)}
+                  {categoriesList.map(c => <option key={c} value={c}>{c}</option>)}
                 </select>
 
                 <div style={{ display: "flex", gap: "10px" }}>
@@ -322,6 +363,31 @@ export default function RewardsAdmin() {
 
               <button type="submit" disabled={givingPoints} style={{ background: "#f59e0b", color: "black", padding: "12px", borderRadius: "8px", border: "none", fontWeight: "bold", cursor: "pointer", fontSize: "1.1rem", marginTop: "10px", opacity: givingPoints ? 0.5 : 1 }}>
                 {givingPoints ? "Processing..." : "Send Points"}
+              </button>
+            </form>
+          </div>
+        )}
+
+        {activeTab === "settings" && (
+          <div style={{ background: "rgba(255,255,255,0.05)", padding: "30px", borderRadius: "15px", border: "1px solid rgba(255,255,255,0.1)", maxWidth: "600px" }}>
+            <h2 style={{ color: "white", marginBottom: "10px" }}>Global Settings</h2>
+            <p style={{ color: "gray", marginBottom: "20px" }}>Configure how the rewards system operates.</p>
+            <form onSubmit={handleSaveConfig} style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+              
+              <div>
+                <label style={{ display: "block", color: "white", marginBottom: "5px", fontWeight: "bold" }}>Daily Check-In Points</label>
+                <p style={{ color: "gray", fontSize: "0.85rem", margin: "0 0 10px 0" }}>How many points should a user get for clicking the Daily Check-in button?</p>
+                <input type="number" placeholder="50" min="0" value={dailyCheckInAmount} onChange={e => setDailyCheckInAmount(Number(e.target.value))} required style={{ width: "100%", padding: "10px", borderRadius: "5px", border: "1px solid #334155", background: "#1e293b", color: "white" }} />
+              </div>
+              
+              <div>
+                <label style={{ display: "block", color: "white", marginBottom: "5px", fontWeight: "bold" }}>Reward Shop Categories</label>
+                <p style={{ color: "gray", fontSize: "0.85rem", margin: "0 0 10px 0" }}>Comma separated list of categories for the shop (e.g. Items, Pokemons, Exclusive Offers).</p>
+                <input type="text" value={rewardCategories} onChange={e => setRewardCategories(e.target.value)} required style={{ width: "100%", padding: "10px", borderRadius: "5px", border: "1px solid #334155", background: "#1e293b", color: "white" }} />
+              </div>
+
+              <button type="submit" disabled={savingConfig} style={{ background: "#3b82f6", color: "white", padding: "12px", borderRadius: "8px", border: "none", fontWeight: "bold", cursor: "pointer", fontSize: "1.1rem", marginTop: "10px", opacity: savingConfig ? 0.5 : 1 }}>
+                {savingConfig ? "Saving..." : "Save Settings"}
               </button>
             </form>
           </div>

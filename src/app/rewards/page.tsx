@@ -8,15 +8,35 @@ export default function RewardsDashboard() {
   const { data: session } = useSession();
   const [points, setPoints] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [canCheckIn, setCanCheckIn] = useState(true);
+  const [dailyAmount, setDailyAmount] = useState(50);
 
   useEffect(() => {
-    // In a real scenario, we would fetch the user's points from an API here
+    // Fetch global config for daily amount
+    fetch("/api/rewards/config")
+      .then(res => res.json())
+      .then(data => {
+        if (data.config && data.config.dailyCheckInAmount) {
+          setDailyAmount(data.config.dailyCheckInAmount);
+        }
+      });
+
+    // Fetch user points and check-in status
     if (session?.user) {
-      fetch("/api/users/profile?email=" + encodeURIComponent(session.user.email || ""))
+      fetch("/api/profile?email=" + encodeURIComponent(session.user.email || ""))
         .then(res => res.json())
         .then(data => {
           if (data && data.user) {
             setPoints(data.user.rewardPoints || 0);
+            if (data.user.lastCheckIn) {
+              const lastCheck = new Date(data.user.lastCheckIn);
+              const now = new Date();
+              if (lastCheck.getUTCFullYear() === now.getUTCFullYear() &&
+                  lastCheck.getUTCMonth() === now.getUTCMonth() &&
+                  lastCheck.getUTCDate() === now.getUTCDate()) {
+                setCanCheckIn(false);
+              }
+            }
           }
         });
     }
@@ -31,6 +51,7 @@ export default function RewardsDashboard() {
       if (data.success) {
         alert(data.message);
         setPoints(data.newPoints);
+        setCanCheckIn(false);
       } else {
         alert(data.error);
       }
@@ -75,16 +96,16 @@ export default function RewardsDashboard() {
           <div style={{ display: "flex", alignItems: "center", gap: "20px" }}>
             <button 
               onClick={handleDailyCheckIn}
-              disabled={loading}
+              disabled={loading || !canCheckIn}
               style={{
-                background: "linear-gradient(135deg, #10b981 0%, #059669 100%)",
+                background: !canCheckIn ? "#475569" : "linear-gradient(135deg, #10b981 0%, #059669 100%)",
                 padding: "10px 20px",
                 borderRadius: "50px",
                 border: "none",
-                color: "white",
+                color: !canCheckIn ? "#94a3b8" : "white",
                 fontWeight: "bold",
-                cursor: "pointer",
-                boxShadow: "0 4px 15px rgba(16, 185, 129, 0.3)",
+                cursor: !canCheckIn ? "not-allowed" : "pointer",
+                boxShadow: !canCheckIn ? "none" : "0 4px 15px rgba(16, 185, 129, 0.3)",
                 display: "flex",
                 alignItems: "center",
                 gap: "8px",
@@ -92,7 +113,7 @@ export default function RewardsDashboard() {
               }}
             >
               <i className="fa-solid fa-calendar-check"></i> 
-              {loading ? "Claiming..." : "Daily Check-in (+50)"}
+              {loading ? "Claiming..." : !canCheckIn ? "Claimed Today" : `Daily Check-in (+${dailyAmount})`}
             </button>
 
             <div style={{

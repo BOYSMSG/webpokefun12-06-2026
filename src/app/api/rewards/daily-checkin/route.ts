@@ -4,8 +4,7 @@ import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import connectMongo from '@/lib/mongoose';
 import User from '@/models/User';
 import RewardTransaction from '@/models/RewardTransaction';
-
-const DAILY_BONUS_AMOUNT = 50; // You can adjust this amount
+import GlobalConfig from '@/models/GlobalConfig';
 
 export async function POST(req: NextRequest) {
   try {
@@ -15,6 +14,10 @@ export async function POST(req: NextRequest) {
     }
 
     await connectMongo();
+    
+    let config = await GlobalConfig.findOne();
+    const DAILY_BONUS_AMOUNT = config?.dailyCheckInAmount || 50;
+    
     const user = await User.findOne({ email: session.user.email });
     if (!user) return NextResponse.json({ error: 'User not found' }, { status: 404 });
 

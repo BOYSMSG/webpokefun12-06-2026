@@ -9,7 +9,7 @@ export default function EarnRewardsPage() {
 
   useEffect(() => {
     if (session?.user) {
-      fetch("/api/users/profile?email=" + encodeURIComponent(session.user.email || ""))
+      fetch("/api/profile?email=" + encodeURIComponent(session.user.email || ""))
         .then(res => res.json())
         .then(data => {
           if (data && data.user) {
