@@ -23,6 +23,7 @@ export default function AdminPage() {
   const canReadDMs = myRole === 'OWNER' || myRole === 'ADMIN' || myPermissions.includes('READ_DMS');
   const canManageGiveawaysPolls = myRole === 'OWNER' || myRole === 'ADMIN' || myPermissions.includes('MANAGE_GIVEAWAYS_POLLS');
   const canManageEventsTourneys = myRole === 'OWNER' || myRole === 'ADMIN' || myPermissions.includes('MANAGE_EVENTS_TOURNAMENTS');
+  const canManageRewardsStore = myRole === 'OWNER' || myRole === 'ADMIN' || myPermissions.includes('MANAGE_REWARDS_STORE');
 
   // Auto redirect if not privileged but logged in
   useEffect(() => {
@@ -166,7 +167,7 @@ export default function AdminPage() {
           </div>
         )}
 
-        {(myRole === 'OWNER' || myRole === 'ADMIN') && (
+        {canManageRewardsStore && (
           <div style={{ background: 'rgba(255,255,255,0.05)', padding: '30px', borderRadius: '16px', border: '1px solid #444' }}>
             <i className="fa-solid fa-store" style={{ fontSize: '2rem', color: '#facc15', marginBottom: '15px' }}></i>
             <h2>Store Configuration</h2>
@@ -175,7 +176,7 @@ export default function AdminPage() {
           </div>
         )}
 
-        {(myRole === 'OWNER' || myRole === 'ADMIN') && (
+        {canManageRewardsStore && (
           <div style={{ background: 'rgba(255,255,255,0.05)', padding: '30px', borderRadius: '16px', border: '1px solid #444' }}>
             <i className="fa-solid fa-gem" style={{ fontSize: '2rem', color: '#ec4899', marginBottom: '15px' }}></i>
             <h2 style={{ color: '#ec4899' }}>Rewards Economy</h2>

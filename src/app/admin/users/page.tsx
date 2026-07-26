@@ -11,7 +11,8 @@ const PERMISSIONS_LIST = [
   { id: 'READ_DMS', label: 'Read Player DMs (Spy)' },
   { id: 'BAN_USERS', label: 'Ban & Warn Users' },
   { id: 'MANAGE_GIVEAWAYS_POLLS', label: 'Manage Giveaways & Polls' },
-  { id: 'MANAGE_EVENTS_TOURNAMENTS', label: 'Manage Events & Tournaments' }
+  { id: 'MANAGE_EVENTS_TOURNAMENTS', label: 'Manage Events & Tournaments' },
+  { id: 'MANAGE_REWARDS_STORE', label: 'Manage Rewards & Store' }
 ];
 
 export default function AdminUsersPage() {
