@@ -20,7 +20,9 @@ export async function GET(req: NextRequest) {
     // Map them to the format the mod expects (com.pokefun.connect.model.DeliveryRequest)
     const formattedDeliveries = deliveries.map(delivery => ({
       deliveryId: delivery._id.toString(),
-      playerUUID: delivery.userId || "00000000-0000-0000-0000-000000000000",
+      playerUUID: (delivery.userId && delivery.userId.length === 24) 
+        ? `${delivery.userId.substring(0,8)}-${delivery.userId.substring(8,12)}-${delivery.userId.substring(12,16)}-${delivery.userId.substring(16,20)}-${delivery.userId.substring(20,24)}00000000` 
+        : "00000000-0000-0000-0000-000000000000",
       playerName: delivery.minecraftUsername || "Unknown",
       rewardId: delivery.productId.toString(),
       rewardType: "COMMAND",
