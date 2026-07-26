@@ -19,6 +19,7 @@ export default function RewardsAdmin() {
   const [dailyCheckInAmount, setDailyCheckInAmount] = useState(50);
   const [rewardCategories, setRewardCategories] = useState("Items, Pokemons, Exclusive Offers");
   const [savingConfig, setSavingConfig] = useState(false);
+  const [modSecret, setModSecret] = useState("Loading...");
   const [categoriesList, setCategoriesList] = useState<string[]>(["Items", "Pokemons", "Exclusive Offers"]);
 
   // Form State - Product
@@ -47,13 +48,23 @@ export default function RewardsAdmin() {
   }, []);
 
   const fetchConfig = async () => {
-    const res = await fetch("/api/rewards/config");
-    const data = await res.json();
-    if (data.config) {
-      setDailyCheckInAmount(data.config.dailyCheckInAmount || 50);
-      setCategoriesList(data.config.rewardCategories || ["Items", "Pokemons", "Exclusive Offers"]);
-      setRewardCategories((data.config.rewardCategories || ["Items", "Pokemons", "Exclusive Offers"]).join(", "));
-    }
+    // Fetch config on load
+    fetch("/api/rewards/config")
+      .then(res => res.json())
+      .then(data => {
+        if (data.config) {
+          setDailyCheckInAmount(data.config.dailyCheckInAmount || 50);
+          setCategoriesList(data.config.rewardCategories || ["Items", "Pokemons", "Exclusive Offers"]);
+          setRewardCategories((data.config.rewardCategories || ["Items", "Pokemons", "Exclusive Offers"]).join(", "));
+        }
+      });
+
+    // Fetch system secret for mod setup
+    fetch("/api/admin/system-config")
+      .then(res => res.json())
+      .then(data => {
+        if (data.secret) setModSecret(data.secret);
+      });
   };
 
   const fetchProducts = async () => {
@@ -200,6 +211,27 @@ export default function RewardsAdmin() {
     if (data.success) {
       alert("Settings saved successfully!");
       setCategoriesList(catsArray);
+    } else {
+      alert("Error: " + data.error);
+    }
+  };
+
+  const handleSaveSecret = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!modSecret) return alert("Secret cannot be empty");
+    
+    setSavingConfig(true);
+    const res = await fetch("/api/admin/system-config", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ modSecret })
+    });
+    
+    const data = await res.json();
+    setSavingConfig(false);
+    
+    if (data.success) {
+      alert("Secret key updated successfully!");
     } else {
       alert("Error: " + data.error);
     }
@@ -400,8 +432,19 @@ export default function RewardsAdmin() {
             
             <div style={{ background: "#0f172a", padding: "15px", borderRadius: "8px", border: "1px solid #334155", fontFamily: "monospace", color: "#a5b4fc", marginBottom: "20px" }}>
               <div><strong style={{ color: "#f472b6" }}>api.endpoint</strong>=<span>https://pokefun.fun</span></div>
-              <div style={{ marginTop: "10px" }}><strong style={{ color: "#f472b6" }}>security.secret.key</strong>=<span>default_pokefun_secret_123!</span></div>
             </div>
+
+            <form onSubmit={handleSaveSecret} style={{ display: "flex", flexDirection: "column", gap: "10px", marginBottom: "20px" }}>
+              <div>
+                <label style={{ display: "block", color: "white", marginBottom: "5px", fontWeight: "bold" }}>Secret Key (security.secret.key)</label>
+                <p style={{ color: "gray", fontSize: "0.85rem", margin: "0 0 10px 0" }}>Update this secret key to keep your connection secure. The mod's config must match this exact key.</p>
+                <div style={{ display: "flex", gap: "10px" }}>
+                  <input type="text" value={modSecret} onChange={e => setModSecret(e.target.value)} required style={{ flex: 1, padding: "10px", borderRadius: "5px", border: "1px solid #334155", background: "#1e293b", color: "white", fontFamily: "monospace" }} />
+                  <button type="button" onClick={() => setModSecret(Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15))} style={{ background: "#475569", color: "white", padding: "10px 15px", borderRadius: "5px", border: "none", cursor: "pointer" }}>Generate</button>
+                  <button type="submit" disabled={savingConfig} style={{ background: "#10b981", color: "white", padding: "10px 20px", borderRadius: "5px", border: "none", fontWeight: "bold", cursor: "pointer", opacity: savingConfig ? 0.5 : 1 }}>Save Secret</button>
+                </div>
+              </div>
+            </form>
 
             <p style={{ color: "gray", fontSize: "0.9rem", lineHeight: "1.6" }}>
               <strong>How to give items?</strong><br/>

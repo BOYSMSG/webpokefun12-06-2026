@@ -4,20 +4,24 @@ import connectMongo from '@/lib/mongoose';
 import DeliveryQueue from '@/models/DeliveryQueue';
 import User from '@/models/User';
 import RewardTransaction from '@/models/RewardTransaction';
-
-const SERVER_SECRET = process.env.PFCONNECT_SECRET || "default_pokefun_secret_123!"; // Make sure to define this in .env
+import GlobalConfig from '@/models/GlobalConfig';
 
 // Verify Authorization Header
-function isAuthorized(req: NextRequest) {
+async function isAuthorized(req: NextRequest) {
   const authHeader = req.headers.get('Authorization');
   if (!authHeader || !authHeader.startsWith('Bearer ')) return false;
   const token = authHeader.split(' ')[1];
-  return token === SERVER_SECRET;
+  
+  await connectMongo();
+  const config = await GlobalConfig.findOne();
+  const serverSecret = config?.modSecret || process.env.PFCONNECT_SECRET || "default_pokefun_secret_123!";
+  
+  return token === serverSecret;
 }
 
 // GET: Plugin polls for pending commands
 export async function GET(req: NextRequest) {
-  if (!isAuthorized(req)) {
+  if (!(await isAuthorized(req))) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
@@ -49,7 +53,7 @@ export async function GET(req: NextRequest) {
 
 // POST: Plugin reports success/failure of execution
 export async function POST(req: NextRequest) {
-  if (!isAuthorized(req)) {
+  if (!(await isAuthorized(req))) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
