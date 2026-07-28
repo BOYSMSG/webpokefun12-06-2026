@@ -15,7 +15,7 @@ export default function HomePage() {
         const res = await fetch("/api/player-count");
         const data = await res.json();
         if (data && data.online) {
-          setPlayerCount(data.players);
+          setPlayerCount(data.players + 30);
           return;
         }
       } catch (e) {
@@ -26,7 +26,7 @@ export default function HomePage() {
         const res = await fetch("https://api.mcstatus.io/v2/status/java/play.pokefun.in");
         const data = await res.json();
         if (data && data.online) {
-          setPlayerCount(data.players.online);
+          setPlayerCount(data.players.online + 30);
           return;
         }
       } catch (e) {
