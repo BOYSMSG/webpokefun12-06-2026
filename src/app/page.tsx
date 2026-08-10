@@ -17,7 +17,7 @@ export default function HomePage() {
         // Try the internal scraper API first (since Cloudflare blocks external pingers)
         const res = await fetch("/api/player-count");
         const data = await res.json();
-        if (data && data.online) {
+        if (data && data.online && data.players > 0) {
           isOnline = true;
           players = data.players;
         }
