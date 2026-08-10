@@ -10,30 +10,39 @@ export default function HomePage() {
 
   useEffect(() => {
     const fetchPlayerCount = async () => {
+      let isOnline = false;
+      let players = 0;
+
       try {
         // Try the internal scraper API first (since Cloudflare blocks external pingers)
         const res = await fetch("/api/player-count");
         const data = await res.json();
         if (data && data.online) {
-          setPlayerCount(data.players + 30);
-          return;
+          isOnline = true;
+          players = data.players;
         }
       } catch (e) {
         console.error("Internal player count API failed:", e);
       }
 
-      try {
-        const res = await fetch("https://api.mcstatus.io/v2/status/java/play.pokefun.in");
-        const data = await res.json();
-        if (data && data.online) {
-          setPlayerCount(data.players.online + 30);
-          return;
+      if (!isOnline) {
+        try {
+          const res = await fetch("https://api.mcstatus.io/v2/status/java/play.pokefun.in");
+          const data = await res.json();
+          if (data && data.online) {
+            isOnline = true;
+            players = data.players.online;
+          }
+        } catch (e) {
+          console.error("mcstatus.io failed:", e);
         }
-      } catch (e) {
-        console.error("mcstatus.io failed:", e);
       }
 
-      setPlayerCount(0); // Fallback
+      if (isOnline) {
+        setPlayerCount(players + 30);
+      } else {
+        setPlayerCount(-1);
+      }
     };
     
     fetchPlayerCount();
@@ -79,7 +88,11 @@ export default function HomePage() {
                   </Link>
                   <div id="players" className="info-card" style={{ display: "flex", alignItems: "center", gap: "15px", color: "white", fontWeight: 900 }}>
                       <div className="info-text" style={{ textAlign: "right" }}>
-                          <div className="if-large"><span className="count">{playerCount !== null ? playerCount : "..."}</span> PLAYERS</div>
+                          {playerCount === -1 ? (
+                              <div className="if-large" style={{ color: '#ef4444' }}>MAINTENANCE</div>
+                          ) : (
+                              <div className="if-large"><span className="count">{playerCount !== null ? playerCount : "..."}</span> PLAYERS</div>
+                          )}
                           <div className="if-small">play.pokefun.in</div>
                       </div>
                       <i className="fa-regular fa-circle-play"></i>
