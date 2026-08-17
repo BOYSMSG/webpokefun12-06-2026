@@ -11,36 +11,32 @@ const claimsContent = `
 Protect your builds, chests, and pets using the **Claim system**! 
 You get **free claim blocks** when you join, and you passively earn more just by playing on the server! If you need a massive amount of claim blocks, you can also get them from the [Server Store](https://pokefun.in/store).
 
-### Creating & Managing Claims
-| Command | Description |
-|---|---|
-| \`/claim <radius>\` | Create a claim around your current position. (Or just use the golden shovel tool!) |
-| \`/claimslist\` (or \`/claims\`) | View the list of all your claims. |
-| \`/extendclaim <blocks>\` | Extend your claim by a number of blocks in the direction you are facing. |
-| \`/reduceclaim <blocks>\` | Reduce your claim by a number of blocks in the direction you are facing. |
-| \`/unclaim\` | Remove the claim you are currently standing in. |
-| \`/unclaimall\` | Remove ALL your claims (Requires confirmation). |
-
-### Trusting Friends in your Claim
-| Command | Description |
-|---|---|
-| \`/trust <username>\` | Grant **Build Trust** (place/break blocks) to a friend. |
-| \`/containertrust <username>\` | Grant **Container Trust** (open chests, hoppers, etc) to a friend. |
-| \`/accesstrust <username>\` | Grant **Access Trust** (use doors, buttons, levers) to a friend. |
-| \`/permissiontrust <username>\` | Grant **Management Trust** (allow them to trust others) to a friend. |
-| \`/trustlist\` | View a list of all trusted players in the claim you are standing in. |
-| \`/untrust <username>\` | Revoke a player's trust level. |
-| \`/claimban <username>\` | Ban a specific user from entering your claim. |
-
-### Claim Blocks & Settings
-| Command | Description |
-|---|---|
-| \`/claimblocks\` | View your current claim block balance. |
-| \`/buyclaimblocks <amount>\` | Buy claim blocks using in-game money. |
-| \`/claimexplosions [on/off]\` | Toggle allowing explosion damage inside your claim. |
-| \`/transferpet <username>\` | Transfer ownership of a tamed animal (pet) to another player. |
-| \`/unlockdrops\` | Unlock your locked item drops from when you died, allowing anyone to pick them up. |
-| \`/trapped\` | Teleports you outside a claim if you get stuck in someone else's land. |
+### Claims Commands
+| Command | Description | Alias | Perm |
+|---|---|---|---|
+| \`/AbandonClaim\` | Deletes the claim you’re standing in. | | claims |
+| \`/ClaimExplosions\` | Toggles if explosions are allowed in the claim. | | claims |
+| \`/Trust\` | Gives another player permission to edit in your claim. | \`/t\` | claims |
+| \`/UnTrust\` | Revokes any permissions granted to a player in your claim. | \`/ut\` | claims |
+| \`/AccessTrust\` | Gives a player permission to use your buttons, levers, and beds. | \`/at\` | claims |
+| \`/ContainerTrust\` | Gives a player permission to use your buttons, levers, beds, crafting gear, containers, and animals. | \`/ct\` | claims |
+| \`/TrustList\` | Lists the permissions for the claim you’re standing in. | | claims |
+| \`/SubdivideClaims\` | Switches your shovel to subdivision mode, so you can subdivide your claims. | \`/sc\` | claims |
+| \`/RestrictSubclaim\` | Restricts a subclaim, so that it inherits no permissions from the parent claim. | \`/rsc\` | claims |
+| \`/BasicClaims\` | Puts your shovel back in basic claims mode. | \`/bc\` | claims |
+| \`/PermissionTrust\` | Grants a player permission to share his permission level with others. | \`/pt\` | claims |
+| \`/Untrust All\` | Removes all permissions for all players in your claim. | | claims |
+| \`/AbandonAllClaims\` | Deletes all of your claims. | | claims |
+| \`/BuyClaimBlocks\` | Converts server money to claim blocks. | \`/BuyClaim\` | buysellclaimblocks |
+| \`/SellClaimBlocks\` | Converts claim blocks to server money. | \`/SellClaim\` | buysellclaimblocks |
+| \`/GivePet\` | Gives away a tamed animal. | | givepet |
+| \`/ClaimsList\` | Lists a player’s claims and claim block details. | | claims |
+| \`/IgnorePlayer\` | Ignores a target player’s chat messages. | \`/Ignore\` | ignore |
+| \`/UnIgnorePlayer\` | Un-ignores a target player’s chat messages. | \`/UnIgnore\` | ignore |
+| \`/IgnoredPlayerList\` | Lists all players currently ignored. | \`/IgnoreList\` | ignore |
+| \`/Siege\` | Besieges a player (disabled by default). | | siege |
+| \`/Trapped\` | Gets a player out of a land claim he’s trapped inside. | | trapped |
+| \`/UnlockDrops\` | Allows other players to pick up items you dropped when you died. | | unlockdrops |
 
 ---
 **Need more claim blocks?**

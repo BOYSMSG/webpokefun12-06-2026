@@ -16,6 +16,7 @@ const wikiPages = [
   { href: "/wiki/guides/ranked", icon: "🏆", title: "Ranked PvP", desc: "Information on competitive battles, ladders, and rewards.", bg: "#fffbe6" },
   { href: "/wiki/guides/homes", icon: "🏠", title: "Homes Guide", desc: "List of player commands for setting homes and teleporting.", bg: "linear-gradient(135deg, #10b981, #059669)" },
   { href: "/wiki/guides/claims", icon: "🛡️", title: "Claims Guide", desc: "List of commands for claiming and protecting your land.", bg: "linear-gradient(135deg, #3b82f6, #2563eb)" },
+  { href: "/wiki/guides/plots", icon: "🏙️", title: "Plots & Property", desc: "Complete guide on buying, selling, and managing plots in City World.", bg: "linear-gradient(135deg, #14b8a6, #0d9488)" },
   { href: "/wiki/guides/cobblebosses", icon: "👹", title: "Bosses", desc: "Learn how to defeat the powerful Cobblemon Bosses.", bg: "#f9e6ff" },
 ];
 
