@@ -33,7 +33,16 @@ export default function ChangelogsPage() {
             <li style={{ marginBottom: "8px" }}>Rank holders can claim up to <strong>20 plots</strong>!</li>
           </ul>
 
-          <p style={{ marginTop: "30px", fontStyle: "italic", color: "#9ca3af" }}>Check out the <a href="/wiki/guides/plots" style={{ color: "var(--ghost-accent-color)", textDecoration: "underline" }}>Plots & Property Wiki</a> for a full list of commands!</p>
+          <h3 style={{ fontSize: "1.4rem", color: "#fff", marginTop: "25px", marginBottom: "15px" }}>🌌 Legendary Vault System</h3>
+          <ul style={{ paddingLeft: "20px", marginBottom: "20px" }}>
+            <li style={{ marginBottom: "8px" }}>Introduced a completely new way to encounter powerful Pokémon!</li>
+            <li style={{ marginBottom: "8px" }}>Summon legendaries through Rituals, Shrines, Temples, Laboratories & Special Machines.</li>
+            <li style={{ marginBottom: "8px" }}>Features custom mechanics like Mewtwo Cloning and the Arceus Ultimate Ritual.</li>
+          </ul>
+
+          <p style={{ marginTop: "30px", fontStyle: "italic", color: "#9ca3af" }}>
+            Check out the <a href="/wiki/guides/plots" style={{ color: "var(--ghost-accent-color)", textDecoration: "underline" }}>Plots & Property Wiki</a> and the <a href="/wiki/guides/legendaries" style={{ color: "var(--ghost-accent-color)", textDecoration: "underline" }}>Legendary System Wiki</a> for a full list of commands and details!
+          </p>
         </div>
       </div>
     </div>

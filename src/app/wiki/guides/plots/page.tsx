@@ -10,15 +10,25 @@ const plotsContent = `
 
 PokefunProperty creates a living **player civilization** on our server with two gameplay areas:
 
-> **⛏️ Survival World**
-> Mining, ores, grinding, exploration, Nether, End and resource collection. Survival is the resource world.
+<div style={{ padding: "20px", background: "rgba(0,0,0,0.3)", borderRadius: "12px", marginBottom: "20px", borderLeft: "5px solid #ff9800" }}>
+  <h2 style={{ fontSize: "2rem", color: "#ff9800", marginBottom: "10px" }}>⛏️ Survival World</h2>
+  <p style={{ fontSize: "1.5rem", lineHeight: "1.6" }}>Mining, ores, grinding, exploration, Nether, End and resource collection. <strong>Survival is the resource world.</strong></p>
+</div>
 
-> **🏙️ City World**
-> Permanent homes, storage, shops, properties, businesses, buying/selling land and a real-estate economy. The city is where players live.
+<div style={{ padding: "20px", background: "rgba(0,0,0,0.3)", borderRadius: "12px", marginBottom: "30px", borderLeft: "5px solid #14b8a6" }}>
+  <h2 style={{ fontSize: "2rem", color: "#14b8a6", marginBottom: "10px" }}>🏙️ City World</h2>
+  <p style={{ fontSize: "1.5rem", lineHeight: "1.6" }}>Permanent homes, storage, shops, properties, businesses, buying/selling land and a real-estate economy. <strong>The city is where players live.</strong></p>
+</div>
+
+<div style={{ padding: "20px", background: "rgba(20, 184, 166, 0.1)", borderRadius: "12px", marginBottom: "30px", border: "1px solid #14b8a6" }}>
+  <p style={{ fontSize: "1.6rem", fontWeight: "bold", color: "#14b8a6", textAlign: "center", fontStyle: "italic" }}>
+    ✨ Plots feature a special system that works exactly like real estate! If you love property dealing and owning multiple houses, this system is insane! ✨
+  </p>
+</div>
 
 ### Plot Limits
-* **Default players** can claim up to **3 plots**.
-* **Rank holders** can claim up to **20 plots**!
+* <span style={{ fontSize: "1.3rem" }}>**Default players** can claim up to **3 plots**.</span>
+* <span style={{ fontSize: "1.3rem" }}>**Rank holders** can claim up to **20 plots**!</span>
 
 ### Player Commands
 | Command | Description |
