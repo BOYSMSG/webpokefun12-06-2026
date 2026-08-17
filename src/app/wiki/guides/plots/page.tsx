@@ -5,30 +5,16 @@ import Link from "next/link";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
-const plotsContent = `
+const plotsContentIntro = `
 # Plots and Property Guide
 
 PokefunProperty creates a living **player civilization** on our server with two gameplay areas:
+`;
 
-<div style={{ padding: "20px", background: "rgba(0,0,0,0.3)", borderRadius: "12px", marginBottom: "20px", borderLeft: "5px solid #ff9800" }}>
-  <h2 style={{ fontSize: "2rem", color: "#ff9800", marginBottom: "10px" }}>⛏️ Survival World</h2>
-  <p style={{ fontSize: "1.5rem", lineHeight: "1.6" }}>Mining, ores, grinding, exploration, Nether, End and resource collection. <strong>Survival is the resource world.</strong></p>
-</div>
-
-<div style={{ padding: "20px", background: "rgba(0,0,0,0.3)", borderRadius: "12px", marginBottom: "30px", borderLeft: "5px solid #14b8a6" }}>
-  <h2 style={{ fontSize: "2rem", color: "#14b8a6", marginBottom: "10px" }}>🏙️ City World</h2>
-  <p style={{ fontSize: "1.5rem", lineHeight: "1.6" }}>Permanent homes, storage, shops, properties, businesses, buying/selling land and a real-estate economy. <strong>The city is where players live.</strong></p>
-</div>
-
-<div style={{ padding: "20px", background: "rgba(20, 184, 166, 0.1)", borderRadius: "12px", marginBottom: "30px", border: "1px solid #14b8a6" }}>
-  <p style={{ fontSize: "1.6rem", fontWeight: "bold", color: "#14b8a6", textAlign: "center", fontStyle: "italic" }}>
-    ✨ Plots feature a special system that works exactly like real estate! If you love property dealing and owning multiple houses, this system is insane! ✨
-  </p>
-</div>
-
+const plotsContentMain = `
 ### Plot Limits
-* <span style={{ fontSize: "1.3rem" }}>**Default players** can claim up to **3 plots**.</span>
-* <span style={{ fontSize: "1.3rem" }}>**Rank holders** can claim up to **20 plots**!</span>
+* **Default players** can claim up to **3 plots**.
+* **Rank holders** can claim up to **20 plots**!
 
 ### Player Commands
 | Command | Description |
@@ -64,31 +50,53 @@ Check out our [Ranks on the Store](https://pokefun.in/store) to upgrade your lim
 `;
 
 export default function PlotsGuidePage() {
+  const markdownComponents = {
+    h1: ({node, ...props}: any) => <h1 style={{ fontSize: "2.5rem", fontWeight: 800, color: "var(--ghost-accent-color)", marginBottom: "20px", borderBottom: "2px solid #333", paddingBottom: "10px" }} {...props} />,
+    h2: ({node, ...props}: any) => <h2 style={{ fontSize: "1.8rem", fontWeight: 700, color: "#fff", marginTop: "30px", marginBottom: "15px" }} {...props} />,
+    h3: ({node, ...props}: any) => <h3 style={{ fontSize: "1.3rem", fontWeight: 700, color: "#a3a3a3", marginTop: "20px", marginBottom: "10px" }} {...props} />,
+    p: ({node, ...props}: any) => <p style={{ fontSize: "1.1rem", lineHeight: 1.6, color: "#d1d5db", marginBottom: "15px" }} {...props} />,
+    ul: ({node, ...props}: any) => <ul style={{ marginLeft: "20px", marginBottom: "15px", color: "#d1d5db" }} {...props} />,
+    li: ({node, ...props}: any) => <li style={{ marginBottom: "5px" }} {...props} />,
+    a: ({node, ...props}: any) => <a style={{ color: "var(--ghost-accent-color)", textDecoration: "underline" }} {...props} />,
+    table: ({node, ...props}: any) => <table style={{ width: "100%", borderCollapse: "collapse", marginBottom: "20px", background: "rgba(0,0,0,0.3)", borderRadius: "8px", overflow: "hidden" }} {...props} />,
+    th: ({node, ...props}: any) => <th style={{ background: "rgba(255,255,255,0.1)", padding: "12px", textAlign: "left", color: "white", borderBottom: "1px solid #444" }} {...props} />,
+    td: ({node, ...props}: any) => <td style={{ padding: "12px", borderBottom: "1px solid #333", color: "#d1d5db" }} {...props} />,
+    code: ({node, ...props}: any) => <code style={{ background: "rgba(255,255,255,0.1)", padding: "2px 6px", borderRadius: "4px", color: "#facc15" }} {...props} />,
+    blockquote: ({node, ...props}: any) => <blockquote style={{ borderLeft: "4px solid var(--ghost-accent-color)", paddingLeft: "15px", color: "#9ca3af", fontStyle: "italic", margin: "15px 0", background: "rgba(0,0,0,0.2)", padding: "10px 15px", borderRadius: "0 8px 8px 0" }} {...props} />,
+    strong: ({node, ...props}: any) => <strong style={{ color: "#fff", fontWeight: 700 }} {...props} />
+  };
+
   return (
     <div className="inner" style={{ paddingTop: "80px", paddingBottom: "60px", maxWidth: "900px", margin: "0 auto", color: "white" }}>
       <Link href="/wiki" style={{ color: "#a3a3a3", textDecoration: "none", marginBottom: "20px", display: "inline-block" }}>
         <i className="fa-solid fa-arrow-left"></i> Back to Wiki
       </Link>
       <div style={{ background: "rgba(30, 34, 39, 0.7)", padding: "40px", borderRadius: "16px", border: "1px solid #333", boxShadow: "0 10px 30px rgba(0,0,0,0.5)" }}>
-        <ReactMarkdown 
-          remarkPlugins={[remarkGfm]}
-          components={{
-            h1: ({node, ...props}) => <h1 style={{ fontSize: "2.5rem", fontWeight: 800, color: "var(--ghost-accent-color)", marginBottom: "20px", borderBottom: "2px solid #333", paddingBottom: "10px" }} {...props} />,
-            h2: ({node, ...props}) => <h2 style={{ fontSize: "1.8rem", fontWeight: 700, color: "#fff", marginTop: "30px", marginBottom: "15px" }} {...props} />,
-            h3: ({node, ...props}) => <h3 style={{ fontSize: "1.3rem", fontWeight: 700, color: "#a3a3a3", marginTop: "20px", marginBottom: "10px" }} {...props} />,
-            p: ({node, ...props}) => <p style={{ fontSize: "1.1rem", lineHeight: 1.6, color: "#d1d5db", marginBottom: "15px" }} {...props} />,
-            ul: ({node, ...props}) => <ul style={{ marginLeft: "20px", marginBottom: "15px", color: "#d1d5db" }} {...props} />,
-            li: ({node, ...props}) => <li style={{ marginBottom: "5px" }} {...props} />,
-            a: ({node, ...props}) => <a style={{ color: "var(--ghost-accent-color)", textDecoration: "underline" }} {...props} />,
-            table: ({node, ...props}) => <table style={{ width: "100%", borderCollapse: "collapse", marginBottom: "20px", background: "rgba(0,0,0,0.3)", borderRadius: "8px", overflow: "hidden" }} {...props} />,
-            th: ({node, ...props}) => <th style={{ background: "rgba(255,255,255,0.1)", padding: "12px", textAlign: "left", color: "white", borderBottom: "1px solid #444" }} {...props} />,
-            td: ({node, ...props}) => <td style={{ padding: "12px", borderBottom: "1px solid #333", color: "#d1d5db" }} {...props} />,
-            code: ({node, ...props}) => <code style={{ background: "rgba(255,255,255,0.1)", padding: "2px 6px", borderRadius: "4px", color: "#facc15" }} {...props} />,
-            blockquote: ({node, ...props}) => <blockquote style={{ borderLeft: "4px solid var(--ghost-accent-color)", paddingLeft: "15px", color: "#9ca3af", fontStyle: "italic", margin: "15px 0", background: "rgba(0,0,0,0.2)", padding: "10px 15px", borderRadius: "0 8px 8px 0" }} {...props} />,
-          }}
-        >
-          {plotsContent}
+        
+        <ReactMarkdown remarkPlugins={[remarkGfm]} components={markdownComponents}>
+          {plotsContentIntro}
         </ReactMarkdown>
+
+        <div style={{ padding: "20px", background: "rgba(0,0,0,0.3)", borderRadius: "12px", marginBottom: "20px", borderLeft: "5px solid #ff9800" }}>
+          <h2 style={{ fontSize: "2rem", color: "#ff9800", marginBottom: "10px", marginTop: 0 }}>⛏️ Survival World</h2>
+          <p style={{ fontSize: "1.3rem", lineHeight: "1.6", margin: 0, color: "#d1d5db" }}>Mining, ores, grinding, exploration, Nether, End and resource collection. <strong style={{color: "#fff"}}>Survival is the resource world.</strong></p>
+        </div>
+
+        <div style={{ padding: "20px", background: "rgba(0,0,0,0.3)", borderRadius: "12px", marginBottom: "30px", borderLeft: "5px solid #14b8a6" }}>
+          <h2 style={{ fontSize: "2rem", color: "#14b8a6", marginBottom: "10px", marginTop: 0 }}>🏙️ City World</h2>
+          <p style={{ fontSize: "1.3rem", lineHeight: "1.6", margin: 0, color: "#d1d5db" }}>Permanent homes, storage, shops, properties, businesses, buying/selling land and a real-estate economy. <strong style={{color: "#fff"}}>The city is where players live.</strong></p>
+        </div>
+
+        <div style={{ padding: "20px", background: "rgba(20, 184, 166, 0.1)", borderRadius: "12px", marginBottom: "30px", border: "1px solid #14b8a6" }}>
+          <p style={{ fontSize: "1.4rem", fontWeight: "bold", color: "#14b8a6", textAlign: "center", fontStyle: "italic", margin: 0 }}>
+            ✨ Plots feature a special system that works exactly like real estate! If you love property dealing and owning multiple houses, this system is insane! ✨
+          </p>
+        </div>
+
+        <ReactMarkdown remarkPlugins={[remarkGfm]} components={markdownComponents}>
+          {plotsContentMain}
+        </ReactMarkdown>
+
       </div>
     </div>
   );
