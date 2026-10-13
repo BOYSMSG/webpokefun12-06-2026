@@ -149,6 +149,7 @@ export default function PushManager() {
     
     // Fallback polling for unread messages and Toasts
     const interval = setInterval(async () => {
+      if (typeof document !== 'undefined' && document.hidden) return;
       try {
         const res = await fetch('/api/messages/unread');
         const data = await res.json();
@@ -191,7 +192,7 @@ export default function PushManager() {
           }
         });
       } catch (e) {}
-    }, 10000);
+    }, 45000);
 
     return () => clearInterval(interval);
   }, [session]);

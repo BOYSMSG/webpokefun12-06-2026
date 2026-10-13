@@ -143,9 +143,10 @@ export default function AIChatWidget() {
     checkUnread();
     
     const intervalId = setInterval(() => {
+      if (typeof document !== 'undefined' && document.hidden) return;
       fetch('/api/user/active', { method: 'PUT' }).catch(() => {});
       checkUnread();
-    }, 30000); // 30 seconds
+    }, 60000); // 60 seconds, pause when tab is inactive
 
     return () => clearInterval(intervalId);
   }, [session, activeWindow]);
@@ -229,6 +230,9 @@ export default function AIChatWidget() {
       if (musicPlaying) {
         audioRef.current.pause();
       } else {
+        if (!audioRef.current.src || !audioRef.current.src.includes('north_province.ogg')) {
+          audioRef.current.src = "/audio/north_province.ogg";
+        }
         audioRef.current.play().catch(e => console.log("Audio play failed:", e));
       }
       setMusicPlaying(!musicPlaying);
@@ -293,7 +297,7 @@ export default function AIChatWidget() {
 
   return (
     <>
-      <audio ref={audioRef} src="/audio/north_province.ogg" loop />
+      <audio ref={audioRef} loop preload="none" />
       <div style={{
         position: "fixed",
         bottom: "30px",

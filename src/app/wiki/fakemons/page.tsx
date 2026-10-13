@@ -9,12 +9,15 @@ export default function FakemonsPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredMons, setFilteredMons] = useState(fakemonsData);
 
+  const [visibleCount, setVisibleCount] = useState(40);
+
   useEffect(() => {
     setFilteredMons(
       fakemonsData.filter(mon => 
         mon.name.toLowerCase().includes(searchTerm.toLowerCase())
       )
     );
+    setVisibleCount(40);
   }, [searchTerm]);
 
   const capitalize = (str: string) => {
@@ -26,6 +29,8 @@ export default function FakemonsPage() {
     const match = showcaseData.find(s => s.name.toLowerCase().includes(fakemonName.toLowerCase()));
     return match ? match.image : `/images/fakemons/${id}.png`;
   };
+
+  const displayedMons = filteredMons.slice(0, visibleCount);
 
   return (
     <div className="inner" style={{ padding: "60px 0", maxWidth: "1200px", margin: "0 auto" }}>
@@ -58,7 +63,7 @@ export default function FakemonsPage() {
       </div>
 
       <div className="fakemons-grid">
-        {filteredMons.map((mon, idx) => (
+        {displayedMons.map((mon, idx) => (
           <Link href={`/wiki/fakemons/${mon.id}`} key={mon.id} style={{ textDecoration: 'none', color: 'inherit' }}>
             <div className="fakemon-card">
               <div style={{ fontSize: "0.9rem", color: "gray", fontWeight: 600, textAlign: "left", marginBottom: "10px" }}>
@@ -67,6 +72,8 @@ export default function FakemonsPage() {
               <img 
                 src={mon.image} 
                 alt={mon.name}
+                loading="lazy"
+                decoding="async"
                 onError={(e) => { e.currentTarget.style.display = 'none'; }}
                 className="fakemon-img"
               />
@@ -87,6 +94,27 @@ export default function FakemonsPage() {
           </Link>
         ))}
       </div>
+
+      {visibleCount < filteredMons.length && (
+        <div style={{ textAlign: "center", marginTop: "40px" }}>
+          <button 
+            onClick={() => setVisibleCount(prev => prev + 40)}
+            style={{
+              background: "#3b82f6",
+              color: "white",
+              border: "none",
+              padding: "14px 35px",
+              borderRadius: "30px",
+              fontSize: "1.1rem",
+              fontWeight: "bold",
+              cursor: "pointer",
+              boxShadow: "0 4px 15px rgba(59, 130, 246, 0.4)"
+            }}
+          >
+            Load More ({filteredMons.length - visibleCount} remaining)
+          </button>
+        </div>
+      )}
       
       {filteredMons.length === 0 && (
         <div style={{ textAlign: "center", color: "gray", marginTop: "50px" }}>

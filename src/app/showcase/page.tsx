@@ -55,9 +55,9 @@ export default function ShowcasePage() {
         <section style={{ marginBottom: '60px' }}>
           <h2 style={{ fontSize: '2rem', fontWeight: 'bold', marginBottom: '20px', borderBottom: '2px solid rgba(255,255,255,0.2)', paddingBottom: '10px', color: 'white', textShadow: '0 2px 4px rgba(0,0,0,0.5)' }}>Server Screenshots & Lobbies</h2>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '20px' }}>
-            {mainImages.map((img, idx) => (
+            {mainImages.slice(0, 12).map((img, idx) => (
               <div key={idx} style={{ borderRadius: '12px', overflow: 'hidden', boxShadow: '0 4px 6px rgba(0,0,0,0.1)', background: '#fff' }}>
-                <img src={img.image} alt="Server Screenshot" style={{ width: '100%', height: '200px', objectFit: 'cover', display: 'block' }} loading="lazy" />
+                <img src={img.image} alt="Server Screenshot" style={{ width: '100%', height: '200px', objectFit: 'cover', display: 'block' }} loading="lazy" decoding="async" />
               </div>
             ))}
           </div>
@@ -70,7 +70,7 @@ export default function ShowcasePage() {
             {features.map((feat, idx) => (
               <div key={idx} style={{ borderRadius: '12px', overflow: 'hidden', boxShadow: '0 2px 4px rgba(0,0,0,0.1)', background: '#fff', textAlign: 'center' }}>
                 <div style={{ height: '150px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f9f9f9', padding: '10px' }}>
-                  <img src={feat.image} alt={feat.name} style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }} loading="lazy" />
+                  <img src={feat.image} alt={feat.name} style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }} loading="lazy" decoding="async" />
                 </div>
                 <div style={{ padding: '10px', fontSize: '14px', fontWeight: 'bold', textTransform: 'capitalize' }}>
                   {feat.name}
@@ -80,16 +80,19 @@ export default function ShowcasePage() {
           </div>
         </section>
 
-
-
         {/* Fakemons & Fusions Section */}
         <section style={{ marginBottom: '60px' }}>
-          <h2 style={{ fontSize: '24px', fontWeight: 'bold', marginBottom: '20px', borderBottom: '2px solid #ddd', paddingBottom: '10px' }}>Fakemons & Fusions Gallery</h2>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', borderBottom: '2px solid #ddd', paddingBottom: '10px' }}>
+            <h2 style={{ fontSize: '24px', fontWeight: 'bold', margin: 0 }}>Fakemons & Fusions Preview</h2>
+            <Link href="/wiki/fakemons" style={{ color: 'var(--ghost-accent-color)', fontWeight: 'bold', textDecoration: 'none' }}>
+              View All Fakemons &rarr;
+            </Link>
+          </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '15px' }}>
-            {fakemons.map((mon, idx) => (
+            {fakemons.slice(0, 16).map((mon, idx) => (
               <div key={idx} style={{ borderRadius: '12px', overflow: 'hidden', boxShadow: '0 2px 4px rgba(0,0,0,0.1)', background: '#fff', textAlign: 'center' }}>
                 <div style={{ height: '200px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f5f5f5', padding: '10px' }}>
-                  <img src={mon.image} alt={mon.name} style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }} loading="lazy" />
+                  <img src={mon.image} alt={mon.name} style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }} loading="lazy" decoding="async" />
                 </div>
                 <div style={{ padding: '10px', fontSize: '14px', fontWeight: 'bold', textTransform: 'capitalize' }}>
                   {mon.name}
@@ -101,12 +104,17 @@ export default function ShowcasePage() {
 
         {/* Cosmetics Section */}
         <section style={{ marginBottom: '60px' }}>
-          <h2 style={{ fontSize: '24px', fontWeight: 'bold', marginBottom: '20px', borderBottom: '2px solid #ddd', paddingBottom: '10px' }}>Cosmetics & Skins</h2>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', borderBottom: '2px solid #ddd', paddingBottom: '10px' }}>
+            <h2 style={{ fontSize: '24px', fontWeight: 'bold', margin: 0 }}>Cosmetics & Skins Preview</h2>
+            <Link href="/wiki/cosmetics" style={{ color: 'var(--ghost-accent-color)', fontWeight: 'bold', textDecoration: 'none' }}>
+              View All {cosmetics.length} Cosmetics &rarr;
+            </Link>
+          </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: '15px' }}>
-            {cosmetics.map((cos, idx) => (
+            {cosmetics.slice(0, 18).map((cos, idx) => (
               <div key={idx} style={{ borderRadius: '12px', overflow: 'hidden', boxShadow: '0 2px 4px rgba(0,0,0,0.1)', background: '#fff', textAlign: 'center' }}>
                 <div style={{ height: '180px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#fafafa', padding: '10px' }}>
-                  <img src={cos.image} alt={cos.name} style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }} loading="lazy" />
+                  <img src={cos.image} alt={cos.name} style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }} loading="lazy" decoding="async" />
                 </div>
                 <div style={{ padding: '10px', fontSize: '14px', fontWeight: 'bold', textTransform: 'capitalize' }}>
                   {cos.name}
@@ -120,9 +128,9 @@ export default function ShowcasePage() {
         <section style={{ marginBottom: '60px' }}>
           <h2 style={{ fontSize: '24px', fontWeight: 'bold', marginBottom: '20px', borderBottom: '2px solid #ddd', paddingBottom: '10px' }}>In-Game Gallery</h2>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '20px' }}>
-            {showcaseImages.map((img, idx) => (
+            {showcaseImages.slice(0, 16).map((img, idx) => (
               <div key={idx} style={{ borderRadius: '12px', overflow: 'hidden', boxShadow: '0 4px 6px rgba(0,0,0,0.1)', background: '#fff' }}>
-                <img src={img.image} alt="In-game moment" style={{ width: '100%', height: 'auto', display: 'block' }} loading="lazy" />
+                <img src={img.image} alt="In-game moment" style={{ width: '100%', height: 'auto', display: 'block' }} loading="lazy" decoding="async" />
               </div>
             ))}
           </div>

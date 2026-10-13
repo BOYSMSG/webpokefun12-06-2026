@@ -45,8 +45,10 @@ export default function MessagesPage() {
       
       // Fallback polling (slower to save server resources)
       const interval = setInterval(() => {
-        fetchMessages();
-      }, 10000);
+        if (typeof document !== 'undefined' && !document.hidden) {
+          fetchMessages();
+        }
+      }, 30000);
       
       return () => {
         clearInterval(interval);
