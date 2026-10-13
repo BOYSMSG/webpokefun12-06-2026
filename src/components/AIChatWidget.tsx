@@ -173,11 +173,14 @@ export default function AIChatWidget() {
   }, [unreadCount]);
 
   useEffect(() => {
-    // Theme setup
+    // Theme setup - Default to Light Mode
     const savedTheme = localStorage.getItem("theme");
-    if (savedTheme === "dark" || (!savedTheme && window.matchMedia("(prefers-color-scheme: dark)").matches)) {
+    if (savedTheme === "dark") {
       setIsDarkMode(true);
       document.documentElement.classList.add("dark-mode");
+    } else {
+      setIsDarkMode(false);
+      document.documentElement.classList.remove("dark-mode");
     }
 
     // Message Sounds setup

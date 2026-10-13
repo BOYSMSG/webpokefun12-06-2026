@@ -12,9 +12,12 @@ export default function SettingsWidget() {
   // Initialize theme from local storage or system preference
   useEffect(() => {
     const savedTheme = localStorage.getItem("theme");
-    if (savedTheme === "dark" || (!savedTheme && window.matchMedia("(prefers-color-scheme: dark)").matches)) {
+    if (savedTheme === "dark") {
       setIsDarkMode(true);
       document.documentElement.classList.add("dark-mode");
+    } else {
+      setIsDarkMode(false);
+      document.documentElement.classList.remove("dark-mode");
     }
 
     // Try to autoplay music
