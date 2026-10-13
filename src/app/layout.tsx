@@ -68,6 +68,19 @@ export default async function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              try {
+                if (localStorage.getItem('theme') === 'dark') {
+                  document.documentElement.classList.add('dark-mode');
+                } else {
+                  document.documentElement.classList.remove('dark-mode');
+                }
+              } catch(e) {}
+            `
+          }}
+        />
         <meta name="HandheldFriendly" content="True" />
         <meta name="viewport" content="width=1200" />
         <link rel="stylesheet" href="/css/screen.css" />
