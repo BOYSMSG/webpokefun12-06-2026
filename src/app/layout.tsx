@@ -135,7 +135,25 @@ export default async function RootLayout({
           .desktop-sidebar-container h2 { font-size: 1.8rem !important; }
 
           .custom-global-nav {
-             padding: 0 200px 0 20px;
+             padding: 0 170px 0 20px;
+          }
+          #nav .container>a {
+             padding: 6px 13px !important;
+             font-size: 16px !important;
+             display: inline-flex;
+             align-items: center;
+             gap: 6px;
+             border-radius: 20px;
+             transition: all 0.2s ease;
+             white-space: nowrap;
+          }
+          #nav .container>a:hover {
+             background: rgba(255, 255, 255, 0.15);
+             transform: translateY(-1px);
+          }
+          #nav .container>a.active-pill {
+             padding: 6px 16px !important;
+             min-width: auto !important;
           }
 
           @media (max-width: 900px) {
@@ -187,7 +205,7 @@ export default async function RootLayout({
             <div className="viewport">
               <div id="gh-header">
               <div id="nav" className="custom-global-nav">
-                  <div className="container" style={{ position: "relative", display: "flex", flexWrap: "wrap", justifyContent: "center", gap: "10px 20px", maxWidth: "1200px", margin: "0 auto" }}>
+                  <div className="container" style={{ position: "relative", display: "flex", flexWrap: "wrap", justifyContent: "center", gap: "8px 12px", maxWidth: "1280px", margin: "0 auto" }}>
                       <a href="/">Home</a>
                       <a href="/community">Community</a>
                       <a href="/community/reels">Reels</a>
